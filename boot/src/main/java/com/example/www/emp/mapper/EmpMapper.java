@@ -1,7 +1,8 @@
-package com.example.web.emp.mapper;
+package com.example.www.emp.mapper;
 
 import java.util.List;
-import com.example.web.emp.service.EmpVO;
+
+import com.example.www.emp.service.EmpVO;
 
 public interface EmpMapper {
 	public EmpVO getEmp(EmpVO empVO);
