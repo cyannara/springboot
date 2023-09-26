@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fontFamilies>
+    <fontFamily name="godicjasper">
+        <normal><![CDATA[static/fonts/MALGUN.TTF]]></normal>
+        <bold><![CDATA[static/fonts/MALGUNBD.TTF]]></bold>
+        <Semilight>static/fonts/MALGUNSL.TTF</Semilight>
+        <pdfEncoding>Identity-H</pdfEncoding>
+        <pdfEmbedded>true</pdfEmbedded>
+    </fontFamily>
+</fontFamilies>

@@ -1,5 +1,7 @@
 package com.example.www.emp.service;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Date;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -14,9 +16,9 @@ public class EmpVO {
 	String firstName;
 	String lastName;
 	String email;
-	Date   hireDate;
+	Timestamp   hireDate;
 	String managerId;
-	int    salary;
+	BigDecimal    salary;
 	String jobId;
 	String departmentId;
 	String profile;

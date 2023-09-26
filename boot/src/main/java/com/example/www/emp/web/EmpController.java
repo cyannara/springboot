@@ -50,7 +50,7 @@ public class EmpController {
 		JRBeanCollectionDataSource beanCollectionDataSource = new JRBeanCollectionDataSource(result);
         
         // jasper 컴파일할 양식 설정 - 만들어둔 jrxml 파일 경로 설정
-		JasperReport compileReport = JasperCompileManager.compileReport(new FileInputStream("src/main/resources/EmpReport.jrxml"));
+		JasperReport compileReport = JasperCompileManager.compileReport(new FileInputStream("src/main/resources/emp2.jrxml"));
 		
         // datasource를 매핑해 양식(jrxml)에 맞게 컴파일
         HashMap<String, Object> map =new HashMap<>();
