@@ -1,8 +1,13 @@
 package com.example.www.emp.web;
 
-import java.io.FileInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.sql.Connection;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -12,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.example.www.emp.service.EmpService;
 import com.example.www.emp.service.EmpVO;
@@ -23,9 +29,12 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.util.JRLoader;
 
 @Controller
 public class EmpController {
+	
+	@Autowired	DataSource datasource;
 	
 	@Autowired	EmpService empService;
 
@@ -40,6 +49,17 @@ public class EmpController {
 		return "empList";
 	}
 	
+	
+	@GetMapping(value="/pdf")
+	public ModelAndView generateStatus2() throws Exception, JRException {
+
+		ModelAndView mv = new ModelAndView();
+		mv.setView(new PdfView<EmpVO>());
+		mv.addObject("filename", "/emp2.jrxml");
+		mv.addObject("param", null);
+		return mv;
+	}
+	
 	@GetMapping(value="generate")
 	public ResponseEntity<byte[]> generateStatus() throws Exception, JRException {
     
@@ -50,7 +70,7 @@ public class EmpController {
 		JRBeanCollectionDataSource beanCollectionDataSource = new JRBeanCollectionDataSource(result);
         
         // jasper 컴파일할 양식 설정 - 만들어둔 jrxml 파일 경로 설정
-		JasperReport compileReport = JasperCompileManager.compileReport(this.getClass().getResourceAsStream("/emp2.jrxml"));
+		JasperReport compileReport = JasperCompileManager.compileReport(getClass().getResourceAsStream("/emp2.jrxml"));
 		
         // datasource를 매핑해 양식(jrxml)에 맞게 컴파일
         HashMap<String, Object> map =new HashMap<>();
@@ -67,5 +87,16 @@ public class EmpController {
 		headers.set(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=Emp.pdf");
 		
 		return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF).body(data);
+	}
+	
+	@RequestMapping("group")
+	public void report1(Integer dept, HttpServletResponse response) throws Exception {
+		Connection conn = datasource.getConnection();
+		InputStream jasperStream = getClass().getResourceAsStream("/reports/group.jasper");
+		JasperReport jasperReport = (JasperReport) JRLoader.loadObject(jasperStream); // 파라미터 맵
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("P_DEPARTMENT_ID", dept);
+		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, map, conn);
+		JasperExportManager.exportReportToPdfStream(jasperPrint, response.getOutputStream());
 	}
 }
