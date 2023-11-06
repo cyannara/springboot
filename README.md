@@ -5,3 +5,4 @@
 # demo
 - mysql
 - jpa
+- websocket
