@@ -13,16 +13,16 @@ import com.example.demo.customer.Customer;
 import com.example.demo.customer.CustomerRepository;
 
 @SpringBootTest
-class DemoApplicationTests {
+class JpaApplicationTests {
 
 	@Autowired
 	CustomerRepository customerRepo;
 	
 	@Test 
 	void findbyname(){
-		List<Customer> list = customerRepo.findByName("이순신");
+		List<Customer> list = customerRepo.findByFirstName("이순신");
 		System.out.println(list);
-		assertEquals("이순신", list.get(0).getName());
+		assertEquals("순신", list.get(0).getFirstName());
 	}
 	
 	//@Test
@@ -33,17 +33,15 @@ class DemoApplicationTests {
 		Iterator<Customer> iter = list.iterator();
 		while(iter.hasNext()) {
 			Customer cust = iter.next();
-			System.out.println( cust.getName() );
+			System.out.println( cust.getFirstName() );
 		}
 	}
 	
 	//@Test
 	void save() {
-		Customer cust = new Customer();
-		cust.setName("이순신");
-		cust.setPhone("011-1111");
+		Customer cust = new Customer("순신","이");
 		Customer result = customerRepo.save(cust);
-		assertEquals(cust.getName(), result.getName());
+		assertEquals(cust.getFirstName(), result.getLastName());
 	}
 
 }
