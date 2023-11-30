@@ -7,6 +7,6 @@ import com.example.demo.customer.service.CustomerVO;
 @Mapper
 public interface CustomerMapper {
 
-	public List<CustomerVO> getEmpList(CustomerVO CustomerVO);
+	public List<CustomerVO> getCustomer(CustomerVO CustomerVO);
 
 }

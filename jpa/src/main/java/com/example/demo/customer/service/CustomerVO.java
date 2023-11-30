@@ -1,6 +1,6 @@
 package com.example.demo.customer.service;
 
-import com.example.demo.customer.repository.Customer;
+import com.example.demo.customer.entity.Customer;
 
 import lombok.Data;
 
@@ -18,4 +18,11 @@ public class CustomerVO {
 	  this.lastName = customer.getLastName();
   }
   
+  public Customer toEntity() {
+      return Customer.builder()
+              .id(id)
+              .firstName(firstName)
+              .lastName(lastName)
+              .build();
+  }
 }
