@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"></head>
+<body>
+<h3>고객 리스트</h3>
+<table class="table">
+		<tr>
+			<th>id</th>
+			<th>firstName</th>
+			<th>lastName</th>
+		</tr>
+		<tr th:each="item : ${customer}">
+			<td th:text="${item.id}"></td>
+			<td th:text="${item.firstName}"></td>
+			<td th:text="${item.lastName}"></td>
+		</tr>
+	</table>
+</body>
+</html>
