@@ -1,20 +1,23 @@
 package com.example.demo.posts.service;
 
+import java.time.LocalDateTime;
+
 import com.example.demo.posts.domain.Posts;
 
 import lombok.Getter;
 
 @Getter
-public class PostsResponseDto {
+public class PostsListResponseDto {
 	private Long id;
 	private String title;
-	private String content;
 	private String author;
+	private LocalDateTime mdoifiedDate;
 	
-	public PostsResponseDto(Posts entity) {
+	public PostsListResponseDto(Posts entity) {
 		this.id = entity.getId();
 		this.title = entity.getTitle();
-		this.content = entity.getContent();
 		this.author = entity.getAuthor();
+		//this.modifiedDate = entity.getModifiedDate();
 	}
+	
 }

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<header th:replace="~{header :: menu}"></header>
+<h1>게시글 등록</h1>
+<div class="col-md-4">
+	<form th:object="${post}" class="form">
+		<div class="form-group">
+			<label for="id" class="form-label">글번호</label>
+			<input type="text" class="form-control" th:value="*{id}"
+			       id="id" disabled="disabled">
+		</div>
+		<div class="form-group">
+			<label for="title" class="form-label">제목</label>
+			<input type="text" class="form-control" th:value="*{title}"
+			       id="title" placeholder="제목을 입력하세요">
+		</div>
+		<div class="form-group">
+			<label for="author" class="form-label">작성자</label>
+			<input type="text" class="form-control" th:value="*{author}"
+			       id="author" disabled="disabled">
+		</div>
+		<div class="form-group">
+			<label for="content" class="form-label">내용</label>
+			<textarea class="form-control" 
+			       id="content" placeholder="내용을 입력하세요" th:text="*{content}"></textarea>
+		</div>
+	</form>
+	<a href="/posts" role="button" class="btn btn-secondary">취소</a>
+	<button type="button" class="btn btn-primary" id="btn-update">수정완료</button>
+	<button type="button" class="btn btn-danger" id="btn-delete">삭제</button>
+</div>
+
+</body>
+</html>

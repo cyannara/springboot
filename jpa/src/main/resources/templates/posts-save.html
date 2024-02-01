@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<header th:replace="~{header :: menu}"></header>
+<h1>게시글 등록</h1>
+<div class="col-md-4">
+	<form>
+		<div class="form-group">
+			<label for="title">제목</label>
+			<input type="text" class="form-contrl" 
+			       id="title" placeholder="제목을 입력하세요">
+		</div>
+		<div class="form-group">
+			<label for="author">제목</label>
+			<input type="text" class="form-contrl" 
+			       id="author" placeholder="작성자를 입력하세요">
+		</div>
+		<div class="form-group">
+			<label for="content">제목</label>
+			<textarea class="form-contrl" 
+			       id="content" placeholder="내용을 입력하세요"></textarea>
+		</div>
+	</form>
+	<a href="/posts" role="button" class="btn btn-secondary">취소</a>
+	<button type="button" class="btn btn-primary" id="btn-save">등록</button>
+</div>
+</body>  
+</html>
