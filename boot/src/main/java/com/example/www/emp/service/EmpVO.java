@@ -22,5 +22,5 @@ public class EmpVO {
 	String jobId;
 	String departmentId;
 	String profile;
-	MultipartFile uploadFile;
+	//MultipartFile uploadFile;
 }

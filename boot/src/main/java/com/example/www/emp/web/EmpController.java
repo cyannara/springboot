@@ -1,10 +1,11 @@
 package com.example.www.emp.web;
 
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
@@ -19,8 +20,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.example.www.ExcelView;
 import com.example.www.emp.service.EmpService;
 import com.example.www.emp.service.EmpVO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -47,6 +50,20 @@ public class EmpController {
 	public String empList(Model model) {
 		model.addAttribute("empList", empService.getEmpList(null));
 		return "empList";
+	}
+	
+	@GetMapping("/empExcel")
+	public ModelAndView empExcel() {
+		ModelAndView mv = new ModelAndView(new ExcelView());
+		mv.addObject("type", EmpVO.class);
+		ObjectMapper objectMapper = new ObjectMapper();
+		List<Map> list = empService.getEmpList(null)
+                .stream()
+                .map(d->objectMapper.convertValue(d, Map.class))
+                .collect(Collectors.toList());	
+		mv.addObject("datas", list);
+		mv.addObject("filename", "aaa.xls");
+		return mv;
 	}
 	
 	
