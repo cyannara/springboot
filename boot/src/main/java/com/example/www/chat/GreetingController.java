@@ -10,26 +10,41 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.HtmlUtils;
 
 @Controller
 public class GreetingController {
 
-	@Autowired
 	private SimpMessagingTemplate template;
-	
+
+	@Autowired
+	public GreetingController(SimpMessagingTemplate template) {
+		this.template = template;
+	}
+
 	@MessageMapping("/hello")
 	@SendTo("/topic/greetings")
 	public Greeting greeting(HelloMessage message) throws Exception {
 		Thread.sleep(1000); // simulated delay
 		return new Greeting("Hello, " + HtmlUtils.htmlEscape(message.getName()) + "!");
 	}
-	
 
 	@GetMapping("/cust")
-	public Map<String,String> cust(){
+	public Map<String, String> cust() {
 		String text = "[" + new Date() + "]:" + "cust select";
-        this.template.convertAndSend("/topic/cust", text);
+		this.template.convertAndSend("/topic/cust", text);
 		return Collections.singletonMap("name", "test");
+	}
+
+	@GetMapping("insert")
+	@ResponseBody
+	public String insert(String greeting) {
+		//서비스
+
+		//메시지 전송 
+		String text = "[" + new Date() + "]:" + "승인요청 ";
+		this.template.convertAndSend("/topic/approve", text);
+		return "ok";
 	}
 }

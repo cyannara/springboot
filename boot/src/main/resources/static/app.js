@@ -8,9 +8,9 @@ stompClient.onConnect = (frame) => {
     stompClient.subscribe('/topic/greetings', (greeting) => {
         showGreeting(JSON.parse(greeting.body).content);
     });
-    stompClient.subscribe('/topic/cust', (greeting) => {
-        $(document.body).append(greeting.body);
-    });
+    stompClient.subscribe('/topic/approve', (greeting) => {
+        alert(greeting.body);
+    });  
 };
 
 stompClient.onWebSocketError = (error) => {
