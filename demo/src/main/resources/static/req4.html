@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h2>커맨트객체</h2>
+	<form action="/ex6" method="post" 
+	                    enctype="multipart/form-data">
+		<br>lastName<input name="lastName">
+		<br>hireDate<input name="hireDate">
+		<br>jobId<select name="jobId" >
+			<option value="IT_PROG">Programmer</option>
+			<option value="ST_MAN">Stock Manager</option>
+		</select>
+		<br>이메일<input name="email">
+		<br>첨부파일 <input type="file" name="photos" 
+		                  multiple="multiple">
+		<br><button>등록</button>
+	</form>
+</body>
+
+</html>

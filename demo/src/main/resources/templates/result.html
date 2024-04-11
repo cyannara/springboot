@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>result.html</title>
+</head>
+<body>
+<h3>사원등록 결과확인 페이지</h3>
+	<div th:text="${param.insertResult}"></div>
+	<div th:text="${flashResult}"></div>
+	[[${empVO}]]
+	<script>
+		let flashResult = "[[${flashResult}]]"
+		if(flashResult) {
+			alert("등록 성공")
+		}
+	</script>
+</body>
+</html>

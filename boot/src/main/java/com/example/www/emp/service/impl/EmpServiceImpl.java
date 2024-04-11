@@ -1,5 +1,6 @@
 package com.example.www.emp.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,11 @@ public class EmpServiceImpl implements EmpService{
 	@Override
 	public void empInsert(EmpVO empVO) {
 		empMapper.empInsert(empVO);
+	}
+
+	@Override
+	public Date getTime() {
+		return new Date();
 	}
 
 }

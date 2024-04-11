@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<div th:object="${emp}">
+    <h3>사원 정보</h3>
+	<div>
+		<span>사번</span>
+		<span th:text="*{employeeId}"></span>		
+	</div>
+	<div>
+		<span>이름</span>
+		<span th:text="|*{firstName} *{lastName}|"></span>		
+	</div>
+	<div>
+		<span></span>
+		<span th:text="*{jobId}"></span>		
+	</div>
+	<div>
+		<span></span>
+		<span th:text="*{departmentId}"></span>		
+	</div>
+	
+</div>
+</body>
+</html>

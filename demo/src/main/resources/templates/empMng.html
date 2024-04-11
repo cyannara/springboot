@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"  >
+<head>
+<meta charset="UTF-8">
+<title>empMng.html(CRUD)</title>
+</head>
+<body>
+<div layout:fragment="content">
+<h3>사원목록</h3>
+<table>
+	<thead>
+		<tr>
+			<th>No</th>
+			<th>employee_id</th>
+			<th>NAME</th>
+			<th>hire_date</th>
+			<th>salary</th>
+			<th>보너스</th> 
+			<th>수정/삭제</th> 
+		</tr>
+	</thead>
+	<tbody id="emplist">
+<!-- 		<tr>
+			<td>1</td>
+			<td>100</td>
+			<td>scott</td>
+			<td>2023-10-10</td>
+			<td>100000</td>
+			<td><button>신청</button><button>미신청</button></td>
+			<td><button type="button" onclick="move(100)">조회</button></td>
+		</tr> -->
+	</tbody>
+</table>
+
+<div id="nav"></div>		
+
+<h3>사원(등록,조회)</h3>
+<form method="post" name="frm">
+		lastName<input name="lastName">
+		hireDate<input name="hireDate">
+		jobId<select name="jobId" >
+			<option value="IT_PROG">Programmer</option>
+			<option value="ST_MAN">Stock Manager</option>
+		</select>
+		이메일<input name="email">
+		<button type="button" id="saveBtn">등록</button>
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="/js/empMng.js"></script>
+<script>
+  (function (){
+	  console.log('즉시실행함수')
+  })();
+
+//  test();
+  
+  empService.listReq(1)
+  
+  saveBtn.addEventListener("click", e=>{
+	  empService.saveReq();
+  })
+  
+  function gopage(p){
+	  empService.listReq(p)
+  }
+  
+  
+</script>
+</div>
+</body>
+</html>

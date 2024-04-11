@@ -1,4 +1,4 @@
-package com.example.www.chat;
+package com.example.demo.chat;
 
 import java.util.Collections;
 import java.util.Date;
@@ -37,14 +37,14 @@ public class GreetingController {
 		return Collections.singletonMap("name", "test");
 	}
 
-	@GetMapping("insert")
+	@GetMapping("/insertTest")
 	@ResponseBody
 	public String insert(String greeting) {
 		//서비스
-
+		System.out.println(">>>>>>socket test");
 		//메시지 전송 
-		String text = "[" + new Date() + "]:" + "승인요청 ";
-		this.template.convertAndSendToUser(text, "/topic/approve", text); 
+		this.template.convertAndSendToUser("user3", "/topic/approve", "개인메시지"); 
+		this.template.convertAndSend("/topic/approve", "전체메시지"); 
 		return "ok";
 	}
 }

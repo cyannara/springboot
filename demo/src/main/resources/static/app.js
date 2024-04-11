@@ -1,5 +1,5 @@
 const stompClient = new StompJs.Client({
-    brokerURL: 'ws://localhost:82/chatserver'
+    brokerURL: 'ws://localhost:8081/chatserver'
 });
 
 stompClient.onConnect = (frame) => {
@@ -11,6 +11,9 @@ stompClient.onConnect = (frame) => {
     stompClient.subscribe('/user/topic/approve', (greeting) => {
         alert(greeting.body);
     });  
+    stompClient.subscribe('/topic/approve', (greeting) => {
+        alert(greeting.body);
+    });     
 };
 
 stompClient.onWebSocketError = (error) => {

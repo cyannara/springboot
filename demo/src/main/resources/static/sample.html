@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>sample.html</title>
+</head>
+<body>
+<h3>ajax test</h3>
+<div id="result"></div>
+<script>
+fetch("/getText")
+  .then(res=> res.text())
+  .then(res=> result.innerHTML = res )
+</script>
+</body>
+</html>

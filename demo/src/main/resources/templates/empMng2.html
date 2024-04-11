@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"  >
+<head>
+<meta charset="UTF-8">
+<title>empMng.html(CRUD)</title>
+</head>
+<body>
+<div layout:fragment="content">
+<h3>사원목록</h3>
+<table>
+	<thead>
+		<tr>
+			<th>No</th>
+			<th>employee_id</th>
+			<th>NAME</th>
+			<th>hire_date</th>
+			<th>salary</th>
+			<th>보너스</th> 
+			<th>수정/삭제</th> 
+		</tr>
+	</thead>
+	<tbody id="emplist">
+<!-- 		<tr>
+			<td>1</td>
+			<td>100</td>
+			<td>scott</td>
+			<td>2023-10-10</td>
+			<td>100000</td>
+			<td><button>신청</button><button>미신청</button></td>
+			<td><button type="button" onclick="move(100)">조회</button></td>
+		</tr> -->
+	</tbody>
+</table>
+
+<div id="nav"></div>		
+
+<h3>사원(등록,조회)</h3>
+<form method="post" name="frm">
+		lastName<input name="lastName">
+		hireDate<input name="hireDate">
+		jobId<select name="jobId" >
+			<option value="IT_PROG">Programmer</option>
+			<option value="ST_MAN">Stock Manager</option>
+		</select>
+		이메일<input name="email">
+		<button type="button" onclick="saveReq()">등록</button>
+</form>
+
+<script>
+listReq(1)
+
+//날짜 포맷	
+function dateFormat(dt) {
+	let result;
+	 result = dt //날짜 형식 변환
+	return result
+}
+
+// 상세조회 요청
+function infoReq(employeeId) {
+	fetch("   ")
+	.then(res=>res.json())
+	.then(res=>infoRes(res))
+}
+
+// 상세조회 응답
+function infoRes(res){
+	//input tag에 표시
+	frm.email.value = res.email
+	frm.lastName.value = res.lastName
+	frm.hireDate.value = res.hireDate
+	frm.jobId.value = res.jobId
+}
+
+
+// 등록 요청
+function saveReq(){
+	const lastName=frm.lastName.value;
+	const email=frm.email.value;
+	const jobId=frm.jobId.value;
+	const hireDate=frm.hireDate.value;
+	let param = {lastName, email, jobId, hireDate }
+	fetch("/ajax/emp",{
+		method : "post",
+		headers: {
+		      "Content-Type": "application/json",
+		    },
+		body : JSON.stringify(param)
+	})
+	.then(res=>res.json())
+	.then(res=>saveRes(res))
+}
+
+// 등록 응답
+function saveRes(res){
+	listReq()
+}
+
+
+//리스트 요청
+  function listReq(p){
+	  let param = "page="+p
+	  fetch("/ajax/empList"  + "?" + param)
+		.then(res => res.json())
+		.then(res => listRes(res))
+  }
+  
+//리스트 응답
+  function listRes(res){
+	let i=0;
+	//목록출력
+	for( obj  of res.data ) {
+		emplist.innerHTML += makeTr(++i,obj);
+	}
+	//페이징처리
+	nav.innerHTML = makePage(res.paging);
+  }
+
+//페이지번호 태그 생성
+  function makePage(paging){
+	  let tag = `<nav aria-label="...">
+		  <ul class="pagination">`
+	  //이전버튼
+	  if(paging.startPage>1) {
+		  tag += `<li class="page-item">
+		        <a class="page-link" href="javascript:gopage(${paging.startPage-1})">Previous</a></li>`
+	  }	
+      //페이지번호		  
+	  for(i=paging.startPage; i<=paging.endPage; i++){
+		  tag += `<li class="page-item">
+		        <a class="page-link" href="javascript:gopage(${i})">${i}</a></li>`
+	  }
+      //다음버튼
+	  if(paging.endPage <= paging.lastPage)
+		  tag+= `<li class="page-item">
+			     <a class="page-link" href="javascript:gopage(${paging.endPage+1})">Next</a></li>`
+	  tag += ` </ul>
+			</nav>`
+			
+	  return  tag; 
+	  // th:addclass="${num} == ${paging.page} ? active"
+  }
+
+//
+  function makeTr(i, obj) {
+	let bonusBtn = '<button>신청</button>'
+	if(obj.salary > 10000) {
+		bonusBtn = '<button>미신청</button>'
+	}
+	let newTag= `<tr>
+		<td>${i}</td>
+		<td onclick="infoReq(${obj.employeeId})">${obj.employeeId}</td>
+		<td>${obj.firstName} ${obj.lastName}</td>
+		<td>${dateFormat(obj.hireDate)}</td>
+		<td>${obj.salary}</td>
+		<td>${bonusBtn}</td>
+		<td><button type="button" onclick="move(${obj.emplpyeeId})">조회</button></td>
+	</tr>`
+	return newTag;
+  } 
+  
+  function gopage(p){
+	  listReq(p)
+  }
+</script>
+</div>
+</body>
+</html>
