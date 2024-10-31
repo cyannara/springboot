@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.posts.service.PostsResponseDto;
+import com.example.demo.posts.dto.PostsResponseDto;
+import com.example.demo.posts.dto.PostsUpdateRequestDto;
 import com.example.demo.posts.service.PostsService;
-import com.example.demo.posts.service.PostsUpdateRequestDto;
 
 import lombok.RequiredArgsConstructor;
 

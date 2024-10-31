@@ -9,10 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.posts.controller.PostsSaveRequestDto;
 import com.example.demo.posts.domain.Posts;
 import com.example.demo.posts.domain.PostsRepository;
-import com.example.demo.posts.service.PostsListResponseDto;
-import com.example.demo.posts.service.PostsResponseDto;
+import com.example.demo.posts.dto.PostsListResponseDto;
+import com.example.demo.posts.dto.PostsResponseDto;
+import com.example.demo.posts.dto.PostsUpdateRequestDto;
 import com.example.demo.posts.service.PostsService;
-import com.example.demo.posts.service.PostsUpdateRequestDto;
 
 import lombok.RequiredArgsConstructor;
 

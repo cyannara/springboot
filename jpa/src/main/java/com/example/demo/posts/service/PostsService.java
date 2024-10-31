@@ -3,6 +3,9 @@ package com.example.demo.posts.service;
 import org.springframework.data.domain.Page;
 
 import com.example.demo.posts.controller.PostsSaveRequestDto;
+import com.example.demo.posts.dto.PostsListResponseDto;
+import com.example.demo.posts.dto.PostsResponseDto;
+import com.example.demo.posts.dto.PostsUpdateRequestDto;
 
 public interface PostsService {
 

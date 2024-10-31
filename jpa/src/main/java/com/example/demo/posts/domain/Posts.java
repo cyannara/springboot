@@ -1,10 +1,16 @@
 package com.example.demo.posts.domain;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -20,16 +26,21 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Posts extends BaseTimeEntity{
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
 	@Column(length = 500, nullable = false)
 	private String title;
 	
-	@Column(columnDefinition = "TEXT", nullable = false)
+	@Column(columnDefinition = "clob", nullable = false)
 	private String content;
 	
 	private String author;
+	
+	@OneToMany(mappedBy = "posts", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+	@OrderBy("id asc") // 댓글 정렬    
+	private List<Comment> comments;
+	
 	
 	@Builder
 	public Posts(String title, String content, String author) {
