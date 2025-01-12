@@ -69,14 +69,18 @@ log에 대한 세부적인 설정을 하려면 logback.xml 파일을 통한 설�
 
 - Spring Boot에는 내장으로 ‘jul(java.util.logging)’ 로깅 프레임워크가 내장되어 있어서 이를 즉시 사용할 수 있습니다.
 
+```java
+Logger log = LoggerFactory.getLogger(SampleController.class);
+```
+
 💡 Spring Boot Lombok
 
-- Spring Boot Lombok 내에 Slf4j가 포함되어 있어서 기존의 Logger를 선언해서 사용하는 방식외에 @Slf4J Annotaion을 이용하여서 간편하게 사용이 가능합니다.
+- Spring Boot Lombok 내에 Slf4j가 포함되어 있어서 기존의 Logger를 선언해서 사용하는 방식외에 `@Slf4J` `@log4j2` Annotaion을 이용하여서 간편하게 사용이 가능합니다.
 
 ## logback을 log4j2로 변경
 
 spring boot에서 log4j2를 사용하기 위해서는 dependency에서 logback을 제거해주는 작업이 필요합니다.
-스프링 부트는 기본 설정으로 logback을 사용하기 때문에 log4j2 의존성을 추가하더라도 기본 설정으로 잡힌 logback이 동작하게 됩니다.
+스프링 부트는 기본 설정으로 logback을 사용하기 때문에 `@log4j2` 의존성을 추가하더라도 기본 설정으로 잡힌 logback이 동작하게 됩니다.
 
 ### 스프링 로깅 동작과정
 
