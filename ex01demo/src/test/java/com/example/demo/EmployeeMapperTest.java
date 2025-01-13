@@ -1,10 +1,12 @@
 package com.example.demo;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
-import java.util.Map;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +26,7 @@ public class EmployeeMapperTest {
 	}
 	
 	@Test
+	 @DisplayName("")
 	public void find() {
 		//given
 		Long id = 100L;
@@ -32,7 +35,9 @@ public class EmployeeMapperTest {
 		EmployeesDto map = employeesMapper.findById(id);
 		
 		//then
-		assertEquals(map.getLastName().toString(), "King");		
+		assertEquals(map.getLastName().toString(), "King");
+		long bno = 5L;
+		assertEquals(bno, 5L);  
 	}
 	
 	@Test
