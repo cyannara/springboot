@@ -257,7 +257,7 @@ public class DITest {
 
  	 @Test
 	public void Restauranttest() {
-		restaurant.getChef();
+		restaurant.getChef().getName();
 	}
 }
 ```
