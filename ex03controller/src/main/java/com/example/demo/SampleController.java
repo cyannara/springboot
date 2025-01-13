@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 //@Log4j2
 public class SampleController {
 	
-	Logger log = LoggerFactory.getLogger(SampleController.class); 
+	Logger log = LoggerFactory.getLogger(SampleController.class);
+	
 	@RequestMapping("")
 	public String basic() {
 		return "sample";
