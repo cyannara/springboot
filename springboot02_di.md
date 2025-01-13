@@ -253,16 +253,11 @@ public class DITest {
 
 	@Autowired TV tv;
 
-
-
-	@Test
-	public void test() {
-
 	@Autowired Restaurant restaurant;
 
-  @Test
+ 	 @Test
 	public void Restauranttest() {
-		restaurant.getChef();
+		restaurant.getChef().getName();
 	}
 }
 ```
