@@ -354,10 +354,90 @@ public interface BoardService {
 }
 ```
 
+BoardServiceImpl  
+```java
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.example.demo.board.mapper.BoardMapper;
+import com.example.demo.board.service.BoardDTO;
+import com.example.demo.board.service.BoardService;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class BoardServiceImpl implements BoardService {
+
+	private final BoardMapper boardMapper;	
+	
+	@Override
+	public void register(BoardDTO board) {
+		boardMapper.insert(board);
+	}
+	@Override
+	public boolean modify(BoardDTO board) {
+		return boardMapper.update(board) == 1 ? true : false;
+	}
+	@Override
+	public boolean remove(Long bno) {
+		return boardMapper.delete(bno) == 1 ? true : false;
+	}
+	@Override
+	public BoardDTO get(Long bno) {
+		return boardMapper.read(bno);
+	}
+	@Override
+	public List<BoardDTO> getList() {
+		return boardMapper.getList();
+	}
+}
+```
 ### 9. Service 테스트
 
 ```java
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import com.example.demo.board.service.BoardDTO;
+import com.example.demo.board.service.BoardService;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@SpringBootTest
+public class BoardServiceTest {
+
+	@Autowired
+	BoardService boardService;
+
+	@Test
+	@DisplayName("게시글 수정")
+	public void update() {
+		// given
+		// 실행전 존재하는 번호인지 확인할 것
+		BoardDTO board = BoardDTO.builder()
+				   .bno(4L)
+				   .title("서비스수정")
+				   .content("서비스 내용")
+				   .writer("user00")
+				   .build();
+
+		// when
+		boolean result = boardService.modify(board);
+
+		// then
+		assertThat(result).isEqualTo(true);
+	}
+
+}
 ```
 
 ### 10. 프리젠테이션 계층 : `Controller` 와 `뷰페이지`
@@ -435,17 +515,140 @@ view page
 - get.html
 - list.html
 
-register.html
+register.html  
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+	crossorigin="anonymous">
+<title>Insert title here</title>
+</head>
+<body>
+	<div class="container">
+		<h3>게시글 작성</h3>
+		<form action="register" method="post">
+			<div class="mb-3">
+				<label for="title" class="form-label">제목</label> 
+				<input type="text" class="form-control" name="title"
+				       placeholder="제목입력">
+			</div>
+			<div class="mb-3">
+				<label for="content" class="form-label">내용</label>
+				<textarea class="form-control" name="content" rows="3"></textarea>
+			</div>
+			<div class="mb-3">
+				<label for="writer" class="form-label">작성자</label>
+				<input type="text" class="form-control" name="writer">
+			</div>
+			<button class="btn btn-success">등록</button>
+		</form>
+	</div>
+</body>
+</html>
+```
+
+modify.html   
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+	crossorigin="anonymous">
+<title>modify.html</title>
+</head>
+<body>
+	<div class="container">
+		<h3>게시글 수정</h3>
+		<form action="modify" method="post">
+			<div class="mb-3">
+				<label for="bno" class="form-label">번호</label> 
+				<input type="text" class="form-control" name="bno"
+				       readonly="readonly" th:value="${board.bno}">
+			</div>
+			<div class="mb-3">
+				<label for="title" class="form-label">제목</label> 
+				<input type="text" class="form-control" name="title"
+				       th:value="${board.title}">
+			</div>
+			<div class="mb-3">
+				<label for="content" class="form-label">내용</label>
+				<textarea class="form-control" name="content" rows="3" 
+				          th:text="${board.content}"></textarea>
+			</div>
+			<div class="mb-3">
+				<label for="writer" class="form-label">작성자</label>
+				<input type="text" class="form-control" name="writer"
+				       th:value="${board.writer}">
+			</div>
+			<button class="btn btn-success">등록</button>
+		</form>
+	</div>
+</body>
+</html>
+```
+get.html  
 ```html
 ```
-modify.html
+list.html  
 ```html
-```
-get.html
-```html
-```
-list.html
-```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+	crossorigin="anonymous">
+<title>Insert title here</title>
+</head>
+<body>
+	<div class="container">
+		<h3>게시글</h3>
+		<div class="panel-heading">
+			<button type="button" id="btnRegister" class="btn btn-info">게시글 등록</button>
+		</div>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>번호</th>
+					<th>제목</th>
+					<th>작성일자</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="board : ${list}">
+					<td th:text="${board.bno}">1</td>
+					<td th:text="${board.title}" 
+					    th:onclick="|location.href='modify?bno=${board.bno}'|">제목</td>
+					<td th:text="${board.writer}">홍길동</td>
+					<td th:text="${board.regdate}">2025/01/06</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<script th:inline="javascript">
+		const result = [[${result}]]
+		if( result ) {
+			alert("등록완료");
+		}
+		
+		btnRegister.addEventListener("click", ()=>{
+			location.href="/board/register";
+		})
+	</script>
+</body>
+</html>
 ```
 ### 11. Controller 테스트
 @AutoConfigureMockMvc  
