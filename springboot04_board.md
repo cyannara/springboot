@@ -127,12 +127,12 @@ alter table tbl_board add constraint pk_board primary key (bno);
 
 ### 6. 영속계층 : Mapper XML 과 Mapper 인터페이스
 
-- Mapper 인터페이스 구성
-  insert: 등록
-  update: 수정
-  delete: 삭제
-  read: 단건조회
-  getList : 전체조회
+- Mapper 인터페이스 구성  
+  insert: 등록  
+  update: 수정  
+  delete: 삭제  
+  read: 단건조회  
+  getList : 전체조회  
 
 - BoardMapper.xml
 
