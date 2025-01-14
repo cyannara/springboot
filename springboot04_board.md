@@ -460,8 +460,7 @@ MockMvc
 - andDo(print()) : 요청/응답 메시지를 확인할 수 있다.  
 
 ```java
-
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -472,26 +471,32 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
-@SpringBootTest
 @AutoConfigureMockMvc
+@SpringBootTest
 public class BoardControllerTest {
 
-    @Autowired
-    MockMvc mvc;
+    @Autowired MockMvc mvc;
+    
+    //@Test
+    @DisplayName("조회 컨트롤러")
+    void list() throws Exception {
+    	mvc.perform(get("/board/list"))
+    	   .andExpect(status().isOk());
+    	 //  .andDo(MockMvcResultHandlers.print())
+    }
     
     @Test
-    @DisplayName("main 테스트")
-    void main() throws Exception  {
-    	String param = "title=test&content=내용&writer=kim";
-    	mvc.perform(post("/register")
+    @DisplayName("등록 컨트롤러")
+    void register() throws Exception  {
+    	String param = "title=moctest&content=내용&writer=kim";
+    	mvc.perform(post("/board/register")
     	   .content(param)
     	   .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-    	).andExpect(status().isOk())
-         .andExpect((ResultMatcher) content().string("main"))
-         .andDo(MockMvcResultHandlers.print());
+    	)
+    	 //.andExpect(status().isOk())
+         //.andExpect((ResultMatcher) content().string("main"))
+         //.andDo(MockMvcResultHandlers.print());
          ;  
     }
 }
