@@ -518,7 +518,7 @@ view page
 register.html  
 ```html
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
 <link
@@ -530,24 +530,40 @@ register.html
 </head>
 <body>
 	<div class="container">
-		<h3>게시글 작성</h3>
-		<form action="register" method="post">
-			<div class="mb-3">
-				<label for="title" class="form-label">제목</label> 
-				<input type="text" class="form-control" name="title"
-				       placeholder="제목입력">
-			</div>
-			<div class="mb-3">
-				<label for="content" class="form-label">내용</label>
-				<textarea class="form-control" name="content" rows="3"></textarea>
-			</div>
-			<div class="mb-3">
-				<label for="writer" class="form-label">작성자</label>
-				<input type="text" class="form-control" name="writer">
-			</div>
-			<button class="btn btn-success">등록</button>
-		</form>
+		<h3>게시글</h3>
+		<div class="panel-heading">
+			<button type="button" id="btnRegister" class="btn btn-info">게시글 등록</button>
+		</div>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>번호</th>
+					<th>제목</th>
+					<th>작성일자</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="board : ${list}">
+					<td th:text="${board.bno}">1</td>
+					<td th:text="${board.title}" 
+					    th:onclick="|location.href='get?bno=${board.bno}'|">제목</td>
+					<td th:text="${board.writer}">홍길동</td>
+					<td th:text="${board.regdate}">2025/01/06</td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
+	
+	<script th:inline="javascript">
+		const result = [[${result}]]
+		if( result ) {
+			alert("등록완료");
+		}
+		
+		btnRegister.addEventListener("click", ()=>{
+			location.href="/board/register";
+		})
+	</script>
 </body>
 </html>
 ```
@@ -568,26 +584,24 @@ modify.html
 <body>
 	<div class="container">
 		<h3>게시글 수정</h3>
-		<form action="modify" method="post">
+		<form action="modify" method="post" th:object="${board}">
 			<div class="mb-3">
 				<label for="bno" class="form-label">번호</label> 
-				<input type="text" class="form-control" name="bno"
-				       readonly="readonly" th:value="${board.bno}">
+				<input type="text" class="form-control" readonly="readonly" 
+				th:field="*{bno}">
 			</div>
 			<div class="mb-3">
 				<label for="title" class="form-label">제목</label> 
-				<input type="text" class="form-control" name="title"
-				       th:value="${board.title}">
+				<input type="text" class="form-control" th:field="*{title}">
 			</div>
 			<div class="mb-3">
 				<label for="content" class="form-label">내용</label>
-				<textarea class="form-control" name="content" rows="3" 
-				          th:text="${board.content}"></textarea>
+				<textarea class="form-control" rows="3" th:field="*{content}"
+				         ></textarea>
 			</div>
 			<div class="mb-3">
 				<label for="writer" class="form-label">작성자</label>
-				<input type="text" class="form-control" name="writer"
-				       th:value="${board.writer}">
+				<input type="text" class="form-control" th:field="*{writer}">
 			</div>
 			<button class="btn btn-success">등록</button>
 		</form>
@@ -597,6 +611,36 @@ modify.html
 ```
 get.html  
 ```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+	crossorigin="anonymous">
+<title>Insert title here</title>
+</head>
+<body>
+<div class="container">
+	<table class="table">
+		<tr><th>번호</th>
+		    <td th:text="${board.bno}"></td></tr>
+		<tr><th>제목</th>
+		    <td th:text="${board.title}"></td></tr>
+		<tr><th>내용</th>
+		    <td th:text="${board.content}"></td></tr>
+		<tr><th>작성자</th>
+		    <td th:text="${board.writer}"></td></tr>
+		<tr><th>작성일자</th>
+		    <td th:text="${board.regdate}"></td></tr>	
+	</table>
+	<button th:onclick="|location.href='modify?bno=${board.bno}'|">수정</button>
+	<button th:onclick="|location.href='remove?bno=${board.bno}'|">삭제</button>
+</div>
+</body>
+</html>
 ```
 list.html  
 ```html
@@ -629,7 +673,7 @@ list.html
 				<tr th:each="board : ${list}">
 					<td th:text="${board.bno}">1</td>
 					<td th:text="${board.title}" 
-					    th:onclick="|location.href='modify?bno=${board.bno}'|">제목</td>
+					    th:onclick="|location.href='get?bno=${board.bno}'|">제목</td>
 					<td th:text="${board.writer}">홍길동</td>
 					<td th:text="${board.regdate}">2025/01/06</td>
 				</tr>
