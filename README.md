@@ -1,37 +1,47 @@
 SpringBoot 수업
 |일|내용|
 | :----|:----|
-| 1일차 | - STS 설치 |
+| 1일차 ||
+|| - STS 설치 |
 | | - Springboot 프로젝트 |
 | | - Mybatis |
 | | - Thymeleaf |
 | | - **실습** : 사원조회 |
-|2일차|- DI|
+|2일차||
+||- DI|
 ||- log|
 ||- Spring MVC|
 ||- Controller|
 ||- **실습** : 부서관리|
-|3일차|- 컨트롤러 : validation|
+|3일차||
+||- 컨트롤러 : validation|
 ||- thymeleaf|
 ||- Service|
-||- board|
-||- **실습** : 부서관리|
-|4일차|- board|
-||- 페이징|
+||- board CRUD|
+|4일차||
+||- validation|
+||- 에러페이지|
+||- 페이징, 검색|
 ||- layout|
+||- rest API|
+||- **실습** : 사원관리|
+|5일차||
 ||- AOP|
 ||- 트랜잭션|
-||- **실습** : 사원관리|
-|5일차|- rest API|
-||- RestTemplate|
 ||- reply|
-||- **실습** : 사원관리|
-|6일차|- reply|
+||- **실습** : 부서관리|
+|6일차||
 ||- 파일업로드|
+||- RestTemplate|
 ||- security|
-|7일차|JPA|
-|8일차|- 정리|
+|7일차||
+||- JPA|
+||- batch|
+||- egov|
+|8일차||
+||- egov|
 ||- 시험|
+|||
 
 ## boot
 

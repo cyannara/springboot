@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
 <link
@@ -8,6 +8,11 @@
 	integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
 	crossorigin="anonymous">
 <title>Insert title here</title>
+<style>
+.error {
+	color: red
+}
+</style>
 </head>
 <body>
 	<div class="container">
@@ -18,8 +23,7 @@
 			<div class="card-header">
 				<div class=" row justify-content-between">
 					<div class="col-4 text-start">Board Register</div>
-					<div class="col-4 text-end">
-					</div>
+					<div class="col-4 text-end"></div>
 				</div>
 			</div>
 			<div class="card-body">
@@ -27,18 +31,24 @@
 				<form action="register" method="post">
 					<div class="mb-3">
 						<label for="title" class="form-label">제목</label> <input
-							type="text" class="form-control" name="title" placeholder="제목입력">
+							type="text" class="form-control" name="title" placeholder="제목입력"
+							th:value="${boardDTO.title}">
+						<div class="error" th:errors="${boardDTO.title}"></div>
 					</div>
 					<div class="mb-3">
 						<label for="content" class="form-label">내용</label>
-						<textarea class="form-control" name="content" rows="3"></textarea>
+						<textarea class="form-control" name="content" rows="3"
+							th:text="${boardDTO.content}"></textarea>
+						<div class="error" th:errors="${boardDTO.content}"></div>
 					</div>
 					<div class="mb-3">
 						<label for="writer" class="form-label">작성자</label> <input
-							type="text" class="form-control" name="writer">
+							type="text" class="form-control" name="writer"
+							th:value="${boardDTO.writer}">
+						<div class="error" th:errors="${boardDTO.writer}"></div>
 					</div>
 					<div class="d-grid justify-content-md-end">
-					  <button class="btn btn-success">등록</button>
+						<button class="btn btn-success">등록</button>
 					</div>
 				</form>
 			</div>

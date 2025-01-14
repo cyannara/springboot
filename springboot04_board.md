@@ -583,7 +583,7 @@ register.html
 
 ```html
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
   <head>
     <meta charset="UTF-8" />
     <link
@@ -596,46 +596,43 @@ register.html
   </head>
   <body>
     <div class="container">
-      <h3>게시글</h3>
-      <div class="panel-heading">
-        <button type="button" id="btnRegister" class="btn btn-info">
-          게시글 등록
-        </button>
-      </div>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>번호</th>
-            <th>제목</th>
-            <th>작성일자</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr th:each="board : ${list}">
-            <td th:text="${board.bno}">1</td>
-            <td
-              th:text="${board.title}"
-              th:onclick="|location.href='get?bno=${board.bno}'|"
-            >
-              제목
-            </td>
-            <td th:text="${board.writer}">홍길동</td>
-            <td th:text="${board.regdate}">2025/01/06</td>
-          </tr>
-        </tbody>
-      </table>
+      <header>
+        <h1 class="text-center">게시판</h1>
+      </header>
+      <main class="card">
+        <div class="card-header">
+          <div class=" row justify-content-between">
+            <div class="col-4 text-start">Board Register</div>
+            <div class="col-4 text-end"></div>
+          </div>
+        </div>
+        <div class="card-body">
+          <h3>게시글 작성</h3>
+          <form action="register" method="post">
+            <div class="mb-3">
+              <label for="title" class="form-label">제목</label>
+              <input
+                type="text"
+                class="form-control"
+                name="title"
+                placeholder="제목입력"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="content" class="form-label">내용</label>
+              <textarea class="form-control" name="content" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="writer" class="form-label">작성자</label>
+              <input type="text" class="form-control" name="writer" />
+            </div>
+            <div class="d-grid justify-content-md-end">
+              <button class="btn btn-success">등록</button>
+            </div>
+          </form>
+        </div>
+      </main>
     </div>
-
-    <script th:inline="javascript">
-      const result = [[${result}]]
-      if( result ) {
-      	alert("등록완료");
-      }
-
-      btnRegister.addEventListener("click", ()=>{
-      	location.href="/board/register";
-      })
-    </script>
   </body>
 </html>
 ```
@@ -758,34 +755,48 @@ list.html
   </head>
   <body>
     <div class="container">
-      <h3>게시글</h3>
-      <div class="panel-heading">
-        <button type="button" id="btnRegister" class="btn btn-info">
-          게시글 등록
-        </button>
-      </div>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>번호</th>
-            <th>제목</th>
-            <th>작성일자</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr th:each="board : ${list}">
-            <td th:text="${board.bno}">1</td>
-            <td
-              th:text="${board.title}"
-              th:onclick="|location.href='get?bno=${board.bno}'|"
-            >
-              제목
-            </td>
-            <td th:text="${board.writer}">홍길동</td>
-            <td th:text="${board.regdate}">2025/01/06</td>
-          </tr>
-        </tbody>
-      </table>
+      <header>
+        <h1 class="text-center">게시판</h1>
+      </header>
+      <main class="card">
+        <div class="card-header">
+          <div class=" row justify-content-between">
+            <div class="col-4 text-start">Board List Page</div>
+            <div class="col-4 text-end">
+              <button type="button" id="btnRegister" class="btn btn-success">
+                게시글등록
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <table class="table table-striped table-hover">
+            <thead>
+              <tr class="table-success">
+                <th>번호</th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>작성일자</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="board : ${list}">
+                <td th:text="${board.bno}">1</td>
+                <td
+                  th:text="${board.title}"
+                  th:onclick="|location.href='get?bno=${board.bno}'|"
+                >
+                  제목
+                </td>
+                <td th:text="${board.writer}">홍길동</td>
+                <td th:text="${#dates.format(board.regdate,'yyyy-MM-dd')}">
+                  2025/01/06
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
     </div>
 
     <script th:inline="javascript">
