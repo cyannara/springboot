@@ -448,10 +448,13 @@ list.html
 ```html
 ```
 ### 11. Controller 테스트
-- @AutoConfigureMockMvc
-웹 환경에서 컨트롤러를 테스트 하려면 반드시 서블릿 컨테이너가 구동되고, DispatcherServlet 객체가 메모리에 올라가야 하지만, 서블릿 컨테이너를 모킹하면 실제 서블릿 컨테이너가 아닌 테스트용 모형 컨테이너를 사용하기 때문에 간단하게 컨트롤러를 테스트 할 수 있다.
+@AutoConfigureMockMvc  
+웹 환경에서 컨트롤러를 테스트 하려면 반드시 서블릿 컨테이너가 구동되고, DispatcherServlet 객체가 메모리에 올라가야 하지만, 서블릿 컨테이너를 모킹하면 실제 서블릿 컨테이너가 아닌 테스트용 모형 컨테이너를 사용하기 때문에 간단하게 컨트롤러를 테스트 할 수 있다. @SpringBootTest위에 지정.
 
-- @WebMvcTest : 웹에서 테스트하기 힘든 컨트롤러를 테스트할 때 적합하며, MockMvc를 의존성 주입한다.  
+@WebMvcTest  
+웹에서 테스트하기 힘든 컨트롤러를 테스트할 때 적합하며, MockMvc를 의존성 주입한다. @SpringBootTest와 같이 사용될 수 없다
+
+MockMvc  
 - perform()를 통해 요청 메서드에 따라 MockMvc를 실행시킬 수 있다.  
 - andExpect() : 응답을 검증하는 역할을 한다.  
 - andDo(print()) : 요청/응답 메시지를 확인할 수 있다.  
