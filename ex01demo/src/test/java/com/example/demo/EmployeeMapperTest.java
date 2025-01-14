@@ -1,8 +1,6 @@
 package com.example.demo;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -17,7 +15,7 @@ import com.example.demo.mapper.EmployeesMapper;
 @SpringBootTest
 public class EmployeeMapperTest {
 
-	@Autowired EmployeesMapper employeesMapper;
+@Autowired EmployeesMapper employeesMapper;
 	
 	@Test
 	public void list() {
