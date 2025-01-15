@@ -64,8 +64,8 @@ public class ReplyControllerTest {
     	)
     	//then
     	.andExpect(status().isOk())
-        .andDo(print())
-        ;
+    	.andExpect(jsonPath("$.reply").value("댓글수정"))
+        .andDo(print()) ;
     	
     }
     
