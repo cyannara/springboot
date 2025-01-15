@@ -199,7 +199,7 @@ public class BoardSearchDTO {
 </select>
 
 <!-- 카운트 -->
-<select id="count">
+<select id="getCount">
   SELECT COUNT(*) FROM TBL_BOARD
 </select>
 ```
