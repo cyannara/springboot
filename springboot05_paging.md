@@ -256,20 +256,56 @@ public class BoardControllerTest {
 페이지 번호 출력
 
 ```HTML
-  <!-- 페이징 시작 -->
-	<nav aria-label="...">
-	  <ul class="pagination">
-	    <li class="page-item" th:classappend="${paging.startPage} == 1 ? disabled">
-	        <a class="page-link" th:href="|javascript:gopage(${paging.startPage})|">Previous</a></li>
+		<!-- 페이징 시작 -->
+		<nav>
+			<ul class="pagination">
+				<li class="page-item"
+					th:classappend="${paging.startPage} == 1 ? disabled"><a
+					class="page-link"
+					th:href="|javascript:gopage(${paging.startPage}-1)|">Previous</a></li>
 
-	    <li th:each="num : *{#numbers.sequence(paging.startPage, paging.endPage)}"
-	        class="page-item"
-	        th:addclass="${num} == ${paging.page} ? active">
-	        <a class="page-link" th:href="|javascript:gopage(${num})|"  th:text="${num}">2</a></li>
+				<li
+					th:each="num : *{#numbers.sequence(paging.startPage, paging.endPage)}"
+					class="page-item" th:addclass="${num} == ${paging.page} ? active">
+					<a class="page-link" th:href="|javascript:gopage(${num})|"
+					th:text="${num}">2</a>
+				</li>
 
-	    <li class="page-item" th:classappend="${paging.endPage} <= ${paging.lastPage} ? disabled">
-	        <a class="page-link" th:href="|javascript:gopage(${paging.endPage})|">Next</a></li>
-	  </ul>
-	</nav>
-	<!-- 페이징 종료 -->
+				<li class="page-item"
+					th:classappend="${paging.endPage} >= ${paging.lastPage} ? disabled">
+					<a class="page-link"
+					th:href="|javascript:gopage(${paging.endPage}+1)|">Next</a>
+				</li>
+			</ul>
+		</nav>
+		<!-- 페이징 끝 -->
+```
+
+검색기능  
+```html
+<!-- 검색폼 시작 -->
+		<div class='row'>
+			<div class="col-lg-12">
+				<form id='searchForm' action="/board/list" method='get'>
+					<select name='type'>
+						<option value="">--</option>
+						<option value="T">제목</option>
+						<option value="C">내용</option>
+						<option value="W">작성자</option>
+						<option value="TC">제목 or 내용</option>
+						<option value="TW">제목 or 작성자</option>
+						<option value="TWC">제목 or 내용 or 작성자</option>
+					</select> 
+					<input type='text' name='keyword' /> 
+					<input type='hidden' name='page' value="1"/> 
+					<select name="pageunit">
+						<option value="10">10</option>
+						<option value="20">20</option>
+						<option value="30">30</option>
+					</select>
+					<button class='btn btn-success'>Search</button>
+				</form>
+			</div>
+		</div>
+		<!-- 검색폼 끝 -->
 ```
