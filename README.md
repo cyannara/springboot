@@ -22,13 +22,13 @@ SpringBoot 수업
 ||- validation|
 ||- 에러페이지|
 ||- 페이징, 검색|
-||- layout|
-||- rest API|
 ||- **실습** : 사원관리|
 |5일차||
+||- layout|
+||- rest API|
+||- reply|
 ||- AOP|
 ||- 트랜잭션|
-||- reply|
 ||- **실습** : 부서관리|
 |6일차||
 ||- 파일업로드|
@@ -42,6 +42,36 @@ SpringBoot 수업
 ||- egov|
 ||- 시험|
 |||
+
+### 2일차 실습
+
+수업: springboot01_start, springboot02_di.md
+과제: forward vs redirect
+
+### 3일차 실습
+
+수업: springboot03_controller.md, springboot04_board.md  
+과제: 사원관리
+
+### 4일차 실습
+
+수업: springboot05_paging.md  
+실습: 부서조회
+
+<pre>
+com.example.demo.insa.controller   - DeptController
+                     .mapper       -  DeptMapper  
+                     .service      -  DeptService, DeptDTO, DeptSearchDTO
+                     .service.impl -  DeptServiceImpl
+mappers  - DeptMapper.xml
+              전체조회  getList
+              단건조회  read
+</pre>
+
+### 5일차 실습
+
+수업: springboot06_rest.md, springboot06_reply.md  
+실습및 과제제: 부서관리
 
 ## boot
 

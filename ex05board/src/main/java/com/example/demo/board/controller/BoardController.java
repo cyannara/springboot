@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.example.demo.Paging;
 import com.example.demo.board.service.BoardDTO;
 import com.example.demo.board.service.BoardSearchDTO;
 import com.example.demo.board.service.BoardService;
+import com.example.demo.common.Paging;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,23 +36,25 @@ public class BoardController {
 	public void list(Model model, BoardSearchDTO searchDTO, Paging paging) {
 
 		// 페이징처리
-		paging.setPage(2);
-		paging.setPageUnit(5);
-		paging.setPageSize(3);
 		paging.setTotalRecord(service.getCount(searchDTO));
 		model.addAttribute("paging", paging);
 		
+    //목록 조회
 		searchDTO.setStart(paging.getFirst());
 		searchDTO.setEnd(paging.getLast());
 		model.addAttribute("list", service.getList(searchDTO));
 	}
 
+  //등록페이지
 	@GetMapping("/register")
 	public void registger(BoardDTO board) {
 	}
 
+  //등록처리
 	@PostMapping("/register")
-	public String register(@Validated BoardDTO board, BindingResult bindingResult, RedirectAttributes rttr) {
+	public String register(@Validated BoardDTO board, 
+                         BindingResult bindingResult, 
+                         RedirectAttributes rttr) {
 		if (bindingResult.hasErrors()) {
 			return "board/register";
 		}
@@ -79,7 +81,8 @@ public class BoardController {
 	}
 
 	@GetMapping("/remove")
-	public String remove(@RequestParam(name = "bno") Long bno, RedirectAttributes rttr) {
+	public String remove(@RequestParam(name = "bno") Long bno, 
+                       RedirectAttributes rttr) {
 		log.info("remove: " + bno);
 		service.remove(bno);
 

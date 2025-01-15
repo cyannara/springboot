@@ -85,7 +85,7 @@ public class BoardMapperTest {
 	    //given
 
 	    //when
-	    List<BoardDTO> list = boardMapper.getList();
+	    List<BoardDTO> list = boardMapper.getList(null);
 
 	    //then
 	    list.forEach(board -> log.info(board.toString()));

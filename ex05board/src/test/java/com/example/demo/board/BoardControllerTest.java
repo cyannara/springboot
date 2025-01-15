@@ -24,7 +24,8 @@ public class BoardControllerTest {
     @Test
     @DisplayName("조회 컨트롤러")
     void list() throws Exception {
-    	ModelMap map = mvc.perform(MockMvcRequestBuilders.get("/board/list"))
+    	ModelMap map = mvc.perform(MockMvcRequestBuilders.get("/board/list")
+    			.param("page", "100"))
     	   .andReturn()
     	   .getModelAndView()
     	   .getModelMap();
