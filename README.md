@@ -71,7 +71,7 @@ mappers  - DeptMapper.xml
 ### 5일차 실습
 
 수업: springboot06_rest.md, springboot06_reply.md  
-실습및 과제제: 부서관리
+실습및 과제: 부서관리
 
 ## boot
 
