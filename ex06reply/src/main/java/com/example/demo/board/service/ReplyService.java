@@ -1,19 +1,15 @@
 package com.example.demo.board.service;
 
-import java.util.List;
-
 public interface ReplyService {
 
-	public int register(ReplyDTO vo);
+	public boolean register(ReplyDTO vo);
+
+	public boolean modify(ReplyDTO vo);
+
+	public boolean remove(Long rno);
 
 	public ReplyDTO get(Long rno);
 
-	public int modify(ReplyDTO vo);
-
-	public int remove(Long rno);
-
-	public List<ReplyDTO> getList(ReplySearchDTO cri, Long bno);
+	public ReplyPageDTO getList(ReplySearchDTO replySearch, Long bno);
 	
-	public ReplyPageDTO getListPage(ReplySearchDTO cri, Long bno);
-
 }

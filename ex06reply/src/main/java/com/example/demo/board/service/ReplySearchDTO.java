@@ -6,6 +6,15 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ReplySearchDTO {
-	int start;
-	int end;
+	
+	int page;
+	int amount;
+	
+	public int getStart() {
+		return (page-1)*amount +1;
+	}
+	
+	public int getEnd() {
+		return page*amount;
+	}
 }

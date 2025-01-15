@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.board.service.ReplyDTO;
@@ -27,73 +27,62 @@ import lombok.extern.slf4j.Slf4j;
 public class ReplyController {
 	private final ReplyService service;
 
-	@PostMapping(value = "/new", consumes = "application/json", produces = { MediaType.TEXT_PLAIN_VALUE })
-	public ResponseEntity<String> create(@RequestBody ReplyDTO vo) {
+	//등록처리
+	@PostMapping(value = "/new", 
+			     consumes = "application/json", 
+			     produces = { MediaType.TEXT_PLAIN_VALUE })
+	public ResponseEntity<String> register(@RequestBody ReplyDTO vo) {
 
-		log.info("ReplyVO: " + vo);
+		boolean result = service.register(vo);
 
-		int insertCount = service.register(vo);
-
-		log.info("Reply INSERT COUNT: " + insertCount);
-
-		return insertCount == 1  
-				?  new ResponseEntity<>("success", HttpStatus.OK)
+		return result  
+				? new ResponseEntity<>("success", HttpStatus.OK)
 				: new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
-	@GetMapping(value = "/{rno}", 
-			produces = { MediaType.APPLICATION_XML_VALUE, 
-					     MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<ReplyDTO> get(@PathVariable("rno") Long rno) {
-
-		log.info("get: " + rno);
-
-		return new ResponseEntity<>(service.get(rno), HttpStatus.OK);
-	}
-
-	@RequestMapping(method = { RequestMethod.PUT,
-			RequestMethod.PATCH }, value = "/{rno}", consumes = "application/json", produces = {
-					MediaType.TEXT_PLAIN_VALUE })
+	//수정처리
+	@PutMapping( value = "/{rno}", 
+			     consumes = "application/json", 
+			     produces = {MediaType.TEXT_PLAIN_VALUE })
 	public ResponseEntity<String> modify(
-			 @RequestBody ReplyDTO vo, 
-			 @PathVariable("rno") Long rno) {
+			 @RequestBody ReplyDTO replyDTO, 
+			 @PathVariable(name="rno") Long rno) {
 
-		vo.setRno(rno);
+		replyDTO.setRno(rno);
 
-		log.info("rno: " + rno);
-		log.info("modify: " + vo);
-
-		return service.modify(vo) == 1 
+		return service.modify(replyDTO) == true 
 				? new ResponseEntity<>("success", HttpStatus.OK)
 				: new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 
 	}
 
-	@DeleteMapping(value = "/{rno}", produces = { MediaType.TEXT_PLAIN_VALUE })
-	public ResponseEntity<String> remove(@PathVariable("rno") Long rno) {
+	//삭제처리
+	@DeleteMapping(value = "/{rno}", 
+			       produces = { MediaType.TEXT_PLAIN_VALUE })
+	public ResponseEntity<String> remove(@PathVariable(name="rno") Long rno) {
 
-		log.info("remove: " + rno);
-
-		return service.remove(rno) == 1 
+		return service.remove(rno) == true 
 				? new ResponseEntity<>("success", HttpStatus.OK)
 				: new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 
 	}
 
+	//단건조회
+	@GetMapping("/{rno}")
+	public ReplyDTO get(@PathVariable("rno") Long rno) {
+		return service.get(rno);
+	}
 
+	//댓글목록조회
 	@GetMapping(value = "/pages/{bno}/{page}", 
-			produces = { MediaType.APPLICATION_XML_VALUE,
-			MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<ReplyPageDTO> getList(@PathVariable("page") int page, 
-			                                    @PathVariable("bno") Long bno) {
+			    produces = {  MediaType.APPLICATION_XML_VALUE,
+			    MediaType.APPLICATION_JSON_VALUE })
+	public ReplyPageDTO getList(@PathVariable(name="page") int page, 
+			                    @PathVariable(name="bno") Long bno) {
 
-		ReplySearchDTO cri = new ReplySearchDTO(page, 10);
-		
-		log.info("get Reply List bno: " + bno);
+		ReplySearchDTO replySearchDTO = new ReplySearchDTO(page, 10);
 
-		log.info("cri:" + cri);
-
-		return new ResponseEntity<>(service.getListPage(cri, bno), HttpStatus.OK);
+		return service.getList(replySearchDTO, bno);
 	}
 
 }

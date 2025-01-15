@@ -1,6 +1,8 @@
 package com.example.demo.board;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,9 +45,9 @@ public class BoardControllerTest {
     	   .content(param)
     	   .contentType(MediaType.APPLICATION_FORM_URLENCODED)
     	)
-    	 //.andExpect(status().isOk())
+    	.andExpect(status().isOk())
          //.andExpect((ResultMatcher) content().string("main"))
-         //.andDo(MockMvcResultHandlers.print());
+        .andDo(print());
          ;  
     }
 }

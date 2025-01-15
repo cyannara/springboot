@@ -1,7 +1,5 @@
 package com.example.demo.board.service.impl;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 
 import com.example.demo.board.mapper.ReplyMapper;
@@ -20,56 +18,34 @@ public class ReplyServiceImpl implements ReplyService {
 
   
   private final ReplyMapper mapper;
-
-  
   
   @Override
-  public int register(ReplyDTO vo) {
-
-    log.info("register......" + vo);
-
-    return mapper.insert(vo);
+  public boolean register(ReplyDTO vo) {
+    return mapper.insert(vo) == 1 ? true : false;
 
   }
 
+  @Override
+  public boolean modify(ReplyDTO vo) {
+    return mapper.update(vo) == 1 ? true : false;
+
+  }
+
+  @Override
+  public boolean remove(Long rno) {
+    return mapper.delete(rno) == 1;
+
+  }
+  
   @Override
   public ReplyDTO get(Long rno) {
-
-    log.info("get......" + rno);
-
-    return mapper.read(rno);
-
+	  return mapper.read(rno);
+	  
   }
 
-  @Override
-  public int modify(ReplyDTO vo) {
-
-    log.info("modify......" + vo);
-
-    return mapper.update(vo);
-
-  }
-
-  @Override
-  public int remove(Long rno) {
-
-    log.info("remove...." + rno);
-
-    return mapper.delete(rno);
-
-  }
-
-  @Override
-  public List<ReplyDTO> getList(ReplySearchDTO replySearch, Long bno) {
-
-    log.info("get Reply List of a Board " + bno);
-
-    return mapper.getList(replySearch, bno);
-
-  }
   
   @Override
-  public ReplyPageDTO getListPage(ReplySearchDTO replySearch, Long bno) {
+  public ReplyPageDTO getList(ReplySearchDTO replySearch, Long bno) {
        
     return new ReplyPageDTO(
         mapper.getCountByBno(bno), 
