@@ -330,6 +330,41 @@ function replyListCallback(result){
 }
 
 /*-------------------------------------
+페이지 번호 태그 만들기
+---------------------------------------*/
+function pagingMake(paging){
+	
+	let tag = `<ul class="pagination">`;
+	
+	//이전버튼
+	if (paging.startPage > 1) {
+		tag += `<li class="page-item">
+		          <a class="page-link" 
+		             href="javascript:gopage(${paging.startPage-1})">이전</a>
+		        </li>`
+	}
+	
+	//페이지 번호
+	for(let i = paging.startPage; i<=paging.endPage; i++ ) {
+		tag+=`<li class="page-item">
+	            <a class="page-link" 
+	              href="javascript:gopage(${i})">${i}</a>
+	          </li>`
+	}
+	
+	//다음 버튼
+	if (paging.endPage < paging.lastPage ) {
+	tag += `<li class="page-item">
+	          <a class="page-link" 
+	             href="javascript:gopage(${paging.endPage +1})">다음</a>
+	        </li>`
+	}
+	tag += `</ul>`
+	
+	return tag;
+}
+
+/*-------------------------------------
 댓글 조회 태그 생성
 ---------------------------------------*/
 function replyMake(item){
