@@ -74,9 +74,7 @@ public class ReplyController {
 	}
 
 	//댓글목록조회
-	@GetMapping(value = "/pages/{bno}/{page}", 
-			    produces = {  MediaType.APPLICATION_XML_VALUE,
-			    MediaType.APPLICATION_JSON_VALUE })
+	@GetMapping("/pages/{bno}/{page}")
 	public ReplyPageDTO getList(@PathVariable(name="page") int page, 
 			                    @PathVariable(name="bno") Long bno) {
 
