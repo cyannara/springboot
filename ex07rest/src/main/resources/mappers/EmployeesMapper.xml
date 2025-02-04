@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.EmployeesMapper">
+	<select id="findAll" 
+	        resultType="com.example.demo.mapper.EmployeesDto">
+		SELECT * 
+		  FROM employees 
+	</select>
+	<select id="findById" 
+	        resultType="com.example.demo.mapper.EmployeesDto" 
+	        parameterType="long">
+		SELECT FIRST_NAME,
+		       LAST_NAME 
+		  FROM employees 
+		 WHERE employee_id = #{employeeId} 		
+	</select>
+	<select id="findBydeptAndName"
+	        resultType="com.example.demo.mapper.EmployeesDto">
+		SELECT *
+		  FROM employees
+		 <where>
+		 	<if test="departmentId != null">
+		 	   and department_id = #{departmentId}
+		 	</if>
+		 	<if test="firstName != null and ! firstName.equals('')">
+		 	   and first_name = #{firstName}
+		 	</if>
+		 </where> 
+	</select>
+</mapper>
+
+
