@@ -105,6 +105,6 @@ view : /egovweb/src/main/webapp/WEB-INF/jsp
     ```java
     import egovframework.rte.psl.dataaccess.mapper.Mapper;  // import 변경
 
-    @Mapper("employeeMapper")
-    public interface EmployeeMapper { … }
+    @Mapper("todoMapper")
+    public interface TodoMapper { … }
     ```   
