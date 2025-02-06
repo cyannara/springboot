@@ -76,8 +76,6 @@ view : /egovweb/src/main/webapp/WEB-INF/jsp
 
 2. Mapper Interface 방식
     ```java
-    import egovframework.rte.psl.dataaccess.mapper.Mapper;  // import 변경
-
     @Mapper("employeeMapper")
     public interface EmployeeMapper { … }
     ```
@@ -102,3 +100,11 @@ view : /egovweb/src/main/webapp/WEB-INF/jsp
     <property name="basePackage" value=" 스캔할 Mapper Interface가 속한 풀패키지명" />
     </bean>
     ```
+
+3. @Mapper 패키지 import 변경
+    ```java
+    import egovframework.rte.psl.dataaccess.mapper.Mapper;  // import 변경
+
+    @Mapper("employeeMapper")
+    public interface EmployeeMapper { … }
+    ```   
