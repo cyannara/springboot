@@ -1,47 +1,55 @@
 SpringBoot 수업
-|일|내용|
-| :----|:----|
-| 1일차 ||
-|| - STS 설치 |
-| | - Springboot 프로젝트 |
-| | - Mybatis |
-| | - Thymeleaf |
-| | - **실습** : 사원조회 |
-|2일차||
-||- DI|
-||- log|
-||- Spring MVC|
-||- Controller|
-||- **실습** : 부서관리|
-|3일차||
-||- 컨트롤러 : validation|
-||- thymeleaf|
-||- Service|
-||- board CRUD|
-|4일차||
-||- validation|
-||- 에러페이지|
-||- 페이징, 검색|
-||- **실습** : 사원관리|
-|5일차||
-||- layout|
-||- rest API|
-||- reply|
-||- AOP|
-||- 트랜잭션|
-||- **실습** : 부서관리|
-|6일차||
-||- 파일업로드|
-||- RestTemplate|
-||- security|
-|7일차||
-||- JPA|
-||- batch|
-||- egov|
-|8일차||
-||- egov|
-||- 시험|
-|||
+
+| 일  | 내용                    |
+| :-- | :---------------------- |
+| 1일 |                         |
+|     | - STS 설치              |
+|     | - Springboot 프로젝트   |
+|     | - Mybatis               |
+|     | - Thymeleaf             |
+|     | - **실습** : 사원조회   |
+| 2일 |                         |
+|     | - DI                    |
+|     | - log                   |
+|     | - Spring MVC            |
+|     | - Controller            |
+|     | - **실습** : 부서관리   |
+| 3일 |                         |
+|     | - 컨트롤러 : validation |
+|     | - thymeleaf             |
+|     | - Service               |
+|     | - board CRUD            |
+| 4일 |                         |
+|     | - validation            |
+|     | - 에러페이지            |
+|     | - 페이징, 검색          |
+|     | - **실습** : 사원관리   |
+| 5일 |                         |
+|     | - layout                |
+|     | - rest API              |
+|     | - reply                 |
+|     | - AOP                   |
+|     | - 트랜잭션              |
+|     | - **실습** : 부서관리   |
+| 6일 |                         |
+|     | - RestTemplate          |
+|     | - 파일업로드            |
+| 7일 |                         |
+|     | - security              |
+| 8일 |                         |
+|     | - JPA                   |
+|     | - 시험                  |
+| etc |                         |
+|     | - egovframe             |
+|     | - batch                 |
+|     | - 레포팅 툴             |
+|     | - JWT                   |
+|     | - 엑츄에이터            |
+|     | - yml, error page       |
+|     | - ec2 jenkins           |
+|     | - JPA @OneToMany        |
+|     | - 쿠버네티스            |
+|     |                         |
 
 ### 2일차 실습
 
@@ -72,6 +80,12 @@ mappers  - DeptMapper.xml
 
 수업: springboot06_rest.md, springboot06_reply.md  
 실습및 과제: 부서관리
+
+### 6일차 실습
+
+### 7일차 실습
+
+### 8일차 실습
 
 ## boot
 

@@ -1,0 +1,60 @@
+<th:block th:replace="~{layout/header}" />
+<h1>스프링부트 인덱스</h1>
+<a href="/posts/save" role="button" class="btn btn-primary">글 등록</a>
+
+        <!-- 목록 출력 영역 -->
+        <table class="table table-horizontal table-bordered">
+            <thead class="thead-strong">
+            <tr>
+                <th>게시글번호</th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>최종수정일</th>
+            </tr>
+            </thead>
+            <tbody id="tbody">
+
+                <tr th:each="post : ${posts}">
+                    <td>[[${post.id}]]</td>
+                    <td><a th:href="|/posts/update/${post.id}|">[[${post.title}]]</a></td>
+                    <td>[[${post.author}]]</td>
+                    <td>[[${post.modifiedDate}]]</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <!-- 페이징 시작 -->
+ 		<nav> 
+			<ul class="pagination" th:with="startPage=${T(java.lang.Math).floor(posts.number/10)}*10+1, 
+			                                endPage=(${posts.totalPages}>${startPage}+9) ? ${startPage}+9 :${posts.totalPages}">
+				<li class="page-item"
+					th:classappend="${posts.first} ? disabled"><a
+					class="page-link"
+					th:href="|javascript:gopage(${posts.number})|">Previous</a></li>
+
+				<li
+					th:each="num : *{#numbers.sequence(startPage, endPage)}"
+					class="page-item" th:classappend="${num} == ${posts.number}+1 ? active">
+					<a class="page-link" th:href="|javascript:gopage(${num})|"
+					th:text="${num}">2</a>
+				</li>
+
+				<li class="page-item"
+					th:classappend="${posts.last} ? disabled">
+					<a class="page-link"
+					th:href="|javascript:gopage(${posts.number}+2)|">Next</a>
+				</li>
+			</ul>
+		</nav>
+		<!-- 페이징 끝 -->
+       	<script th:inline="javascript">
+
+		
+		function gopage(p){
+			//searchForm.page.value = p;
+			//searchForm.submit();
+			location.href = "/?page=" + p;
+		}
+	</script>
+</body>
+</html>
