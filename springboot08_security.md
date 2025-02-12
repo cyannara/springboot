@@ -1,5 +1,26 @@
-package com.example.demo.securing.config;
+## spring security
 
+### 작업순서
+1. spring security starter 추가  
+```xml
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>      
+		<dependency>
+			<groupId>org.thymeleaf.extras</groupId>
+			<artifactId>thymeleaf-extras-springsecurity6</artifactId>
+		</dependency>  
+```
+
+2. security config  
+
+```java
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,28 +53,15 @@ public class WebSecurityConfig {
 				.anyRequest().authenticated()
 			)
 			.formLogin((form) -> form
-				//.loginPage("/login")
-				//.usernameParameter("userid")
-				.successHandler(suthenticationSuccessHandler())
 				.permitAll()
 			)
 			.logout((logout) -> logout.deleteCookies("JSESSIONID").permitAll())
-			//.csrf(csrf -> csrf.disable())
+			.csrf(csrf -> csrf.disable())
 			;
 
-		http.exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler()));
 		return http.build();
 	}
 
-	@Bean
-	public AuthenticationSuccessHandler suthenticationSuccessHandler() {
-		return new CustomLoginSuccessHandler();
-	}
-	
-	@Bean
-	public AccessDeniedHandler accessDeniedHandler() {
-		return new CustomAccessDeniedHandler();
-	}
 	
 	@Bean
 	public UserDetailsService userDetailsService() {
@@ -73,3 +81,7 @@ public class WebSecurityConfig {
 		return new InMemoryUserDetailsManager(user,admin);
 	}
 }
+```
+
+### reference
+- https://ddonghyeo.tistory.com/56  

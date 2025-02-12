@@ -1,4 +1,4 @@
-package com.example.demo.securing.config;
+package com.example.demo.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,27 +32,17 @@ public class WebSecurityConfig {
 				.anyRequest().authenticated()
 			)
 			.formLogin((form) -> form
-				//.loginPage("/login")
-				//.usernameParameter("userid")
-				.successHandler(suthenticationSuccessHandler())
 				.permitAll()
 			)
 			.logout((logout) -> logout.deleteCookies("JSESSIONID").permitAll())
-			//.csrf(csrf -> csrf.disable())
+			.cors(cors -> cors
+                    .configurationSource(CorsConfig.corsConfigurationSource())
+            )
+			.csrf(csrf -> csrf.disable())
 			;
 
-		http.exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler()));
-		return http.build();
-	}
-
-	@Bean
-	public AuthenticationSuccessHandler suthenticationSuccessHandler() {
-		return new CustomLoginSuccessHandler();
-	}
 	
-	@Bean
-	public AccessDeniedHandler accessDeniedHandler() {
-		return new CustomAccessDeniedHandler();
+		return http.build();
 	}
 	
 	@Bean
