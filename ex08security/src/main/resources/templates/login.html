@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head>
+        <title>Spring Security Example </title>
+    </head>
+    <body>
+    	<h1>로그인</h1>
+        <div th:if="${param.error}">
+            Invalid username and password.
+        </div>
+        <div th:if="${param.logout}">
+            You have been logged out.
+        </div>
+        <form th:action="login" method="post">
+        	<div>
+        	<hr/>
+        	</div>
+        	 <!-- <input  type="hidden" th:name="${_csrf.parameterName}" 
+        	         th:value="${_csrf.token}"> -->
+            <div><label> User Name : <input type="text" name="userid"/> </label></div>
+            <div><label> Password: <input type="password" name="password"/> </label></div>
+            <div><input type="submit" value="로그인"/></div>
+        </form>
+    </body>
+</html>

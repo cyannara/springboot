@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.securing.mapper.UserMapper">
+
+	<resultMap type="UserDTO" id="userMap">
+		<id column="id"  property="id"/>
+		<result column="password"  property="password"/>
+		<collection property="roles"
+		            ofType="RoleDTO" 
+		            select="getRole"
+		            column="id"
+		></collection>
+	</resultMap>
+	
+	<!-- 단건조회 -->
+	<select id="getUser" resultMap="userMap">
+	select ID
+			,LOGIN_ID
+			,PASSWORD
+			,FULL_NAME
+			,DEPT_NAME
+	  from t_user
+	 where login_id = #{loginId}
+	</select>
+	 
+	<!-- 권한조회 -->
+	<select id="getRole" resultType="RoleDTO">
+    select role_name
+	  from t_user_role u
+	  join t_role r on (u.ROLE_ID = r.id )
+	 where id = #{id}
+	 </select>
+</mapper>

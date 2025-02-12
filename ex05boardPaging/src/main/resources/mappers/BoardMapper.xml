@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.board.mapper.BoardMapper">
+<!-- insert: 등록 -->
+<insert id="insert" parameterType="boardDTO">
+  INSERT INTO tbl_board (
+      bno,
+      title,
+      content,
+      writer
+  )
+  VALUES (
+      seq_board.nextval,
+      #{title},
+      #{content},
+      #{writer}
+  )
+</insert>
+
+<!-- update: 수정 -->
+<update id="update" parameterType="boardDTO">
+  UPDATE tbl_board
+     SET
+         title = #{title},
+         content = #{content},
+         writer = #{writer},
+         updateDate = sysdate
+   WHERE bno = #{bno}
+</update>
+
+<!-- delete: 삭제 -->
+<delete id="delete" parameterType="long">
+  DELETE tbl_board 
+   WHERE bno = #{bno}
+</delete>
+<!-- read: 단건조회 -->
+<select id="read" parameterType="long" 
+       resultType="BoardDTO">
+  SELECT bno,
+         title,
+         content,
+         writer,
+         regdate
+    FROM tbl_board
+   WHERE bno = #{bno}
+</select>
+<!-- getList : 전체조회 -->
+<select id="getList" resultType="BoardDTO">
+SELECT * 
+FROM (
+	    SELECT /*+index_desc(TBL_BOARD PK_BOARD)*/ 
+	           ROWNUM RN, 
+	           BNO, 
+	           TITLE, 
+	           WRITER,
+	           REGDATE
+	     FROM tbl_board  
+	  <![CDATA[
+	    WHERE ROWNUM <= #{end}
+	  ]]>
+		<include refid="criteria"></include>
+) WHERE RN >= #{start}
+</select>
+
+<!-- 카운트 -->
+<select id="getCount" resultType="int">
+  SELECT COUNT(*) FROM TBL_BOARD
+  <where>
+	<include refid="criteria"></include>
+  </where> 
+</select>
+<sql id="criteria">
+    <if test="keyword != null and ! keyword.equals('')">
+      <trim prefix="and (" suffix=")" prefixOverrides="or">
+    	<foreach item="type" collection="typeArr">
+    	  <trim prefix="or">
+    		<choose>
+    			<when test=" type =='T'.toString() ">
+    				TITLE like '%' || #{keyword} || '%'
+    			</when>
+    			<when test=" type =='C'.toString() ">
+    				CONTENT like '%' || #{keyword} || '%'
+    			</when>
+    			<when test=" type =='W'.toString() ">
+    			    WRITER like '%' || #{keyword} || '%'
+    			</when>
+    		</choose>
+    	  </trim>	
+    	</foreach>
+      </trim>
+    </if> 
+</sql>
+</mapper>

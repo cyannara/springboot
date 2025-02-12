@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+<title>Spring Security Example</title>
+</head>
+<body>
+	<h1>Welcome!</h1>
+
+	<p>
+		Click <a th:href="@{/hello}">here</a> to see a greeting.
+	</p>
+
+	<div sec:authorize="isAnonymous()">로그인 전</div>
+	<div sec:authorize="isAuthenticated()">
+		<span sec:authentication="principal.username">사용자이름</span>
+		<span sec:authentication="principal.userDTO.deptName">부서</span>
+		<br/>session: <span th:text="${session.deptName}">부서명</span>
+	</div>
+	<div sec:authorize="hasRole('ROLE_ADMIN')">어드민 권한이 있으면</div>
+</body>
+</html>
