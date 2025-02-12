@@ -1,4 +1,4 @@
-package com.example.demo.securingweb;
+package com.example.demo.securing.config;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 
