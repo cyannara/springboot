@@ -99,7 +99,7 @@ public class RestBoardController {
 	//삭제 처리
 	@DeleteMapping("/remove")
 	public Map remove(@RequestBody GrdaData<BoardDTO> board) {
-		log.info("remove: " + bno);
+		log.info("remove: " + board);
 		//service.remove(bno);
 		return Collections.singletonMap("result", true);
 	}
