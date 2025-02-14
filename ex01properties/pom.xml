@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.yedam</groupId>
-	<artifactId>ex01</artifactId>
+	<artifactId>ex01properties</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>ex01</name>
+	<name>ex01properties</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- timePicker -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/tui.time-picker/latest/tui-time-picker.css" />
+    <script src="https://uicdn.toast.com/tui.time-picker/latest/tui-time-picker.js"></script>
+  
+    <!-- datePicker -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/tui.date-picker/latest/tui-date-picker.css" />
+    <script src="https://uicdn.toast.com/tui.date-picker/latest/tui-date-picker.js"></script>
+  
+  
+    <!-- paging -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/tui.pagination/latest/tui-pagination.css" />
+    <script src="https://uicdn.toast.com/tui.pagination/latest/tui-pagination.js"></script>
+  
+    <!-- toast grid -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css" />
+    <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+  
+    <!-- 엑셀 -->
+    <script lang="javascript" src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+  
+    <style>
+      .red {
+        background-color: brown;
+      }
+    </style>
+    <title>toastGrid.html</title>
+  </head>
+  
+  <body>
+    <input type="time">
+    <button type="button" id="btnAdd">행추가</button>
+    <button type="button" id="btnDelete">행삭제</button>
+    <button type="button" id="btnSave">저장</button>
+    <button type="button" id="btnExcel">엑셀</button>
+  
+    <div id="grid"></div>
+    <div id="pagination" class="tui-pagination"></div>
+ 
+    <script>
+      var Grid = tui.Grid;
+
+      const dataSource = {
+        api: {
+          readData: { url: 'http://localhost:81/api/board/list', method: 'GET', initParams: { param: 'param' } },
+          createData: { url: '/api/createData', method: 'POST' },
+          updateData: { url: '/api/updateData', method: 'PUT' },
+          modifyData: { url: 'http://localhost:81/api/board/modifyData', method: 'PUT' },
+          deleteData: { url: '/api/deleteData', method: 'DELETE' }
+        },
+        contentType: 'application/json',
+      };
+
+      const grid = new Grid({
+        el: document.getElementById('grid'), // 컨테이너 엘리먼트
+        pageOptions: {
+          useClient: false,
+          perPage: 2
+        },
+        columns: [ 
+          { header : "번호", name:"bno", editor: 'text'},
+          { header : "제목", name:"title",  editor: 'text'},
+          { header : "content", name:"content",  editor: 'text'},
+          { header : "writer", name:"writer",  editor: 'text'},
+        ],
+        data: dataSource
+      });
+
+
+    // 버튼 이벤트 핸들러
+    // 행추가
+    btnAdd.addEventListener("click", function () {
+      grid.appendRow({ }, {at:0});
+    })
+
+    //행삭제
+    btnDelete.addEventListener("click", function (e) {
+      let rowKey = grid.getFocusedCell().rowKey;
+      console.log(rowKey)
+      grid.removeRow(rowKey)
+    })
+
+    //저장
+    btnSave.addEventListener("click", function () {
+      grid.blur();
+      grid.request('modifyData');
+    })
+
+    //grid.request('readData', {});
+    </script>
+</body>
+</html>
