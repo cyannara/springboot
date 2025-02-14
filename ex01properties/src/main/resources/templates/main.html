@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+ <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
@@ -7,5 +7,9 @@
 <body>
  <h3>업로드 경로: [[${uploadpath}]] </h3>
  <img src="/attach/dog.jpg" width="300">
+<div>
+    <div>개발환경 : <span th:text="${@environment.getProperty('spring.profiles.active')}"></span></div>
+    locale<div th:text="${#ctx.locale}"></div>
+</div>
 </body>
 </html>
