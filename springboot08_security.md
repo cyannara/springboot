@@ -1,6 +1,7 @@
 ## spring security
 
 ### 작업순서
+
 1. spring security starter 추가  
 ```xml
 		<dependency>
@@ -82,6 +83,30 @@ public class WebSecurityConfig {
 	}
 }
 ```
+
+
+1. 필터  
+
+WebSecurityConfigurerAdapter
+securityFilterChain
+
+리스너  
+
+
+2. token  
+
+```html
+<form>
+<input  name>
+
+$.ajax
+  header : token  
+```
+
+3. ajax 요청에서 token 전달  
+
+
+4. toast grid에서 토큰 전달  
 
 ### reference
 - https://ddonghyeo.tistory.com/56  
