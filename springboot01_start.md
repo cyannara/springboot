@@ -138,3 +138,55 @@ build > plugin > annotationProcessorPaths > path에 lombok 버전을 지정함
 ```html
 <span th:text="${@environment.getProperty('spring.profiles.active')}"></span>
 ```
+
+
+## -parameters 에러
+에러  
+java.lang.IllegalArgumentException: Name for argument of type [java.lang.String] not specified, and parameter name information not available via reflection. Ensure that the compiler uses the '-parameters' flag.
+@RequestParam, @PathVariable, @Autowired, @ConfigurationProperties 어노테이션 사용 시 문제가 발생
+
+💡 해결책  
+Spring boot 3.2 부터 자바 컴파일러에 '-parameters' 옵션을 넣어야 애노테이션 이름을 생략할 수 있음
+
+원인    
+referer : https://mangkyu.tistory.com/376  
+
+LocalVariableTableParameterNameDiscoverer 클래스는 스프링 6.0에서 deprecated 되었고, 6.1에서 최종 삭제
+
+스프링 부트 3.0(스프링 6.0에서 deprecated)
+스프링 부트 3.1(스프링 6.0에서 deprecated)
+스프링 부트 3.2(스프링 6.1에서 removed)
+
+LocalVariableTableParameterNameDiscoverer  ==>  StandardReflectionParameterNameDiscoverer
+
+참고
+-parameters  
+Generates metadata for reflection on method parameters. Stores formal parameter names of constructors and methods in the generated class file so that the method java.lang.reflect.Executable.getParameters from the Reflection API can retrieve them.
+
+- gradle
+```groovy
+compileJava {	
+	options.compilerArgs << '-parameters'
+}
+```
+
+```groovy
+tasks.withType(JavaCompile) {
+    options.compilerArgs.add("-parameters")
+}
+```
+
+```groovy
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-parameters"
+}
+```
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <configuration>
+        <parameters>true</parameters>
+    </configuration>
+</plugin>
+```
