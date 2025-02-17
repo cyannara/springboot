@@ -153,17 +153,18 @@ referer : https://mangkyu.tistory.com/376
 
 LocalVariableTableParameterNameDiscoverer 클래스는 스프링 6.0에서 deprecated 되었고, 6.1에서 최종 삭제
 
-스프링 부트 3.0(스프링 6.0에서 deprecated)
-스프링 부트 3.1(스프링 6.0에서 deprecated)
-스프링 부트 3.2(스프링 6.1에서 removed)
+스프링 부트 3.0(스프링 6.0에서 deprecated)  
+스프링 부트 3.1(스프링 6.0에서 deprecated)  
+스프링 부트 3.2(스프링 6.1에서 removed)  
 
-LocalVariableTableParameterNameDiscoverer  ==>  StandardReflectionParameterNameDiscoverer
+LocalVariableTableParameterNameDiscoverer  ==>  StandardReflectionParameterNameDiscoverer  
 
-참고
+참고  
 -parameters  
 Generates metadata for reflection on method parameters. Stores formal parameter names of constructors and methods in the generated class file so that the method java.lang.reflect.Executable.getParameters from the Reflection API can retrieve them.
 
 - gradle
+  
 ```groovy
 compileJava {	
 	options.compilerArgs << '-parameters'
