@@ -3,7 +3,7 @@ reference : https://velog.io/@yedam_it/springboot-프로젝트
 
 ### 스프링부트 버전
 <pre>
-spring boot                   spring            servlet                   tomcat                java
+spring boot                   spring            servlet                   tomcat                java           
                                                   6.1                      11                    21    
 3.4.2                         6.2.2               
 3.3.8                         6.1.16               
@@ -12,6 +12,14 @@ spring boot                   spring            servlet                   tomcat
 2.7.18                        5.3.31              4.0                      9                     8	
 </pre>
 
+### Java JDK 별 Gradle 지원 버전
+reference : https://docs.gradle.org/current/userguide/compatibility.html#java  
+<pre>
+11	5.0
+17	7.3
+19      7.6
+23      8.10
+</pre>
 
 ### 로컬, 개발, 운영 환경에 맞게 프로파일 분리
 
