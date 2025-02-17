@@ -1,6 +1,18 @@
 
 reference : https://velog.io/@yedam_it/springboot-프로젝트    
 
+### 스프링부트 버전
+<pre>
+spring boot                   spring            servlet                   tomcat                java
+                                                  6.1                      11                    21    
+3.4.2                         6.2.2               
+3.3.8                         6.1.16               
+3.2.12                        6.1.15              
+3.0.13                        6.0.2               6.0                      10                    11 
+2.7.18                        5.3.31              4.0                      9                     8	
+</pre>
+
+
 ### 로컬, 개발, 운영 환경에 맞게 프로파일 분리
 
 1. 개발환경
