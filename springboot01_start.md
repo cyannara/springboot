@@ -1,3 +1,78 @@
+
+reference : https://velog.io/@yedam_it/springboot-프로젝트    
+
+### 스프링부트 버전
+<pre>
+spring boot                   spring            servlet                   tomcat                java           
+                                                  6.1                      11                    21    
+3.4.2                         6.2.2               
+3.3.8                         6.1.16               
+3.2.12                        6.1.15              
+3.0.13                        6.0.2               6.0                      10                    11 
+2.7.18                        5.3.31              4.0                      9                     8	
+</pre>
+
+### Java JDK 별 Gradle 지원 버전
+reference : https://docs.gradle.org/current/userguide/compatibility.html#java  
+<pre>
+11	5.0
+17	7.3
+19      7.6
+23      8.10
+</pre>
+
+### 로컬, 개발, 운영 환경에 맞게 프로파일 분리
+
+1. 개발환경
+- local(로컬 개발환경) : 각 개발자 PC에서 개발 및 테스트 환경 설정
+- dev(서버 개발환경) : 개발자들이 만든 코드를 통합하여 테스트 할 수 있는 서버 환경
+- production(운영 환경) : 실제 서비스를 운영하는 환경
+
+2. 개발환경에 맞게 프로퍼티 파일 준비
+application.properties
+application-local.properties
+application-dev.properties
+application-prod.properties
+
+3. 적용할 프로퍼티 지정
+- application.properties 파일에 활성 프로파일을 dev로 지정
+```
+spring.profiles.active=dev
+```
+
+- 실행할 때 active 프로퍼티 지정
+```java
+java -jar  XXX.jar                              // application.properties 적용됨
+java -jar -Dspring.profiles.active=dev XXX.jar  // application-dev.properties 적용됨
+```
+- `.gitignore에 *.properties 추가`
+
+
+### 외부 경로의 리소스(업로드폴더) 접근
+```java
+import java.util.concurrent.TimeUnit;
+import org.springframework.http.CacheControl;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@Configuration
+public class ResourceConfiguration implements WebMvcConfigurer {
+
+	@Value("${file.uploadpath}")
+	String uploadpath;
+    
+    @Override
+    public void addResourceHandlers(final ResourceHandlerRegistry registry) {
+	
+      registry.addResourceHandler("/img/**")
+              .addResourceLocations("file://" + uploadpath + "/")      
+              // 접근 파일 캐싱 시간 
+			        .setCacheControl(CacheControl.maxAge(1, TimeUnit.MINUTES));
+    }
+}
+```
+
+
 ### rombok 업데이트 에러
 
 에러메시지  
@@ -44,8 +119,75 @@ build > plugin > annotationProcessorPaths > path에 lombok 버전을 지정함
 							<version>${lombok.version}</version>
 						</exclude>
 					</excludes>
-				</configuration>
+				</confi
+				guration>
 			</plugin>
 		</plugins>
 	</build>
+```
+
+### properties
+1. JAVA를 통해 가져오기  
+
+```java
+	@Value("${upload.path}")
+	String path;
+```
+
+2. html에서 직접 접근하기
+```html
+<span th:text="${@environment.getProperty('spring.profiles.active')}"></span>
+```
+
+
+## -parameters 에러
+에러  
+java.lang.IllegalArgumentException: Name for argument of type [java.lang.String] not specified, and parameter name information not available via reflection. Ensure that the compiler uses the '-parameters' flag.
+@RequestParam, @PathVariable, @Autowired, @ConfigurationProperties 어노테이션 사용 시 문제가 발생
+
+💡 해결책  
+Spring boot 3.2 부터 자바 컴파일러에 '-parameters' 옵션을 넣어야 애노테이션 이름을 생략할 수 있음
+
+원인    
+referer : https://mangkyu.tistory.com/376  
+
+LocalVariableTableParameterNameDiscoverer 클래스는 스프링 6.0에서 deprecated 되었고, 6.1에서 최종 삭제
+
+스프링 부트 3.0(스프링 6.0에서 deprecated)  
+스프링 부트 3.1(스프링 6.0에서 deprecated)  
+스프링 부트 3.2(스프링 6.1에서 removed)  
+
+LocalVariableTableParameterNameDiscoverer  ==>  StandardReflectionParameterNameDiscoverer  
+
+참고  
+-parameters  
+Generates metadata for reflection on method parameters. Stores formal parameter names of constructors and methods in the generated class file so that the method java.lang.reflect.Executable.getParameters from the Reflection API can retrieve them.
+
+- gradle
+  
+```groovy
+compileJava {	
+	options.compilerArgs << '-parameters'
+}
+```
+
+```groovy
+tasks.withType(JavaCompile) {
+    options.compilerArgs.add("-parameters")
+}
+```
+
+```groovy
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-parameters"
+}
+```
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <configuration>
+        <parameters>true</parameters>
+    </configuration>
+</plugin>
 ```
