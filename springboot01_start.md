@@ -2,50 +2,151 @@
 reference : https://velog.io/@yedam_it/springboot-프로젝트    
 
 ### 스프링부트 버전
-<pre>
-spring boot                   spring            servlet                   tomcat                java           
-                                                  6.1                      11                    21    
-3.4.2                         6.2.2               
-3.3.8                         6.1.16               
-3.2.12                        6.1.15              
-3.0.13                        6.0.2               6.0                      10                    11 
-2.7.18                        5.3.31              4.0                      9                     8	
-</pre>
 
-### Java JDK 별 Gradle 지원 버전
-reference : https://docs.gradle.org/current/userguide/compatibility.html#java  
-<pre>
-11	5.0
-17	7.3
-19      7.6
-23      8.10
-</pre>
+||||||||
+| :-------: | :--: |:--:| :--: | :---: | :---: | :--: |
+|spring boot|spring|java|gradle|maven  |servlet|tomcat|
+|3.0.13     |6.0.14|17  |7.5   |3.5    |6.0    |10    |
+|2.7.18     |5.3.31|8   |6.8   |3.5    |4.0    |9     |
+||||||||
 
-### 로컬, 개발, 운영 환경에 맞게 프로파일 분리
+- spring Boot3 = Java 17 이상(21 권장), Spring 6  
+- Spring Boot2 = Java 8 이상, Spring 5  
 
-1. 개발환경
-- local(로컬 개발환경) : 각 개발자 PC에서 개발 및 테스트 환경 설정
-- dev(서버 개발환경) : 개발자들이 만든 코드를 통합하여 테스트 할 수 있는 서버 환경
-- production(운영 환경) : 실제 서비스를 운영하는 환경
+- reference : https://docs.gradle.org/current/userguide/compatibility.html#java  
 
-2. 개발환경에 맞게 프로퍼티 파일 준비
-application.properties
-application-local.properties
-application-dev.properties
-application-prod.properties
+### 개발, 테스트, 운영 환경에 맞게 다중 프로파일 설정
 
-3. 적용할 프로퍼티 지정
+- `.gitignore`에 **`*.properties`** 추가
+
+
+#### 1. 개발환경에 맞게 프로퍼티 파일 준비
+
+> application-`{profile}`.properties
+
+> src/main/resources/  
+	├── application.properties  (기본 설정 파일)  
+	├── application-`local`.properties  (로컬 개발 환경 : 각 개발자 PC에서 개발 및 테스트 환경 설정)  
+	├── application-`dev`.properties  (개발 환경 : 개발자들이 만든 코드를 통합하여 테스트 할 수 있는 서버 환경)  
+	├── application-`test`.properties  (테스트 환경)  
+	├── application-`prod`.properties  (운영 환경 : production - 실제 서비스를 운영하는 환경)  
+
+
+#### 2. 적용할 프로퍼티 지정
 - application.properties 파일에 활성 프로파일을 dev로 지정
-```
+
+```properties
 spring.profiles.active=dev
 ```
 
-- 실행할 때 active 프로퍼티 지정
-```java
-java -jar  XXX.jar                              // application.properties 적용됨
-java -jar -Dspring.profiles.active=dev XXX.jar  // application-dev.properties 적용됨
+- 운영환경에서 실행할 때 JVM 옵션으로 프로파일 지정
+```sh
+java -jar  XXX.jar  --spring.profiles.active=prod     # application.properties 적용됨
+java -jar -Dspring.profiles.active=prod    XXX.jar    # application-dev.properties 적용됨
 ```
-- `.gitignore에 *.properties 추가`
+
+- 환경변수로 프로파일 설정
+
+```sh
+export SPRING_PROFILES_ACTIVE=prod
+```
+
+- Kubernetes 또는 Docker에서 지정  
+Docker Compose 예제  
+```yaml
+version: '3'
+services:
+  myapp:
+    image: myapp:latest
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+```
+
+Kubernetes ConfigMap 예제  
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: myapp-config
+data:
+  SPRING_PROFILES_ACTIVE: "prod"
+```
+
+
+#### 3. 프로퍼티를 코드에서 사용
+
+- JAVA 코드에서 사용  
+```java
+	@Value("${file.uploadpath}")
+	String uploadpath;
+```
+
+- html에서 직접 접근하기  
+```html
+<span th:text="${@environment.getProperty('spring.profiles.active')}"></span>
+```
+
+- @ConfigurationProperties로 프로퍼티 설정  
+여러 설정 값을 한 번에 객체로 매핑  
+
+```java
+@ConfigurationProperties(prefix = "server")
+public class ServerConfig {
+    private int port;
+}
+```
+
+```java
+@Configuration
+@ConfigurationProperties(prefix = "spring.datasource")
+public class DataSourceConfig {
+    private String url;
+    private String username;
+    private String password;
+
+    // Getters and Setters
+}
+```
+application-{profile}.properties에 있는 spring.datasource.url, username, password 값이 자동으로 매핑  
+
+
+#### 4. YAML을 사용한 다중 프로파일 설정  
+```yaml
+# application.yml
+spring:
+  profiles:
+    active: dev
+server:
+  port: 81
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+server:
+  port: 82
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod 
+server:
+  port: 83
+```
+이렇게 설정하면 dev 프로파일이 활성화되었을 때 82 포트를 사용하고, prod가 활성화되면 83 포트를 사용  
+
+
+
+#### 6. Spring Boot에서 설정 파일이 로드되는 우선순위
+
+1. application-{profile}.properties (환경별 프로퍼티)
+2. application.properties (기본 프로퍼티)
+3. 환경 변수(Environment Variables)
+4. JVM 옵션(-Dspring.profiles.active=prod)
+
+즉, 환경 변수나 JVM 옵션이 가장 우선순위가 높고, 기본 application.properties가 가장 낮은 우선순위를 가짐.  
 
 
 ### 외부 경로의 리소스(업로드폴더) 접근
@@ -124,19 +225,6 @@ build > plugin > annotationProcessorPaths > path에 lombok 버전을 지정함
 			</plugin>
 		</plugins>
 	</build>
-```
-
-### properties
-1. JAVA를 통해 가져오기  
-
-```java
-	@Value("${upload.path}")
-	String path;
-```
-
-2. html에서 직접 접근하기
-```html
-<span th:text="${@environment.getProperty('spring.profiles.active')}"></span>
 ```
 
 
