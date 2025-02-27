@@ -280,13 +280,23 @@ tasks.withType(JavaCompile) {
 </plugin>
 ```
 
-
-## WebMvcConfigurer  인터페이스
-[java api 🔗](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/config/annotation/WebMvcConfigurer.html)
-
+## Spring Web MVC Config
+[spring.io 참조](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-config.html){_target=blank}  
+Spring Boot에서 제공하는 기본 설정을 유지하면서 특정 설정을 오버라이드하고 싶을 때 사용됩니다.   
 @EnableWebMvc를 통해 활성화된 Spring MVC에 대한 Java 기반 구성을 사용자 정의하기 위한 콜백 메서드를 정의합니다.   
 WebMvcConfigurer는 Spring MVC의 설정을 커스터마이징할 수 있는 인터페이스입니다. 
-Spring Boot에서 제공하는 기본 설정을 유지하면서 특정 설정을 오버라이드하고 싶을 때 사용됩니다.  
+
+```java
+@Configuration
+public class WebConfiguration implements WebMvcConfigurer {
+
+	// Implement configuration methods...
+}
+```
+
+### WebMvcConfigurer  인터페이스
+[java api 🔗](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/config/annotation/WebMvcConfigurer.html)
+
 
 |메서드	|설명 |
 |:---|:----|
