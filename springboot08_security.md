@@ -164,5 +164,19 @@ public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
 		)
 }
 ```
+
+
+### Rest API (Ajax 인증검사)
+AuthenticationEntryPoint    <-- AuthenticationException
+AuthenticationSuccessHandler  
+AuthenticationFailureHandler  
+AccessDeniedHandler         <-- AccessDeniedException
+
+
+<img src="./images/security01.png">
+
+referer : https://redcoder.tistory.com/243  
+
 ### reference
 - https://ddonghyeo.tistory.com/56  
+
