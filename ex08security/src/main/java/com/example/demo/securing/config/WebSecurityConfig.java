@@ -14,10 +14,15 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+import lombok.RequiredArgsConstructor;
+
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class WebSecurityConfig {
 
+	final CustomAuthenticationEntryPoint authenticationEntryPoint;
+	
 	@Bean 
 	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -27,26 +32,29 @@ public class WebSecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 			.authorizeHttpRequests((requests) -> requests
-				.requestMatchers("/", "/home", "/css/*", "/js/*", "/assets/*").permitAll()
+				.requestMatchers("/", "/home", "/css/*", "/js/*", "/assets/*", "/login").permitAll()
 				.requestMatchers("/admin/*").hasRole("ADMIN")
 				.anyRequest().authenticated()
 			)
 			.formLogin((form) -> form
 				//.loginPage("/login")
 				//.usernameParameter("userid")
-				.successHandler(suthenticationSuccessHandler())
+				.successHandler(authenticationSuccessHandler())
 				.permitAll()
 			)
 			.logout((logout) -> logout.deleteCookies("JSESSIONID").permitAll())
-			//.csrf(csrf -> csrf.disable())
+			//.csrf(csrf -> csrf.disable())			
 			;
 
-		http.exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler()));
+		http.exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler())
+				                     .authenticationEntryPoint(authenticationEntryPoint));
 		return http.build();
 	}
 
+	
+	
 	@Bean
-	public AuthenticationSuccessHandler suthenticationSuccessHandler() {
+	public AuthenticationSuccessHandler authenticationSuccessHandler() {
 		return new CustomLoginSuccessHandler();
 	}
 	
@@ -55,7 +63,7 @@ public class WebSecurityConfig {
 		return new CustomAccessDeniedHandler();
 	}
 	
-	@Bean
+	//@Bean
 	public UserDetailsService userDetailsService() {
 		UserDetails user =
 			 User.withDefaultPasswordEncoder()
