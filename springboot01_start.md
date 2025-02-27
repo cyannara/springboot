@@ -159,8 +159,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class ResourceConfiguration implements WebMvcConfigurer {
 
-	@Value("${file.uploadpath}")
-	String uploadpath;
+    @Value("${file.uploadpath}")
+    String uploadpath;
     
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
@@ -168,7 +168,7 @@ public class ResourceConfiguration implements WebMvcConfigurer {
       registry.addResourceHandler("/img/**")
               .addResourceLocations("file://" + uploadpath + "/")      
               // 접근 파일 캐싱 시간 
-			        .setCacheControl(CacheControl.maxAge(1, TimeUnit.MINUTES));
+             .setCacheControl(CacheControl.maxAge(1, TimeUnit.MINUTES));
     }
 }
 ```
@@ -279,3 +279,143 @@ tasks.withType(JavaCompile) {
     </configuration>
 </plugin>
 ```
+
+
+## WebMvcConfigurer  인터페이스 (🔗)[https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/config/annotation/WebMvcConfigurer.html]
+
+@EnableWebMvc를 통해 활성화된 Spring MVC에 대한 Java 기반 구성을 사용자 정의하기 위한 콜백 메서드를 정의합니다.   
+WebMvcConfigurer는 Spring MVC의 설정을 커스터마이징할 수 있는 인터페이스입니다. 
+Spring Boot에서 제공하는 기본 설정을 유지하면서 특정 설정을 오버라이드하고 싶을 때 사용됩니다.  
+
+|메서드	|설명 |
+|:---|:----|
+|addCorsMappings|	CORS 설정 추가|
+|addInterceptors|	요청을 가로채는 인터셉터 추가|
+|addResourceHandlers|	정적 리소스 경로 설정|
+|addViewControllers|	URL과 View 연결|
+|configureContentNegotiation|	응답의 Content-Type 설정|
+|configureMessageConverters|	HTTP 메시지 변환기 추가|
+|extendMessageConverters|	기본 메시지 변환기 설정 확장|
+|configureAsyncSupport|	비동기 요청 설정|
+|||
+
+### CORS 설정
+전역 크로스 오리진 요청 처리를 구성.  컨트롤러의 @CrossOrigin을 통해 더욱 세분화된 구성을 선언할 수 있고 컨트롤러의 메서드에 정의된 로컬 CORS 구성과 결합됩니다.  
+
+```java
+@Override
+public void addCorsMappings(CorsRegistry registry) {
+    registry.addMapping("/**") // 모든 경로에 대해 적용
+            .allowedOrigins("https://example.com") // 특정 도메인 허용
+            .allowedMethods("GET", "POST", "PUT", "DELETE") // 허용할 HTTP 메서드
+            .allowCredentials(true);
+}
+```
+
+### Interceptor 추가
+```java
+@Override
+public void addInterceptors(InterceptorRegistry registry) {
+    registry.addInterceptor(new MyInterceptor())
+            .addPathPatterns("/api/**") // 특정 경로만 적용
+            .excludePathPatterns("/api/auth/**"); // 인증 관련 API는 제외
+}
+```
+
+### 정적 리소스 경로 설정
+```java
+@Override
+public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    registry.addResourceHandler("/static/**")
+            .addResourceLocations("classpath:/static/")
+            .setCachePeriod(3600); // 캐시 유지 시간 (초)
+}
+```
+
+### URL 과 view 매핑
+```java
+@Override
+public void addViewControllers(ViewControllerRegistry registry) {
+    registry.addViewController("/home").setViewName("home");
+}
+```
+
+### 응답의 Content-Type을 설정
+```java
+@Override
+public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+    configurer.favorParameter(true)
+              .parameterName("format")
+              .defaultContentType(MediaType.APPLICATION_JSON)
+              .mediaType("xml", MediaType.APPLICATION_XML)
+              .mediaType("json", MediaType.APPLICATION_JSON);
+}
+```
+
+### HTTP 메시지 변환기 추가 또는 설정
+```java
+@Override
+public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+    converters.add(new MappingJackson2HttpMessageConverter()); // JSON 변환기 추가
+}
+```
+
+### 메시지 변환기에 추가 설정
+```java
+@Override
+public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+    for (HttpMessageConverter<?> converter : converters) {
+        if (converter instanceof MappingJackson2HttpMessageConverter) {
+            ((MappingJackson2HttpMessageConverter) converter).setPrettyPrint(true);
+        }
+    }
+}
+```
+
+### 비동기 요청 설정
+```java
+@Override
+public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
+    configurer.setDefaultTimeout(5000) // 5초 후 타임아웃
+              .registerCallableInterceptors(new MyCallableInterceptor());
+}
+```
+
+
+## 인터셉터(Interceptor)
+인터셉터는 특정 URI 패턴에 대한 요청을 가로채어 컨트롤러가 처리하기 전후에 추가적인 작업을 할 수 있게 해준다. 로그인 체크, 권한 검증, 로깅 등과 같은 작업을 처리할 수 있다.
+
+동작과정  
+1. 클라이언트의 요청을 가로챈다
+2. 요청에 대해 전처리를 수행한다.
+3. 처리가 끝난 후 원래의 목적지인 컨트롤러 전달한다.
+4. 컨트롤러가 응답을 반환하면 응답을 가로챈다.
+5. 응답에 대해 후처리를 수행한 후 응답을 클라이언트로 전달한다.
+
+구현과정  
+1. HandlerInterceptor 인터페이스 구현 :  preHandler()와 postHandler() 오버라이딩
+2. WebMvcConfigurer 인터페이스 구현 : addIntercpetors() 오버라이딩
+
+
+HandlerInterceptor 인터페이스 구현  
+```java
+@Slf4j
+public class LoggerInterceptor implements HandlerInterceptor {
+
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        log.debug("==================== BEGIN ====================");
+        log.debug("Request URI ===> " + request.getRequestURI());
+        return HandlerInterceptor.super.preHandle(request, response, handler);
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+        log.debug("==================== END ======================");
+        HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
+    }
+
+}
+```
+
+ 
