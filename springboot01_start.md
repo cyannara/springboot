@@ -321,10 +321,10 @@ public class WebConfiguration implements WebMvcConfigurer {
 
 |메서드	|설명 |
 |:---|:----|
-|addCorsMappings|	CORS 설정 추가|
-|addInterceptors|	요청을 가로채는 인터셉터 추가|
+|addCorsMappings    |	CORS 설정 추가|
+|addInterceptors    |	요청을 가로채는 인터셉터 추가|
 |addResourceHandlers|	정적 리소스 경로 설정|
-|addViewControllers|	URL과 View 연결|
+|addViewControllers |	URL과 View 연결|
 |configureContentNegotiation|	응답의 Content-Type 설정|
 |configureMessageConverters|	HTTP 메시지 변환기 추가|
 |extendMessageConverters|	기본 메시지 변환기 설정 확장|
@@ -359,7 +359,7 @@ public void addInterceptors(InterceptorRegistry registry) {
 @Override
 public void addResourceHandlers(ResourceHandlerRegistry registry) {
     registry.addResourceHandler("/static/**")
-            .addResourceLocations("classpath:/static/")
+            .addResourceLocations("file:///main/upload")
             .setCachePeriod(3600); // 캐시 유지 시간 (초)
 }
 ```
