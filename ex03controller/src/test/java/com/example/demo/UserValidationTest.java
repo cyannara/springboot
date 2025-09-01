@@ -9,6 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.example.demo.ex3.Member;
+
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -27,7 +29,7 @@ public class UserValidationTest {
 	
 	@Test
 	void test() {
-		User user = new User();
+		Member user = new Member();
 		user.setName("test-name");
 		user.setWorking(true);
 		user.setAboutMe("test-about-me");
@@ -37,7 +39,7 @@ public class UserValidationTest {
 		user.setEnddate(new Date(2025,2,10));
 		user.setStartdate(new Date(2025,3,11));
 		
-		Set<ConstraintViolation<User>> violations = validator.validate(user);
+		Set<ConstraintViolation<Member>> violations = validator.validate(user);
 		violations.forEach(err->log.debug(err.getPropertyPath().toString() + ": " + err.getMessage()));
 		assertTrue(violations.isEmpty());
 	}

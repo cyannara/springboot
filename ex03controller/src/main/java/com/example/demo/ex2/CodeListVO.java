@@ -1,10 +1,10 @@
-package com.example.demo.ex;
+package com.example.demo.ex2;
 
 import java.util.List;
 
 import lombok.Data;
 
 @Data
-public class ListCodeVO {
+public class CodeListVO {
 	private List<CodeVO> list;
 }

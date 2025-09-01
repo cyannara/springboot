@@ -1,53 +1,74 @@
-package com.example.demo.sample;
+package com.example.demo.rest2;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.example.demo.rest1.Reserve;
+import com.example.demo.rest1.Ticket;
+import com.example.demo.rest1.User;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.extern.slf4j.Slf4j;
 
+@RequestMapping("/api/*")
 @Slf4j
 @RestController
-public class SampleController {
-
+public class Rest2Controller {
+	
 	@GetMapping(value="/getText", produces = "text/plain;charset:UTF-8")
 	public String getText() {
 		return "안녕하세요";
 	}
 	
+	@GetMapping(value = "/getText", produces = "application/json;charset=UTF-8" )
+	public String getjson() {
+		return  "[{\"greet\":\"안녕하세요\"}]"; 
+	}
+	
+	@GetMapping("/check")
+	public ResponseEntity<User> check(Double height, Double weight){
+		User vo =new User(0,"","",null); //new UserVO(0, ""+height, ""+weight );
+		ResponseEntity<User> result =  null;
+		if(height > 150) {
+			result =  ResponseEntity.status(HttpStatus.OK).body(vo);
+		} else {
+			result =  new ResponseEntity<>(vo, HttpStatus.BAD_GATEWAY);
+		}
+		return result;	
+	}
+
 	@GetMapping(value="/getTextEntity")
 	public ResponseEntity<String> getTextEntity() {
 		return new ResponseEntity<>("안녕하세요", HttpStatus.BAD_GATEWAY);
 	}
 	
 	@GetMapping("/getSample")
-	public SampleVO getSample() {
-		return new SampleVO(100,"길동","김", new Date());
+	public User getSample() {
+		return new User(100,"길동","김", new Date());
 	}
 	
 	@GetMapping("/getSampleEntity")
-	public ResponseEntity<SampleVO> getSampleEntity() {
-		SampleVO sample = new SampleVO(100,"길동","김", new Date());
+	public ResponseEntity<User> getSampleEntity() {
+		User sample = new User(100,"길동","김", new Date());
 		return new ResponseEntity<>(sample, HttpStatus.BAD_REQUEST);
 	}
 	
 	@GetMapping("/getMap")
 	public Map<String,Object> getMap(){
 		Map<String,Object> map = new HashMap<>();
-		map.put("sample", new SampleVO(100,"길동","김", new Date()));
+		map.put("sample", new User(100,"길동","김", new Date()));
 		map.put("total", 20);
 		map.put("success", true);
 		return map;		
@@ -59,38 +80,8 @@ public class SampleController {
 		return new String[] {cat, ""+prdid};
 	}
 	
-	@PostMapping("/ticket")
-	public Ticket convert(
-			 @RequestBody Ticket ticket) {
-		log.info("ticket: "+ticket);
-		return ticket;
-	}
-	
-	@PostMapping("/comp")
-	public CompVO comp(@RequestBody CompVO comp) {
-		log.info("owner: " + comp.getList().get(0).getOwner());
-		return comp;
-	}
-	
-	
-	@PostMapping("/compMap")
-	public JsonNode compMap(
-			@RequestBody JsonNode node) {
-		//첫번째 티켓의 owner 출력
-		log.info("owner:" + node.get("list").get(0).get("owner").asText() );
-		return node;
-	}
-	
 
-	
-	@GetMapping("/movie")
-	public String movie( @RequestParam(defaultValue = "20250115", required = false) String date) {
-		RestTemplate restTemplate = new RestTemplate();
-		String uri = "http://kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json?key=12664b24453335d2c3eca0fdc4b3b013&targetDt="+ date;
-		JsonNode node = restTemplate.getForObject(uri, JsonNode.class);
-		String name = node.get("boxOfficeResult").get("dailyBoxOfficeList").get(0).get("movieNm").asText();
-		return name;
-	}
+
 }
 
 

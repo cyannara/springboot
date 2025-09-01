@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.ex3;
 
 import java.util.Date;
 
@@ -13,7 +13,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class User {
+public class Member {
 
     @NotNull(message = "Name cannot be null")
     private String name;
