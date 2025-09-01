@@ -1,8 +1,8 @@
-package com.example.demo.mapper;
+package com.example.demo.ex;
 
 import java.util.Date;
 
-public class EmployeesDto {
+public class EmpVO {
 	private String employeeId;
 	private String firstName;
 	private String lastName;
