@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class ExVO {
+public class SampleVO {
 	private String name;
 	private int age;
 	

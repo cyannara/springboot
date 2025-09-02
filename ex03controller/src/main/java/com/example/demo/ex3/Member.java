@@ -2,6 +2,8 @@ package com.example.demo.ex3;
 
 import java.util.Date;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
@@ -33,13 +35,20 @@ public class Member {
     @Email(message = "Email should be valid")
     private String email;
 
-    @Pattern(regexp = "0\\d{1,4}-\\\\d{1,4}-\\\\d{4}" , message = "xxx-xxx-xxxx 형식")
+    @Pattern(regexp = "0\\d{1,2}-\\d{1,4}-\\d{4}" , message = "xxx-xxxx-xxxx 형식")
     private String phone;
+    
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date startdate;
+    
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date enddate;
     
     @AssertTrue
-    public Boolean isEndDateAfterStartDate() {
-    	return this.enddate.after(startdate);
+    public Boolean getEndDateAfterStartDate() {
+    	if ( enddate != null && startdate != null )
+    		return this.enddate.after(startdate);
+    	else 
+    		return true;
     }
 }

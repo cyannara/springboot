@@ -1,4 +1,4 @@
-package com.example.www.emp;
+package com.example.demo;
 
 
 
@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.example.www.emp.web.HelloController;
+import com.example.demo.rest1.HelloController;
 
 @WebMvcTest(controllers = HelloController.class)
 public class HelloControllerTest {
@@ -26,8 +26,7 @@ public class HelloControllerTest {
 		String hello = "hello";
 		mvc.perform(get("/hello"))
 			.andExpect(status().isOk())
-			.andExpect(content().string(hello))
-			;
+			.andExpect(content().string(hello))	;
 			
 	}
 	
