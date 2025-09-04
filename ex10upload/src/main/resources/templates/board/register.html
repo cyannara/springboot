@@ -5,11 +5,33 @@
 <title></title>
 </head>
 <body>
-	<form name="frm" action="regisgter" 
+	<form name="frm" th:action="@{/register}" 
 	      method="post" enctype="multipart/form-data">
 	   <input type="text" name="title">   
-	   <input type="file" name="attach">   
+	   <input type="file" name="file">   
 	   <button>등록</button>
 	</form>
+	<button type="button" onclick="apiregister()">ajax 등록</button>
+	
+	<script>
+	async function apiregister(){
+		const formData = new FormData();
+		formData.append("file", frm.file.files[0]);
+		
+		const url = "/api/register";
+		const response = await fetch(url, {
+			method:"post",
+			body: formData
+		})
+		const result = await response.json();
+		console.log(result);
+		
+/* 		await axios.post(url, formData, {
+		  headers: {
+		    "Content-Type": "multipart/form-data"
+		  }
+		}); */
+	}
+	</script>
 </body>
 </html>

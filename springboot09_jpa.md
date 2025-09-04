@@ -296,7 +296,7 @@ PostsApiController update 메서드 추가
 
 ### JPA Auditing
 
-등록시간, 수정시간 자동으로 관리하는 Auditing 기능 추가가
+등록시간, 수정시간 자동으로 관리하는 Auditing 기능 추가
 
 1. @EntityListeners 를 지정한 클래스 생성
 

@@ -77,12 +77,10 @@ ALTER SYSTEM FLUSH SHERED_POOL;
 
 <PRE>
 V$MYSTAT에 액세스를 실패했습니다.
-데이터베이스 관리자로부터
-카탈로그 읽기 권한을 얻으십시오.
+데이터베이스 관리자로부터 카탈로그 읽기 권한을 얻으십시오.
 grant SELECT_CATALOG_ROLE to HR
 grant SELECT ANY DICTIONARY to HR
-참고: 설정 변경사항을 적용하려면 현재
-세션을 재접속해야 합니다.
+참고: 설정 변경사항을 적용하려면 현재 세션을 재접속해야 합니다.
 </PRE>
 
 ```SQL

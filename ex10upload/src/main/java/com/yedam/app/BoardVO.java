@@ -16,5 +16,5 @@ public class BoardVO {
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date regdate;		//작성일
 	private Date updatedate;	//수정일
-	private String image;		//첨부이미지
+	private String attach;		//첨부파일
 }
