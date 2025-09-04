@@ -102,6 +102,8 @@ public class BoardController {
 
 ResponseEntity를 이용한 방식
 
+- 코드는 간결하지만 아주 큰 파일은 메모리 부담이 갈 수 있음.
+
 ```java
 	@GetMapping("/download/{filename}")
 	public ResponseEntity<Resource> downloadFile(@PathVariable String filename) throws MalformedURLException {
@@ -123,6 +125,8 @@ ResponseEntity를 이용한 방식
 ```
 
 response 이용한 방식
+
+- 스트리밍 방식으로 대용량 파일도 처리 가능함.
 
 ```java
 	@GetMapping("/download/resp/{filename}")
@@ -245,7 +249,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
 ### 파일명 중복 제거
 
-UUID붙이는 방식으로 파일명 변경
+파일명 중복만 피하려면 UUID+확장자 방식 사용.  
+많은 파일을 장기간 관리한다면 날짜별 폴더 + UUID 조합 사용.
+
+> 원본: photo.png  
+> 저장: 550e8400-e29b-41d4-a716-446655440000.png
 
 ```java
     // 확장자 추출
