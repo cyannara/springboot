@@ -27,3 +27,6 @@ target/
 .classpath
 .project
 .factorypath
+
+all/
+servers/
