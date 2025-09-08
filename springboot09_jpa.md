@@ -166,24 +166,6 @@ public class PostsService {
 }
 ```
 
-PostsApiController
-
-```java
-@RequiredArgsConstructor
-@RestController
-public class PostsApiController {
-
-    private final PostsService postsService;
-
-    @PostMapping("/api/v1/posts")
-    public Long save(@RequestBody PostsSaveRequestDto requestDto) {
-        return postsService.save(requestDto);
-    }
-}
-```
-
-PostsApiControllerTestRestTemplate
-
 PostsSaveRequestDto  
 ```java
 
@@ -212,6 +194,25 @@ public class PostsSaveRequestDto {
 	}
 }
 ```
+
+PostsApiController
+
+```java
+@RequiredArgsConstructor
+@RestController
+public class PostsApiController {
+
+    private final PostsService postsService;
+
+    @PostMapping("/api/v1/posts")
+    public Long save(@RequestBody PostsSaveRequestDto requestDto) {
+        return postsService.save(requestDto);
+    }
+}
+```
+
+PostsApiControllerTestRestTemplate
+
 - RestTemplate 을 이용한 테스트
 
 ```java
