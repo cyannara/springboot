@@ -375,7 +375,27 @@ public class JpaApplication {
 }
 ```
 
-### 페이징
+### 페이징 조회
+
+조회에 사용될 PostsListResponseDto 클래스 추가.  
+content 필드가 없고 Posts 엔티티를 DTO에 담음.  
+```java
+@Getter
+public class PostsListResponseDto {
+	private Long id;
+	private String title;
+	private String author;
+	private LocalDateTime mdoifiedDate;
+	
+	public PostsListResponseDto(Posts entity) {
+		this.id = entity.getId();
+		this.title = entity.getTitle();
+		this.author = entity.getAuthor();
+		//this.modifiedDate = entity.getModifiedDate();
+	}
+	
+}
+```
 
 PostsRepository findAllPage() 메서드 추가
 
