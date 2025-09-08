@@ -423,6 +423,14 @@ public class PostsService {
     }
 }
 ```
+PostsController    
+```java
+	@GetMapping("/api/v1/posts")
+	public Page<PostsListResponseDto> index(Model model,
+			@PageableDefault(page = 1, size = 3, sort = "id", direction = Direction.ASC) Pageable pagable) {
+		return postsService.findAllPaging(pagable);
+	}
+```
 
 IndexController
 
