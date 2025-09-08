@@ -1,3 +1,14 @@
+## JPA
+
+### JPA 오라클 계정 생성
+관리자 권한으로 실행  
+```
+ALTER SESSION SET "_ORACLE_SCRIPT"=true;
+create user jpa identified by jpa;
+grant resource, connect to jpa;
+ALTER USER jpa DEFAULT TABLESPACE USERS QUOTA UNLIMITED ON USERS;
+```
+
 ### JPA 환경설정
 
 Oracle
