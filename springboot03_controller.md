@@ -58,24 +58,27 @@ Controller에서 자주 쓰는 추가 애너테이션
 8. 데이터를 모델에 저장
 9. 뷰 페이지로 이동
 
-   ```java
+모델의 일생  
+<img src="images/controller04.png" width="1000">
 
-   @Log4j
-   @RequestMapping("/board/*")
-   @RequiredArgsConstructor
-   @Controller  //1. 빈등록
-   public class BoardController {
+```java
 
-   	private final BoardService service;  //2. 서비스 주입
+@Log4j
+@RequestMapping("/board/*")
+@RequiredArgsConstructor
+@Controller  //1. 빈등록
+public class BoardController {
 
-   	@GetMapping("/list")  //3. 핸들러와 요청을 매핑
-   	public String list(Criteria cri, Model model) {  //4. InitBinner  5. Validation  6. 요청파라미터 받기
-   		List<BoardVO> list = service.getList(cri);  // 7. 서비스 호출
-   		model.addAttribute("list", list);  // 8. 데이터를 모델에 저장
-   		return "board/list";  //9. 뷰 페이지로 이동
-   	}
+	private final BoardService service;  //2. 서비스 주입
 
-   ```
+	@GetMapping("/list")  //3. 핸들러와 요청을 매핑
+	public String list(Criteria cri, Model model) {  //4. InitBinner  5. Validation  6. 요청파라미터 받기
+		List<BoardVO> list = service.getList(cri);  // 7. 서비스 호출
+		model.addAttribute("list", list);  // 8. 데이터를 모델에 저장
+		return "board/list";  //9. 뷰 페이지로 이동
+	}
+
+```
 
 ## Controller 실습
 
