@@ -1,4 +1,43 @@
-### Controller 작성
+# 컨트롤러
+
+## 컨트롤러 애너테이션
+
+### Spring MVC 컨트롤러 주요 애너테이션 정리
+
+| 애너테이션                          | 설명                                                                                                       | 예시                                         |
+| :---------------------------------- | :--------------------------------------------------------------------------------------------------------- | :------------------------------------------- |
+| **@Controller**                     | MVC 패턴의 컨트롤러 클래스임을 표시. 주로 뷰(JSP, Thymeleaf 등)를 반환할 때 사용.                          |                                              |
+| **@RestController**                 | `@Controller` + `@ResponseBody` 조합. 뷰가 아닌 JSON/XML 등 데이터를 직접 반환하는 REST API 전용 컨트롤러. |                                              |
+| **@RequestMapping**                 | 요청 URL과 메서드를 매핑. 클래스나 메서드 레벨에 사용 가능.                                                | `@RequestMapping("/users")`                  |
+| **@PostMapping**, **@GetMapping**   | `@RequestMapping(method=...)`의 축약형. 각각 POST, GET 요청을 처리.                                        |                                              |
+| **@DeleteMapping**, **@PutMapping** | REST API에서 DELETE, PUT 요청을 처리할 때 사용.                                                            |                                              |
+| **@RequestParam**                   | 요청 파라미터(쿼리스트링, form-data)를 매개변수에 바인딩.                                                  | `/user?id=1` → `@RequestParam("id") Long id` |
+| **@RequestPart**                    | Multipart 요청에서 특정 파일이나 JSON 파트를 바인딩할 때 사용.                                             | `@RequestPart("file") MultipartFile file`    |
+| **@PathVariable**                   | URL 경로의 변수를 매핑.                                                                                    | `/user/10` → `@PathVariable Long id`         |
+| **@RequestBody**                    | 요청 본문(JSON/XML)을 Java 객체로 변환해서 매개변수에 바인딩.<br>주로 POST/PUT API에서 사용.               |                                              |
+| **@ResponseBody**                   | 메서드 반환값을 뷰가 아닌 HTTP 응답 바디에 직접 담아 반환.<br>JSON/XML로 직렬화됨.                         |                                              |
+
+### Controller에서 자주 쓰는 추가 애너테이션
+
+| 애너테이션              | 설명                                                                     | 예시                                                         |
+| ----------------------- | ------------------------------------------------------------------------ | :----------------------------------------------------------- |
+| **@ModelAttribute**     | 요청 파라미터를 객체에 자동 바인딩하고, 뷰 렌더링 시 모델에 자동 등록됨. |                                                              |
+| **@SessionAttributes**  | 특정 모델 속성을 세션에 저장하여 여러 요청 간 공유할 수 있게 함.         |                                                              |
+| **@CookieValue**        | 요청 쿠키 값을 매개변수로 주입받음.                                      | `@CookieValue("JSESSIONID") String sessionId`                |
+| **@RequestHeader**      | 요청 헤더 값을 매개변수로 주입받음.                                      | `@RequestHeader("User-Agent") String userAgent`              |
+| **@CrossOrigin**        | CORS 허용 설정. 특정 컨트롤러/메서드에서 외부 도메인 요청 허용 가능.     |                                                              |
+| **@Valid / @Validated** | 요청 데이터를 검증할 때 사용.                                            | `public String save(@Valid User user, BindingResult result)` |
+| **@ExceptionHandler**   | 컨트롤러 내 특정 예외를 처리할 메서드를 지정.                            |                                                              |
+| **@ControllerAdvice**   | 전역적으로 예외 처리, 바인딩 설정 등을 적용하는 클래스에 사용.           |                                                              |
+| **@InitBinder**         | 컨트롤러 내에서 데이터 바인딩/포맷팅 규칙을 직접 정의할 때 사용.         |                                                              |
+| **@ResponseStatus**     | 메서드 실행 결과에 대해 HTTP 상태 코드를 지정.                           | `@ResponseStatus(HttpStatus.CREATED)`                        |
+
+## @Controller와 @RestController
+
+<img src="images/controller01.png" width="550">
+<img src="images/controller02.png" width="550">
+
+## Controller 작성
 
 1. 컨트롤러 애노테이션
 2. 서비스 객체 인젝션
@@ -243,5 +282,3 @@ error 메시지를 출력할 곳에 `th:errors` 지정
   </div>
 </form>
 ```
-
-### 예외처리  
