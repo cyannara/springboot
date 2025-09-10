@@ -1,8 +1,17 @@
 # 컨트롤러
 
+## MVC 페턴
+
+화면과 데이터 처리를 분리해서 재사용이 가능하도록 하는 구조  
+<img src="images/controller03.png" width="500">
+
+- Model : 데이터 혹은 데이터를 처리하는 영역
+- View : 결과화면을 만들어 내는데 사용하는 자원
+- Controller : 웹의 요청(request)를 받아서 뷰와 모델 사이의 중간통신 역할
+
 ## 컨트롤러 애너테이션
 
-### Spring MVC 컨트롤러 주요 애너테이션 정리
+Spring MVC 컨트롤러 주요 애너테이션 정리
 
 | 애너테이션                          | 설명                                                                                                       | 예시                                         |
 | :---------------------------------- | :--------------------------------------------------------------------------------------------------------- | :------------------------------------------- |
@@ -17,7 +26,7 @@
 | **@RequestBody**                    | 요청 본문(JSON/XML)을 Java 객체로 변환해서 매개변수에 바인딩.<br>주로 POST/PUT API에서 사용.               |                                              |
 | **@ResponseBody**                   | 메서드 반환값을 뷰가 아닌 HTTP 응답 바디에 직접 담아 반환.<br>JSON/XML로 직렬화됨.                         |                                              |
 
-### Controller에서 자주 쓰는 추가 애너테이션
+Controller에서 자주 쓰는 추가 애너테이션
 
 | 애너테이션              | 설명                                                                     | 예시                                                         |
 | ----------------------- | ------------------------------------------------------------------------ | :----------------------------------------------------------- |
@@ -34,116 +43,147 @@
 
 ## @Controller와 @RestController
 
-<img src="images/controller01.png" width="550">
+<img src="images/controller01.png" width="550">  
 <img src="images/controller02.png" width="550">
 
 ## Controller 작성
 
-1. 컨트롤러 애노테이션
-2. 서비스 객체 인젝션
-3. 핸들러 메서드와 @XxxMapping
-4. bean validation
-5. 요청 파라미터 가져오기
-6. 서비스 호출
-7. 뷰에 데이터 전달하기
+1. 컨트롤러 애노테이션 지정해서 컨테이너에 빈으로 등록
+2. 서비스 객체 주입받기
+3. 핸들러 메서드와 @XxxMapping 요청을 매핑
+4. InitBinder
+5. bean validation
+6. 요청 파라미터 가져오기
+7. 서비스 호출
+8. 데이터를 모델에 저장
+9. 뷰 페이지로 이동
+
+   ```java
+
+   @Log4j
+   @RequestMapping("/board/*")
+   @RequiredArgsConstructor
+   @Controller  //1. 빈등록
+   public class BoardController {
+
+   	private final BoardService service;  //2. 서비스 주입
+
+   	@GetMapping("/list")  //3. 핸들러와 요청을 매핑
+   	public String list(Criteria cri, Model model) {  //4. InitBinner  5. Validation  6. 요청파라미터 받기
+   		List<BoardVO> list = service.getList(cri);  // 7. 서비스 호출
+   		model.addAttribute("list", list);  // 8. 데이터를 모델에 저장
+   		return "board/list";  //9. 뷰 페이지로 이동
+   	}
+
+   ```
+
+## Controller 실습
+
+1. 컨트롤러 작성  
+   SampleController
+
+   ```java
+   @Log4j2
+   @RequestMapping("/sample/*")
+   @Controller
+   public class SampleController {
+
+   	@RequestMapping("")
+   	public String basic() {
+   		return "sample";
+   	}
+   }
+   ```
+
+2. 뷰페이지 작성  
+   templates/sample.html
+
+   ```html
+   <body>
+     sample
+   </body>
+   ```
+
+3. 로그 레벨 설정하기  
+   application.properties
+
+   ```
+   logging.level.org.springframework=debug
+   ```
+
+4. 브라우저 실행
+
+   ```cmd
+   http://localhost/sample
+   ```
+
+5. 로그 확인
+   이클립스 Console log 확인
+
+   ```
+   web.servlet.DispatcherServlet  : GET "/sample/aaa", parameters={}
+   RequestMappingHandlerMapping   : Mapped to com.example.demo.SampleController#basic()
+   ContentNegotiatingViewResolver : Selected 'text/html'
+   ```
+
+## 파라미터 받기
 
 ```java
-@Controller
-@Log4j
-@RequestMapping("/board/*")
-@AllArgsConstructor
-public class BoardController {
-
-	private BoardService service;
-
-	@GetMapping("/list")
-	public String list(Criteria cri, Model model) {
-		model.addAttribute("list", service.getList(cri));
-    return "board/list";
-	}
-
-```
-
-### Controller 실습
-
-SampleController
-
-```java
-@Controller
-@RequestMapping("/sample/*")
-@Log4j2
-public class SampleController {
-
-	@RequestMapping("")
-	public String basic() {
+	//질의문자열 -> 커맨드 객체
+	@GetMapping("/ex1")
+	public String ex1(@ModelAttribute("user") UserVO userVO) {
+		log.info(userVO);
 		return "sample";
 	}
-}
+
+	//JSON 문자열 -> 커맨드 객체
+	@GetMapping("/ex2")
+	public String ex1(@RequestBody UserVO userVO) {
+		log.info(userVO);
+		return "sample";
+	}
+
+	//@RequestParam 원시타입(String, int...) 파라미터
+	@GetMapping("/ex3")
+	public String ex3(@RequestParam String name,
+			              @RequestParam(value = "userage", required = false, defaultValue = "20") Integer age) {
+		log.info(name +":" + age);
+		return "sample";
+	}
+
+	// @RequestParam Map
+	@GetMapping("/ex4")
+	public String ex4(@RequestParam Map<String, Object> map) {
+		log.info(map);
+		return "sample";
+	}
+
+  // @PathVariable
+	@GetMapping("/ex5/{name}/{age}")  // http://localhost/api/ex5/kim/29
+	public String ex5(@PathVariable String name,
+			              @PathVariable int age) {
+		log.info("path=" + name + ":" + age );
+		return "sample";
+	}
+
+	//첨부파일
+	@PostMapping("/ex6")
+	public String ex6(UserVO vo, MultipartFile pic) {
+		log.info(pic.getOriginalFilename());
+		log.info(pic.getSize());
+		log.info(vo);
+		return "sample";
+	}
 ```
 
-templates/sample.html
-
-```html
-<body>
-  sample
-</body>
-```
-
-application.properties
-
-```
-logging.level.org.springframework=debug
-```
-
-Console log 확인
-
-```
-web.servlet.DispatcherServlet  : GET "/sample/aaa", parameters={}
-RequestMappingHandlerMapping   : Mapped to com.example.demo.SampleController#basic()
-ContentNegotiatingViewResolver : Selected 'text/html'
-```
-
-### bean validation
+## bean validation
 
 Spring Boot는 사용자 정의 유효성 검사기와의 완벽한 통합을 지원하지만 유효성 검사를 수행하는 사실상의 표준은 Bean 유효성 검사 프레임 워크의 참조 구현인 Hibernate Validator 입니다.
 
-reference
+※reference
 
-https://docs.spring.io/spring-framework/reference/core/validation/beanvalidation.html  
-https://docs.jboss.org/hibernate/validator/8.0/reference/en-US/html_single/#section-builtin-constraints
-
-라이브러리 dependency 추가
-
-```xml
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-validation</artifactId>
-		</dependency>
-```
-
-bean에 validation 적용
-
-```java
-public class User {
-
-    @NotNull(message = "Name cannot be null")
-    private String name;
-
-    @AssertTrue(message = "Working must be true")
-    private boolean working;
-
-    @Size(min = 10, max = 200, message
-      = "About Me must be between 10 and 200 characters")
-    private String aboutMe;
-
-    @Min(value = 18, message = "Age should not be less than 18")
-    @Max(value = 150, message = "Age should not be greater than 150")
-    private int age;
-
-    @Email(message = "Email should be valid")
-    private String email;
-}
-```
+- https://docs.spring.io/spring-framework/reference/core/validation/beanvalidation.html
+- https://docs.jboss.org/hibernate/validator/8.0/reference/en-US/html_single/#section-builtin-constraints
 
 Bean Validation 주요 애노테이션
 
@@ -163,122 +203,218 @@ Bean Validation 주요 애노테이션
 | @Past, @PastOrPresent      | 날짜 값이 과거인지, 또는 현재를 포함한 과거인지 검증                 |
 | @Future, @FutureOrPresent  | 날짜 값이 미래 또는 현재를 포함한 미래인지 검증                      |
 | @Pattern                   | 지정한 정규표현식에 맞는지 검증                                      |
-|                            |                                                                      |
 
-테스트 코드
+|
+
+1. pom.xml에 라이브러리 dependency 추가
+
+   ```xml
+   		<dependency>
+   			<groupId>org.springframework.boot</groupId>
+   			<artifactId>spring-boot-starter-validation</artifactId>
+   		</dependency>
+   ```
+
+2. bean에 validation 애너테이션 적용
+
+   ```java
+   public class User {
+
+   		@NotNull(message = "Name cannot be null")
+   		private String name;
+
+   		@AssertTrue(message = "Working must be true")
+   		private boolean working;
+
+   		@Size(min = 10, max = 200, message
+   			= "About Me must be between 10 and 200 characters")
+   		private String aboutMe;
+
+   		@Min(value = 18, message = "Age should not be less than 18")
+   		@Max(value = 150, message = "Age should not be greater than 150")
+   		private int age;
+
+   		@Email(message = "Email should be valid")
+   		private String email;
+   }
+   ```
+
+3. 테스트 코드
+
+   ```java
+   import static org.junit.jupiter.api.Assertions.assertTrue;
+
+   import java.util.Set;
+
+   import org.junit.jupiter.api.BeforeEach;
+   import org.junit.jupiter.api.Test;
+   import org.springframework.boot.test.context.SpringBootTest;
+
+   import jakarta.validation.ConstraintViolation;
+   import jakarta.validation.Validation;
+   import jakarta.validation.Validator;
+   import lombok.extern.slf4j.Slf4j;
+
+   @Slf4j
+   @SpringBootTest
+   public class UserValidationTest {
+
+   	private Validator validator;
+
+   	@BeforeEach
+   	void setUp() {
+   			validator = Validation.buildDefaultValidatorFactory().getValidator();
+   	}
+
+   	@Test
+   	void test() {
+   		User user = new User();
+   		user.setName("test-name");
+   		user.setWorking(true);
+   		user.setAboutMe("test-about-me");
+   		user.setAge(24);
+   		user.setEmail("test.baeldung.ut");
+
+   		Set<ConstraintViolation<User>> violations = validator.validate(user);
+   		violations.forEach(err->log.debug(err.getPropertyPath().toString() + ": " + err.getMessage()));
+   		assertTrue(violations.isEmpty());
+   	}
+   }
+   ```
+
+4. controller 적용
+   `@Validated` BoardDTO board, `BindingResult bindingResult`를 컨트롤러 핸들러 인수에 추가
+
+PersonController
 
 ```java
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.Set;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
-@SpringBootTest
-public class UserValidationTest {
-
-	private Validator validator;
-
-	@BeforeEach
-	void setUp() {
-	    validator = Validation.buildDefaultValidatorFactory().getValidator();
+	@GetMapping("/person")
+	public String showForm(PersonForm personForm) {
+		return "form";
 	}
 
-	@Test
-	void test() {
-		User user = new User();
-		user.setName("test-name");
-		user.setWorking(true);
-		user.setAboutMe("test-about-me");
-		user.setAge(24);
-		user.setEmail("test.baeldung.ut");
+	@PostMapping("/person")
+	public String checkPersonInfo(@Valid PersonForm personForm,
+			                      BindingResult bindingResult) {
 
-		Set<ConstraintViolation<User>> violations = validator.validate(user);
-		violations.forEach(err->log.debug(err.getPropertyPath().toString() + ": " + err.getMessage()));
-		assertTrue(violations.isEmpty());
-	}
-}
-```
-
-controller 적용
-
-BoardDTO
-bean에 `@NotBlank` 적용
-
-```java
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
-public class BoardDTO {
-	 private Long bno;
-
-	 @NotBlank
-	 private String title;
-	 @NotBlank
-	 private String content;
-	 @NotBlank
-	 private String writer;
-	 private Date regdate;
-}
-```
-
-BoardController
-`@Validated` BoardDTO board, `BindingResult bindingResult`를 컨트롤러 핸들러 인수에 추가
-
-```java
-	@GetMapping("/register")
-	public void registger(BoardDTO board) {}
-
-
-	@PostMapping("/register")
-	public String register(@Validated BoardDTO board,
-                         BindingResult bindingResult,
-                         RedirectAttributes rttr) {
-		if(bindingResult.hasErrors()) {
-			return "board/register";
+		if (bindingResult.hasErrors()) {
+			return "form";
 		}
-		log.info("register: " + board);
-		service.register(board);
 
-		rttr.addFlashAttribute("result", true);
-		return "redirect:/board/list";
+		return "redirect:/api/sample";
 	}
 ```
 
-board/list.html
-error 메시지를 출력할 곳에 `th:errors` 지정
+5. board/list.html. error 메시지를 출력할 곳에 `th:errors` 지정
 
-```html
-<div class="error" th:errors="${boardDTO.title}"></div>
-```
+   ```html
+   <div class="error" th:errors="${boardDTO.title}"></div>
+   ```
 
-```html
-<style>
-  .error {
-    color: red;
-  }
-</style>
+   ```html
+   <style>
+     .error {
+       color: red;
+     }
+   </style>
 
-<form action="register" method="post">
-  <div class="mb-3">
-    <label for="title" class="form-label">제목</label>
-    <input
-      type="text"
-      class="form-control"
-      name="title"
-      placeholder="제목입력"
-      th:value="${boardDTO.title}"
-    />
-    <div class="error" th:errors="${boardDTO.title}"></div>
-  </div>
-</form>
-```
+   <form
+     action="#"
+     th:action="@{/person}"
+     th:object="${personForm}"
+     method="post"
+   >
+     <table>
+       <tr>
+         <td>Name:</td>
+         <td><input type="text" th:field="*{name}" /></td>
+         <td th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
+           Name Error
+         </td>
+       </tr>
+       <tr>
+         <td>Age:</td>
+         <td><input type="text" th:field="*{age}" /></td>
+         <td th:if="${#fields.hasErrors('age')}" th:errors="*{age}">
+           Age Error
+         </td>
+       </tr>
+       <tr>
+         <td>Phone:</td>
+         <td><input type="text" th:field="*{phone}" /></td>
+         <td th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}">
+           Phone Error
+         </td>
+       </tr>
+       <tr>
+         <td>email:</td>
+         <td><input type="text" th:field="*{email}" /></td>
+         <td th:if="${#fields.hasErrors('email')}" th:errors="*{email}">
+           email Error
+         </td>
+       </tr>
+       <tr>
+         <td>date:</td>
+         <td>
+           <input type="date" th:field="*{startdate}" />
+           <input type="date" th:field="*{enddate}" />
+         </td>
+         <td
+           th:if="${#fields.hasErrors('endDateAfterStartDate')}"
+           th:errors="*{endDateAfterStartDate}"
+         >
+           date Error
+         </td>
+       </tr>
+       <tr>
+         <td><button type="submit">Submit</button></td>
+       </tr>
+     </table>
+   </form>
+   ```
+
+## springdoc-openapi(swagger3)
+
+| 애노테이션   | 설명                    | 예시                                                                         |
+| :----------- | :---------------------- | :--------------------------------------------------------------------------- |
+| @Tag         | API 그룹 설정           | @Tag(name = "posts", description = "게시물 API")                             |
+| @Schema      | DTO의 필드를 문서화     | @Schema(description = "회원 ID", example = "1")                              |
+| @Operation   | API의 메소드 단위 설명  | @Operation(summary = "회원 조회")                                            |
+| @Parameter   | 메서드 파라미터 설명    | @Parameter(description = "회원 정보", example = "{mno:1, owner:''}")         |
+| @ApiResponse | 응답 코드와 설명을 지정 | @Operation(summary = "회원 등록", description = "새로운 회원을 등록합니다.", |
+|              |                         | responses = {                                                                |
+|              |                         | @ApiResponse(responseCode = "200", description = "등록 성공"),               |
+|              |                         | @ApiResponse(responseCode = "400", description = "잘못된 요청"),             |
+|              |                         | @ApiResponse(responseCode = "500", description = "서버 에러")                |
+|              |                         | }                                                                            |
+|              |                         | )                                                                            |
+
+1. dependency
+
+   ```xml
+   <dependency>
+   	<groupId>org.springdoc</groupId>
+   	<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+   	<version>2.8.4</version>
+   </dependency>
+   ```
+
+   ```java
+   @Tag(name = "회원관리 API", description = "게임사이트 회원 가입")
+   @RequestMapping("/api")
+   @RestController //@Controller + @ResponseBody
+   public class Ex2Controller {
+
+   	@Tag(name = "회원관리 API")
+   	@Operation(summary = "회원조회")
+   	//UserVO 단건조회
+   	@GetMapping("/rest1")
+   	public UserVO rest1() {
+   		return new UserVO("홍길동", 20, new Date(),
+   									Arrays.asList("게임","등산"));
+   	}
+   ```
+
+   <img src="images/springdoc02.png" width="600">  
+    
+   <img src="images/springdoc01.png" width="600">
