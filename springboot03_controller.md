@@ -176,7 +176,7 @@ public class BoardController {
 
 	//첨부파일
 	@PostMapping("/ex6")
-	public String ex6(UserVO vo, MultipartFile pic) {
+	public String ex6(UserVO vo, @RequestPart MultipartFile pic) {
 		log.info(pic.getOriginalFilename());
 		log.info(pic.getSize());
 		log.info(vo);
