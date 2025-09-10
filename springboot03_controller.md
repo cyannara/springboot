@@ -26,6 +26,11 @@ Spring MVC 컨트롤러 주요 애너테이션 정리
 | **@RequestBody**                    | 요청 본문(JSON/XML)을 Java 객체로 변환해서 매개변수에 바인딩.<br>주로 POST/PUT API에서 사용.               |                                              |
 | **@ResponseBody**                   | 메서드 반환값을 뷰가 아닌 HTTP 응답 바디에 직접 담아 반환.<br>JSON/XML로 직렬화됨.                         |                                              |
 
+express  
+req.query  
+req.body  
+req.param  
+
 Controller에서 자주 쓰는 추가 애너테이션
 
 | 애너테이션              | 설명                                                                     | 예시                                                         |
