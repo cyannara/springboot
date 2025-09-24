@@ -93,6 +93,16 @@ public class JasperPdfView extends AbstractView {
 		return mv;
 	}
 ```
+
+### content type 지정
+```java
+	// view 지정
+	JasperPdfView view = new JasperPdfView("reports/emp.jrxml");
+	view.setContentType("application/octet-stream");
+	//view.setContentType("application/pdf");
+	ModelAndView mv = new ModelAndView(view);
+```
+
 ### TextFiled
 - 날짜 포맷 변경  
 <img src="./images/report_dateformat.png">
