@@ -1,7 +1,8 @@
 # JPA
 
 ## 목차
-1. 환경 설정  
+
+1. 환경 설정
 2. 엔티티 선언
 3. 엔티티 매핑 실습
 4. 리포지토리 만들기 (EntityManager, Spring Data JPA)
@@ -10,6 +11,7 @@
 ## 환경설정
 
 ### 라이브러리 의존성 설정
+
 ```xml
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -19,10 +21,10 @@
 			<groupId>com.oracle.database.jdbc</groupId>
 			<artifactId>ojdbc11</artifactId>
 			<scope>runtime</scope>
-		</dependency>    
+		</dependency>
 ```
 
-### JPA 환경설정
+### 프로퍼티 설정
 
 Oracle
 
@@ -60,7 +62,9 @@ spring.jpa.properties.hibernate.format-sql=true
 ```
 
 ### JPA 오라클 계정 생성
-관리자(system) 권한으로 접속하여 사용자 계정 생성  
+
+관리자(system) 권한으로 접속하여 사용자 계정 생성
+
 ```
 ALTER SESSION SET "_ORACLE_SCRIPT"=true;
 create user jpa identified by jpa;
@@ -70,7 +74,7 @@ ALTER USER jpa DEFAULT TABLESPACE USERS QUOTA UNLIMITED ON USERS;
 
 ## 엔티티 선언
 
-Posts 
+Posts
 
 ```java
 package com.example.demo.domain.Posts;
@@ -113,6 +117,7 @@ public class Posts {
 ## 리포지토리 만들기
 
 ### Entity Manager 사용
+
 ```java
 import org.springframework.stereotype.Repository;
 
@@ -137,7 +142,9 @@ public class MemberRepository {
 }
 
 ```
-###  repository 테스트  
+
+### repository 테스트
+
 ```java
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -214,10 +221,11 @@ Member 에 필드 추가
     private Team team;
 ```
 
-**조인 쿼리**를 직접 쓰지 않았는데 팀 이름이 조회된다.  
+**조인 쿼리**를 직접 쓰지 않았는데 팀 이름이 조회된다.
+
 ```java
     @Autowired EntityManager em;
-    
+
     @Commit
     @Transactional
     @Test
@@ -225,18 +233,19 @@ Member 에 필드 추가
 	    Team team = new Team();
 	    team.setName("개발팀");
 	    em.persist(team);
-	
+
 	    Member member = new Member();
 	    member.setName("홍길동");
 	    member.setTeam(team);
 	    em.persist(member);
-	    
+
 	    //조회
 	    Member found = em.find(Member.class, member.getId());
 	    System.out.println("회원 이름: " + found.getName());
-	    System.out.println("팀 이름: " + found.getTeam().getName()); 
+	    System.out.println("팀 이름: " + found.getTeam().getName());
     }
 ```
+
 PostsRepositoryTest
 
 ```java
@@ -306,7 +315,8 @@ public class PostsService {
 }
 ```
 
-PostsSaveRequestDto  
+PostsSaveRequestDto
+
 ```java
 
 @Getter
@@ -316,21 +326,21 @@ public class PostsSaveRequestDto {
 	private String title;
 	private String content;
 	private String author;
-	
+
 	@Builder
 	public PostsSaveRequestDto(String title, String content, String author) {
 		this.title = title;
 		this.content = content;
 		this.author = author;
 	}
-	
+
 	public Posts toEntity() {
 		return Posts.builder()
 				.title(title)
 				.content(content)
 				.author(author)
 				.build();
-				
+
 	}
 }
 ```
@@ -518,7 +528,8 @@ public class JpaApplication {
 ### 페이징 조회
 
 조회에 사용될 PostsListResponseDto 클래스 추가.  
-content 필드가 없고 Posts 엔티티를 DTO에 담음.  
+content 필드가 없고 Posts 엔티티를 DTO에 담음.
+
 ```java
 @Getter
 public class PostsListResponseDto {
@@ -526,14 +537,14 @@ public class PostsListResponseDto {
 	private String title;
 	private String author;
 	private LocalDateTime mdoifiedDate;
-	
+
 	public PostsListResponseDto(Posts entity) {
 		this.id = entity.getId();
 		this.title = entity.getTitle();
 		this.author = entity.getAuthor();
 		//this.modifiedDate = entity.getModifiedDate();
 	}
-	
+
 }
 ```
 
@@ -563,7 +574,9 @@ public class PostsService {
     }
 }
 ```
-PostsController    
+
+PostsController
+
 ```java
 	@GetMapping("/api/v1/posts")
 	public Page<PostsListResponseDto> index(Model model,
