@@ -48,8 +48,8 @@
       <constraint>
         <height>-1</height>
         <width>-1</width>
-        <x>157</x>
-        <y>183</y>
+        <x>342</x>
+        <y>239</y>
       </constraint>
       <sourceConnections/>
       <targetConnections>
@@ -81,8 +81,8 @@
             <constraint>
               <height>-1</height>
               <width>-1</width>
-              <x>299</x>
-              <y>16</y>
+              <x>400</x>
+              <y>28</y>
             </constraint>
             <sourceConnections>
               <net.java.amateras.uml.classdiagram.model.AggregationModel reference="../../.."/>
