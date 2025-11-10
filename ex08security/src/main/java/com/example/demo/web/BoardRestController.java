@@ -1,4 +1,4 @@
-package com.example.demo.securing.web;
+package com.example.demo.web;
 
 import java.util.Collections;
 import java.util.Map;

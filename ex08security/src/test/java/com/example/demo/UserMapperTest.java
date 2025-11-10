@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.example.demo.securing.mapper.UserMapper;
-import com.example.demo.securing.service.RoleDTO;
-import com.example.demo.securing.service.UserDTO;
+import com.example.demo.mapper.UserMapper;
+import com.example.demo.service.RoleDTO;
+import com.example.demo.service.UserDTO;
 
 import lombok.extern.slf4j.Slf4j;
 

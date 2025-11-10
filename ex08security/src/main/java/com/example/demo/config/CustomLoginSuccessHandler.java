@@ -1,4 +1,4 @@
-package com.example.demo.securing.config;
+package com.example.demo.config;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,8 +7,8 @@ import java.util.List;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
-import com.example.demo.securing.service.CustomerUser;
-import com.example.demo.securing.service.UserDTO;
+import com.example.demo.service.CustomerUser;
+import com.example.demo.service.UserDTO;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package com.example.demo.securing.config;
+package com.example.demo.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,7 +38,7 @@ public class WebSecurityConfig {
 			)
 			.formLogin((form) -> form
 				//.loginPage("/login")
-				//.usernameParameter("userid")
+				.usernameParameter("userid")
 				.successHandler(authenticationSuccessHandler())
 				.permitAll()
 			)

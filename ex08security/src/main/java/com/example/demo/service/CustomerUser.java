@@ -1,5 +1,6 @@
-package com.example.demo.securing.service;
+package com.example.demo.service;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -12,7 +13,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class CustomerUser  implements UserDetails {
+public class CustomerUser  implements UserDetails , Serializable{
 	
 	UserDTO userDTO;
 	

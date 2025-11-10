@@ -1,9 +1,9 @@
-package com.example.demo.securing.config;
+package com.example.demo.config;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.example.demo.securing.service.CustomerUser;
-import com.example.demo.securing.service.UserDTO;
+import com.example.demo.service.CustomerUser;
+import com.example.demo.service.UserDTO;
 
 public class SecuUtil {
 
