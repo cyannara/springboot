@@ -22,13 +22,15 @@ public class CustomerService {
 	List<Customer> findPaging(int page) {
 		
 		Pageable pageable = PageRequest.of(0, 10, Sort.by("name"));
-		QCustomer qCustomer = QCustomer.customer;
-		String keyword = "name";
-
-		BooleanBuilder builder = new BooleanBuilder();
-		BooleanExpression expression = qCustomer.name.contains(keyword);
-		builder.and(qCustomer.name.contains(keyword));
-		
-		Page<Customer> result = custRepository.findAll(builder,pageable);
+		/*
+		 * //QCustomer qCustomer = QCustomer.customer; String keyword = "name";
+		 * 
+		 * BooleanBuilder builder = new BooleanBuilder(); BooleanExpression expression =
+		 * qCustomer.name.contains(keyword);
+		 * builder.and(qCustomer.name.contains(keyword));
+		 * 
+		 * Page<Customer> result = custRepository.findAll(builder,pageable);
+		 */
+		return null;
 	}
 }

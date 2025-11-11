@@ -2,13 +2,12 @@ package com.example.demo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
-public class Ex09jpaApplication {
+public class ExjpaApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Ex09jpaApplication.class, args);
+		SpringApplication.run(ExjpaApplication.class, args);
 	}
 
 }

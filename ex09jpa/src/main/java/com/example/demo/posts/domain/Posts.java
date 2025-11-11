@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Getter   
 @NoArgsConstructor
 @Entity
-public class Posts extends BaseTimeEntity{
+public class Posts extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;

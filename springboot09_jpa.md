@@ -2,15 +2,45 @@
 
 ## 목차
 
+1. JPA란
 1. 환경 설정
-2. 엔티티 선언
-3. 엔티티 매핑 실습
-4. 리포지토리 만들기 (EntityManager, Spring Data JPA)
-5. JPQL/쿼리 메서드
+1. 스프링 웹계층
+1. 엔티티 선언
+1. 엔티티 매핑 실습
+1. 리포지토리 만들기 (EntityManager, Spring Data JPA)
+1. JPQL/쿼리 메서드
+
+## JPA란
+
+referer : [JPA vs Mybatis](https://www.elancer.co.kr/blog/detail/231)
+
+데이터 베이스 접속을 편하게 사용하기 위해 SQL Mapper 기술과, ORM(Object Relational Mapping) 기술을 제공합니다. 둘 다 DB와의 연동, 저장을 위한 기술이며, SQL Mapper는 ‘개발자가 작성한 SQL 실행 결과를 객체에 매핑’시켜주는 프레임워크이며, ORM은 객체와 DB의 데이터를 ‘자동으로 매핑’시켜주는 프레임워크를 말합니다.
+SQL Mapper 기술을 제공하는 것이 `MyBatis`이며, ORM 기술을 제공하는 것이 `JPA(Java Persistence API)`입니다.
+Mybatis는 SQL 문을 별도로 Java 코드에서 분리해두어서 관리가 편하게 하였으며, 분리된 SQL 문을 MyBatis가 찾아서 실행해 주는 기능을 합니다. MyBatis 프레임워크는 반복적인 JDBC 프로그래밍을 단순화하여, 불필요한 Boilerplate 코드를 제거하고, Java 소스코드에서 SQL 문을 분리하여 별도의 XML 파일로 저장하고, 이 둘을 서로 연결시켜주는 기능을 제공합니다.
+
+| 특징            | MyBatis | JPA  |
+| :-------------- | :-----: | :--: |
+| SQL 직접작성    |    O    |  X   |
+| 자동매핑        |    O    |  O   |
+| 객체지향적      |    X    |  O   |
+| 유지보수 용이성 |  중간   | 높음 |
+
+## ORM 프레임워크
+
+Java 객체와 관계형 데이터베이스 간의 매핑을 위한 API입니다. JPA는 ORM(Object-Relational Mapping)을 구현하는 자바 표준 스펙으로, 개발자가 객체지향 프로그래밍 언어에서 사용하는 객체 모델과 관계형 데이터베이스의 테이블 간의 매핑을 자동으로 처리해 줍니다.
+
+### 스프링 웹계층
+
+- Web Layer : 컨트롤러와 뷰 템플릿 영역. 필터, 인터셉터, 어드바이스(@ControllerAdvice) 등 외부 요청과 응답에 대한 전반적인 영역
+- Service Layer : 컨트롤러와 리포지토리 중간 영역으로 트랜잭션, 도메인 기능 간의 순서를 보장
+- Repository Layer : 데이터베이스와 같은 데이터 저장소에 접근하는 영역
+- Dto : 계층간의 데이터 교환을 위한 객체. Request와 Response 용 DTO 는 뷰를 위한 클래스라 자주 변겨이 필요
+- Domain Model : 개발 대상을 모든 사람이 동일한 관점에서 이해할 수 있고 공유할 수 있도록 단순화시킨 것  
+  <img src="./images/jpa02.png" width="400">
 
 ## 환경설정
 
-### 라이브러리 의존성 설정
+### 라이브러리 의존성 설정( pom.xml )
 
 ```xml
 		<dependency>
@@ -24,12 +54,11 @@
 		</dependency>
 ```
 
-### 프로퍼티 설정
+### 프로퍼티 설정 (application.properties)
 
 Oracle
 
 ```properties
-
 #oracle
 spring.datasource.driver-class-name=oracle.jdbc.driver.OracleDriver
 spring.datasource.url=jdbc:oracle:thin:@localhost:1521/xe
@@ -38,7 +67,7 @@ spring.datasource.password=jpa
 
 #jpa
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.OracleDialect
-spring.jpa.hibernate.ddl-auto=create
+spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format-sql=true
 
@@ -47,7 +76,6 @@ spring.jpa.properties.hibernate.format-sql=true
 Mysql
 
 ```properties
-
 #mysql
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 spring.datasource.url=jdbc:mysql://localhost:3306/test
@@ -56,7 +84,7 @@ spring.datasource.password=jpa
 
 #jpa
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
-#spring.jpa.hibernate.ddl-auto=create
+spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format-sql=true
 ```
@@ -66,10 +94,55 @@ spring.jpa.properties.hibernate.format-sql=true
 관리자(system) 권한으로 접속하여 사용자 계정 생성
 
 ```
-ALTER SESSION SET "_ORACLE_SCRIPT"=true;
-create user jpa identified by jpa;
-grant resource, connect to jpa;
+ALTER SESSION SET "_ORACLE_SCRIPT" = true;
+CREATE USER jpa IDENTIFIED BY jpa;
+GRANT RESOURCE, CONNECT TO jpa;
 ALTER USER jpa DEFAULT TABLESPACE USERS QUOTA UNLIMITED ON USERS;
+```
+
+## 프로젝트 패키지 구성
+
+```sh
+com.example.project
+  ├─ member/                            # 도메인별 폴더
+  │   ├─ web/
+  │   │   └─ MemberController.java      # Controller - 요청 처리 및 응답
+  │   │
+  │   ├─ service/
+  │   │   ├─ MemberService.java         # Service Interface - 비즈니스 로직 정의
+  │   │   ├─ MemberVO.java              # Value Object - 데이터 전송 객체
+  │   │   └─ impl/
+  │   │       └─ MemberServiceImpl.java # Service Implementation - 비즈니스 로직 구현
+  │   │
+  │   ├─ mapper/
+  │   │   ├─ MemberMapper.java          # MyBatis 인터페이스
+  │   │
+  │   └─ repository/
+  │       └─ MemberRepository.java      # JPA Repository
+  │       └─ Member.java                # JPA 엔티티
+  │
+  ├─ board/
+  │   ├─ web/
+  │   ├─ service/
+  │   ├─ mapper/
+  │   └─ repository/
+  │
+  ├─ common/                             # 공통 유틸, 상수, 예외, 공통응답 등
+  │   ├─ util/
+  │   ├─ aop/
+  │   ├─ constant/
+  │   ├─ security/
+  │   ├─ exception/
+  │   ├─ config/             # 환경설정 (AOP, Security, Interceptor, MyBatis, JPA, WebMvc, etc)
+  │   │   ├─ JpaConfig.java
+  │   │   └─ MyBatisConfig.java
+  │   └─ base/               # BaseEntity, BaseService 등
+  │
+  └─ Application.java        # Spring Boot 메인 클래스
+
+src/main/resources
+└── mapper/
+    └── MemberMapper.xml     # MyBatis SQL 맵핑 파일)
 ```
 
 ## 엔티티 선언
@@ -77,7 +150,7 @@ ALTER USER jpa DEFAULT TABLESPACE USERS QUOTA UNLIMITED ON USERS;
 Posts
 
 ```java
-package com.example.demo.domain.Posts;
+package com.example.demo.Posts.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -127,6 +200,7 @@ import jakarta.transaction.Transactional;
 
 @Repository
 public class MemberRepository {
+
     @PersistenceContext
     private EntityManager em;
 
