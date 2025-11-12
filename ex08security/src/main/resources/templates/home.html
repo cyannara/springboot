@@ -19,5 +19,14 @@
 		<br/>session: <span th:text="${session.deptName}">부서명</span>
 	</div>
 	<div sec:authorize="hasRole('ROLE_ADMIN')">어드민 권한이 있으면</div>
+
+	<form th:if="${#authorization.expression('isAuthenticated()')}" 
+	  	  th:action="@{/logout}" method="post">
+	    <button class="dropdown-item">Logout</button>                    
+    </form>
+  
+    <a th:unless="${#authorization.expression('isAuthenticated()')}" 
+	  th:href="@{/login}"
+	  class="dropdown-item">로그인</a>
 </body>
 </html>
