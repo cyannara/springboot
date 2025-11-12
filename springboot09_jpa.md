@@ -59,17 +59,28 @@ Java 객체와 관계형 데이터베이스 간의 매핑을 위한 API입니다
 Oracle
 
 ```properties
-#oracle
+spring.application.name=boot02_jpa
+server.port=81
+
+#datasource	(oracle)
 spring.datasource.driver-class-name=oracle.jdbc.driver.OracleDriver
-spring.datasource.url=jdbc:oracle:thin:@localhost:1521/xe
+spring.datasource.url=jdbc:oracle:thin:@127.0.0.1:1521/xe
 spring.datasource.username=jpa
 spring.datasource.password=jpa
 
+#jpa database
+spring.jpa.database=oracle
+spring.jpa.database-platform=org.hibernate.dialect.OracleDialect
+
 #jpa
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.OracleDialect
-spring.jpa.hibernate.ddl-auto=update
+spring.jpa.generate-ddl=true
+spring.jpa.hibernate.ddl-auto=create
+
+#jpa log
 spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.format-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+logging.level.org.hibernate=info
+logging.pattern.console=[%d{HH:mm:ss}] %-5level %logger{36} - %msg%n
 
 ```
 
