@@ -158,15 +158,35 @@ Globals.MainPage  =/EgovContent.do
 
 2. 패키지 생성
     <pre>
+    src/main/java
     egovframe.tdo.service      : service, vo,
-                .service.impl : dao, serviceImpl
-                .web          : controller
+                 .service.impl : dao, mapper, serviceImpl
+                 .web          : controller
+              
     </pre>
 
 3. CRUD Program  
-mapper(xml) : /src/main/resources/egovframework/mapper  
+mapper(xml) : /src/main/resources/egovframework/mapper   / todo_oracle_Mapper.xml 
 view : /egovweb/src/main/webapp/WEB-INF/jsp
 
+4. todoMapper.xml
+```xml
+```
+
+5. TodoServiceImpl.java
+```java
+@Service("todoService")
+public class TodoServiceImpl extends EgovAbstractServiceImpl implements
+        TodoService {
+        
+    private static final Logger LOGGER = LoggerFactory.getLogger(TodoServiceImpl.class);
+
+//    @Resource(name="todoMapper")
+//    private TodoMapper todoDAO;
+    
+    @Resource(name="todoDAO")
+    private TodoDAO todoDAO;
+```
 ## MyBatis 적용
 
 ### reference  
