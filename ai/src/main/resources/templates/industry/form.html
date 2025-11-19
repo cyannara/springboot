@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>업종 요약 생성 — 입력</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body class="bg-light">
+<div class="container py-5">
+  <div class="card mx-auto" style="max-width:900px;">
+    <div class="card-body">
+      <h3 class="card-title mb-3">업종 요약 & 영업 스크립트 생성</h3>
+      <form th:action="@{/industry/submit}" th:object="${request}" method="post">
+        <input type="hidden" th:field="*{companyId}" />
+        <div class="mb-3">
+          <label for="industryRaw" class="form-label">업종 / 사업 내용 (원문)</label>
+          <textarea th:field="*{industryRaw}" id="industryRaw" class="form-control" rows="8"
+                    placeholder="예: 당사는 스킨케어, OEM/ODM 화장품을 제조 및 유통..."></textarea>
+        </div>
+
+      </form>
+
+      <hr/>
+
+      <div class="mt-3">
+        <small class="text-muted">또는 비동기(ajax)로 결과를 받고 싶다면 아래 버튼을 사용하세요.</small>
+        <button id="ajaxBtn" class="btn btn-outline-secondary btn-sm mt-2">AJAX로 분석</button>
+        <div id="ajaxResult" class="mt-3"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('ajaxBtn').addEventListener('click', async () => {
+    const raw = document.getElementById('industryRaw').value;
+    const payload = { companyId: 1, industryRaw: raw };
+
+    const btn = document.getElementById('ajaxBtn');
+    btn.disabled = true;
+    btn.innerText = '분석중...';
+
+    try {
+      const res = await fetch('/api/industry/analyze', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      document.getElementById('ajaxResult').innerHTML = `
+        <div class="alert alert-success">
+          <h5>요약</h5>
+          <p>${escapeHtml(data.summary)}</p>
+          <hr/>
+          <h5>영업스크립트</h5>
+          <pre style="white-space:pre-wrap;">${escapeHtml(data.salesScript)}</pre>
+        </div>
+      `;
+    } catch (e) {
+      document.getElementById('ajaxResult').innerHTML = `<div class="alert alert-danger">오류가 발생했습니다.</div>`;
+    } finally {
+      btn.disabled = false;
+      btn.innerText = 'AJAX로 분석';
+    }
+  });
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('\n','<br/>');
+  }
+</script>
+</body>
+</html>
