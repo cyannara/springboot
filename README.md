@@ -1,4 +1,7 @@
-SpringBoot 수업
+## String tools 설치
+- [STS](https://github.com/spring-projects/spring-tools/wiki)  
+
+### SpringBoot 수업일정
 
 | 일  | 내용                    |
 | :-- | :---------------------- |
