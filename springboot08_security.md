@@ -1,5 +1,25 @@
 ## spring security
 
+### 권한관리모델
+- RBAC (Role-Based Access Control) : 역할기반 접근제어
+- PBAC (Permission-Based Access Control) : 사용자에게 직접 권한 부여
+- PBAC (Policy-Based Access Control): 정책 기반 접근 제어
+- ABAC (Attribute-Based Access Control) : 속성기반
+- ACL (Access Control List) : 접근제어목록
+- DAC (Discretionary Access Control) :임의적 접근제어.  자원 소유자가 권한을 설정
+- MAC (Mandatory Access Control) : 강제적접근제어. 보안등급기반통제
+
+### 권한모델선택기준
+역할 : RBAC
+컨텍스트(시간,위치,상황) : ABAC
+작은 수의 리소스 제어 : ACL
+
+### 권한관리 구현방식
+- 스프링 security의 AuthorizationManager
+- AOP
+- 인터셉터
+  
+
 ### reference
 
 - [스프링 시큐리티 아키텍처](https://docs.spring.io/spring-security/reference/servlet/architecture.html)
@@ -113,9 +133,9 @@ CREATE TABLE T_ROLE (
  CREATE TABLE T_USER_ROLE (
   ROLE_ID number,
   USER_ID number,
-  foreign key (role_id) references t_role(id),
-  foreign key (user_id) references t_user(id),
-  primary key(role_id, user_id)
+  foreign key (ROLE_ID) references t_role(id),
+  foreign key (USER_ID) references t_user(id),
+  primary key(ROLE_ID, USER_ID)
 );
 
 --///데이터 입력
@@ -171,6 +191,87 @@ public class UserVO implements UserDetails {
      return auth;
   }
 }
+
+```
+
+```java
+@Data
+public class RoleDTO implements Serializable{
+	private String userId;
+	private String roleName;
+}
+
+@Data
+public class UserDTO implements Serializable{
+	  private Long id;
+	  private String loginId;
+	  private String password;
+	  private String  fullName;
+	  private String  deptName;
+	  
+	  private List<RoleDTO> roles;
+}
+
+@Data
+@AllArgsConstructor
+public class CustomerUser  implements UserDetails , Serializable{
+	
+	UserDTO userDTO;
+	
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return userDTO.getRoles()
+				      .stream()
+				      .map(r-> new SimpleGrantedAuthority(r.getRoleName()))
+				      .collect(Collectors.toList());
+	}
+
+	@Override
+	public String getPassword() {
+		return userDTO.getPassword();
+	}
+
+	@Override
+	public String getUsername() {
+		return userDTO.getLoginId();
+	}
+
+}
+```
+### UserMapper
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.UserMapper">
+
+	<resultMap type="UserDTO" id="userMap">
+		<id column="id"  property="id"/>
+		<result column="password"  property="password"/>
+		<collection property="roles"
+		            ofType="RoleDTO" 
+		            select="getRole"
+		            column="id"/>
+	</resultMap>
+	
+	<!-- 단건조회 -->
+	<select id="getUser" resultMap="userMap">
+	select ID
+			,LOGIN_ID
+			,PASSWORD
+			,FULL_NAME
+			,DEPT_NAME
+	  from t_user
+	 where login_id = #{loginId}
+	</select>
+	 
+	<!-- 권한조회 -->
+	<select id="getRole" resultType="RoleDTO">
+    select role_name
+	  from t_user_role u
+	  join t_role r on (u.ROLE_ID = r.id )
+	 where id = #{id}
+	 </select>
+</mapper>
 ```
 
 ### UserDetailsService
@@ -187,9 +288,7 @@ public class CustomUserDetailsService  implements UserDetailsService{
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-		UsersVO vo = new UsersVO();
-		vo.setName(username);
-		vo = dao.getUser(vo);
+		UsersVO vo =  = dao.getUser(username);
 
       //사용자가 존재하지 않는 경우
 		if(vo == null) {
@@ -214,11 +313,6 @@ public class CustomUserDetailsService  implements UserDetailsService{
 public class SecurityConfig {
 
 	@Bean
-	public UsersService userService() {
-		return new UsersService();
-	}
-
-	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
@@ -232,6 +326,7 @@ public class SecurityConfig {
 	public AccessDeniedHandler accessDeniedHandler() {
 		return new WebAccessDenyHandler();
 	}
+
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.authorizeHttpRequests((requests) ->
@@ -253,7 +348,8 @@ public class SecurityConfig {
 					     .accessDeniedHandler(accessDeniedHandler())
 					     .and()
 				// .csrf().disable()
-				.userDetailsService(userService());
+				//.userDetailsService(userService())
+				;
 
 		return http.build();
 	}
@@ -434,6 +530,135 @@ public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
 		)
 }
 ```
+
+## DB 기반 RABC
+
+사용자 -> ROLE -> PERMISSION -> 리소스(URI)  
+```
+USER
+ └── USER_ROLE
+        └── ROLE
+              └── ROLE_PERMISSION
+                      └── PERMISSION
+                              └── RESOURCE (MENU)
+
+```
+
+### 테이블 생성
+
+```sql
+CREATE TABLE T_MENU (
+     MENU_CODE   varchar2(100) primary key,
+     MENU_NAME   varchar2(100) not null,
+     URL_PATTERN varchar2(100)
+ );
+
+ CREATE TABLE T_ROLE_MENU (
+  ROLE_ID    number ,
+  MENU_CODE  varchar2(100)   not null,
+  CAN_CREATE  char(1)  default 'N',
+  CAM_READ    char(1)  default 'N',
+  CAN_UPDATE  char(1)  default 'N',
+  CAN_DELETE  char(1)  default 'N',
+	primary key(ROLE_ID, MENU_CODE),
+	foreign key (ROLE_ID) references t_role(id),
+	foreign key (MENU_CODE) references t_menu(MENU_CODE)
+);
+
+
+--///데이터 입력
+ insert into T_MENU values(1, 'project', '/project/*');
+ insert into T_MENU values(2, 'job', '/job/*');
+ insert into T_MENU values(3, 'board', '/board/*');
+ insert into T_MENU values(4, 'qna', '/qna/*');
+
+ insert into T_ROLE_MENU values(1, 1);
+ insert into T_ROLE_MENU values(1, 2);
+ insert into T_ROLE_MENU values(2, 1);
+ insert into T_ROLE_MENU values(2, 2);
+ insert into T_ROLE_MENU values(2, 3);
+ insert into T_ROLE_MENU values(2, 4);
+
+ commit;
+
+ --update t_user set password = '$2a$16$UAEsMmsluU3m8S/EBUSzP.2G2x3yP87BggZT4bqm2sy1Ri1UmX5ti';
+```
+###  AuthorizationManager
+ 
+```java
+@Bean
+public SecurityFilterChain filterChain(
+        HttpSecurity http,
+        RbacAuthorizationManager manager) throws Exception {
+
+    http
+        .authorizeHttpRequests(auth -> auth
+            .anyRequest().access(manager)
+        );
+
+    return http.build();
+}
+```
+
+RbacAuthorizationManager
+```java
+@Component
+@RequiredArgsConstructor
+public class RbacAuthorizationManager
+        implements AuthorizationManager<RequestAuthorizationContext> {
+
+    private final MenuService menuService;
+
+    @Override
+    public AuthorizationDecision check(
+            Supplier<Authentication> authenticationSupplier,
+            RequestAuthorizationContext context) {
+
+        Authentication authentication = authenticationSupplier.get();
+        HttpServletRequest request = context.getRequest();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return new AuthorizationDecision(false);
+        }
+
+        String uri = request.getRequestURI();
+        String method = request.getMethod();
+
+        // 1️⃣ DB에서 URL 매칭되는 메뉴 찾기
+        Menu menu = menuService.findByUrlAndMethod(uri, method);
+
+        if (menu == null) {
+            return new AuthorizationDecision(false);
+        }
+
+        // 2️⃣ HTTP Method → Action 변환
+        String action = convertMethodToAction(method);
+
+        String requiredAuthority =
+                menu.getMenuCode() + ":" + action;
+
+        // 3️⃣ 로그인 사용자의 Authority와 비교
+        boolean granted = authentication.getAuthorities()
+                .stream()
+                .anyMatch(a -> a.getAuthority().equals(requiredAuthority));
+
+        return new AuthorizationDecision(granted);
+    }
+
+    private String convertMethodToAction(String method) {
+        return switch (method) {
+            case "GET" -> "READ";
+            case "POST" -> "CREATE";
+            case "PUT" -> "UPDATE";
+            case "DELETE" -> "DELETE";
+            default -> "READ";
+        };
+    }
+}
+
+```
+### 어노테이션
+
 
 ### 세션 저장소 관리
 

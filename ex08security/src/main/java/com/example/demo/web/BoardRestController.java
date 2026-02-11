@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public class BoardRestController {
 
 	@GetMapping("/api")
-	public Map test(HttpServletRequest request) {
+	public Map<String, Boolean> test(HttpServletRequest request) {
 		String ajax = request.getHeader("x-requested-with");
 		System.out.println("ajax>> " + ajax);
 		return Collections.singletonMap("result", true);	

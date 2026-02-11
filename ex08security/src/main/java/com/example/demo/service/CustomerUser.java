@@ -45,7 +45,6 @@ public class CustomerUser  implements UserDetails , Serializable{
 
 	@Override
 	public String getPassword() {
-		// TODO Auto-generated method stub
 		return userDTO.getPassword();
 	}
 

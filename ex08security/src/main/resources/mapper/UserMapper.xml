@@ -8,8 +8,7 @@
 		<collection property="roles"
 		            ofType="RoleDTO" 
 		            select="getRole"
-		            column="id"
-		></collection>
+		            column="id"/>
 	</resultMap>
 	
 	<!-- 단건조회 -->
