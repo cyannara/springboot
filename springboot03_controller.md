@@ -474,48 +474,6 @@ error 메시지를 출력할 곳에 `th:errors` 지정
 </form>
 ```
 
-## springdoc-openapi(swagger3)
 
-| 애노테이션   | 설명                    | 예시                                                                         |
-| :----------- | :---------------------- | :--------------------------------------------------------------------------- |
-| @Tag         | API 그룹 설정           | @Tag(name = "posts", description = "게시물 API")                             |
-| @Schema      | DTO의 필드를 문서화     | @Schema(description = "회원 ID", example = "1")                              |
-| @Operation   | API의 메소드 단위 설명  | @Operation(summary = "회원 조회")                                            |
-| @Parameter   | 메서드 파라미터 설명    | @Parameter(description = "회원 정보", example = "{mno:1, owner:''}")         |
-| @ApiResponse | 응답 코드와 설명을 지정 | @Operation(summary = "회원 등록", description = "새로운 회원을 등록합니다.", |
-|              |                         | responses = {                                                                |
-|              |                         | @ApiResponse(responseCode = "200", description = "등록 성공"),               |
-|              |                         | @ApiResponse(responseCode = "400", description = "잘못된 요청"),             |
-|              |                         | @ApiResponse(responseCode = "500", description = "서버 에러")                |
-|              |                         | }                                                                            |
-|              |                         | )                                                                            |
 
-#### 1. dependency
 
-```xml
-<dependency>
-	<groupId>org.springdoc</groupId>
-	<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-	<version>2.8.4</version>
-</dependency>
-```
-
-```java
-@Tag(name = "회원관리 API", description = "게임사이트 회원 가입")
-@RequestMapping("/api")
-@RestController //@Controller + @ResponseBody
-public class Ex2Controller {
-
-	@Tag(name = "회원관리 API")
-	@Operation(summary = "회원조회")
-	//UserVO 단건조회
-	@GetMapping("/rest1")
-	public UserVO rest1() {
-		return new UserVO("홍길동", 20, new Date(),
-									Arrays.asList("게임","등산"));
-	}
-```
-
-   <img src="images/springdoc02.png" width="600">  
-    
-   <img src="images/springdoc01.png" width="600">
