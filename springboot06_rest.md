@@ -37,6 +37,7 @@ Swagger : REST API Documentation을 위해 사용
 ### reference
 - https://springdoc.org/  
 - https://swagger.io/solutions/api-design/
+- 예제: https://github.com/spring-projects/spring-restdocs-samples
 - https://mageddo.com/tools/yaml-converter  
 - https://adjh54.tistory.com/561  
 - https://sjh9708.tistory.com/169  
