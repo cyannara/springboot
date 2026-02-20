@@ -4,13 +4,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.example.demo.board.BoardService;
+
 @SpringBootTest
-public class AopTest {
+public class AopExceptionTest {
 
 	@Autowired BoardService boardService;
 	
 	@Test
 	public void test() {
-		boardService.regiser();
+		boardService.select(0);
 	}
 }

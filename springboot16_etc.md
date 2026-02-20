@@ -132,3 +132,79 @@ http://localhost:85/actuator/metrics/spring.batch.job
 Boot 3.x부터는 Actuator의 Batch 전용 엔드포인트가 사라지고, 대신 Micrometer Metrics 방식으로 모니터링하도록 바뀌었습니다. actuator/batch가 deprecated 됨
 
 
+
+## PageHelper
+### 의존성 추가
+scope를 compile로 지정해야 interceptor가 등록됨.  
+maven  
+```xml
+<!-- Source: https://mvnrepository.com/artifact/com.github.pagehelper/pagehelper-spring-boot-starter -->
+<dependency>
+    <groupId>com.github.pagehelper</groupId>
+    <artifactId>pagehelper-spring-boot-starter</artifactId>
+    <version>2.1.1</version>
+    <scope>compile</scope>
+</dependency>
+```
+gradle
+```
+// Source: https://mvnrepository.com/artifact/com.github.pagehelper/pagehelper-spring-boot-starter
+implementation 'com.github.pagehelper:pagehelper-spring-boot-starter:2.1.1'
+```
+
+### mapper xml, 인터페이스
+목록조회 id 뒤에 '_COUNT'를 붙여서 건수조회 쿼리 추가  
+```xml
+   <!-- 전체조회 -->
+	<select id="selectAll" resultType="EmpVO">
+	SELECT *
+      FROM employees
+      ORDER BY employee_id
+	</select>
+
+	<!-- 전체건수 -->
+	<select id="selectAll_COUNT" resultType="long">
+	SELECT count(*) 
+	  FROM employees
+	</select>
+```
+```java
+public interface EmpMapper {
+	// 전체조회
+	public List<EmpVO> selectAll();
+   // 전체건수
+	public Long selectAll_COUNT();
+}
+```
+
+
+### service
+서비스에서 매퍼 호출할 때 PageHelper를 적용해야 함.  
+```java
+	public PageInfo<EmpVO> findAll(Integer pageNum) {
+		// 사원전체조회		
+		PageInfo<EmpVO> page = PageHelper.startPage(pageNum, 3)
+				                         .doSelectPageInfo(() -> empMapper.selectAll());
+
+//	    PageHelper.startPage(pageNum, 5);            // startPage 지정. 
+//	    List<EmpVO> list = empMapper.selectAll();    // 다음에 실행되는 매퍼 쿼리에만 적용됨. (쿼리를 paging되게 수정하여 실행)
+//	    PageInfo<EmpVO> page = new PageInfo<>(list); // page 정보를 담음
+		
+		log.info("TotalCount : {}, CurrentPage : {}, PageSize : {}, TotalPage : {}", page.getTotal()
+                                                           , page.getPageNum()
+                                                           , page.getPageSize()
+                                                           , page.getPages());
+		
+		return page;
+	}
+```
+![alt text](image-5.png)
+```sql
+SELECT * 
+  FROM ( SELECT TMP_PAGE.*, ROWNUM PAGEHELPER_ROW_ID 
+           FROM ( SELECT * 
+                    FROM employees ORDER BY employee_id 
+                ) TMP_PAGE
+       ) 
+ WHERE PAGEHELPER_ROW_ID <= ? AND PAGEHELPER_ROW_ID > ?
+```

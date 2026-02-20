@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org/">
+<head>
+<meta charset="UTF-8">
+<title></title>
+</head>
+<body>
+<h1>500 Error Page</h1>
+
+<p>상태코드: <span th:text="${status}"></span></p>
+<p>에러명: <span th:text="${error}"></span></p>
+<p>메시지: <span th:text="${message}"></span></p>
+<p>요청경로: <span th:text="${path}"></span></p>
+
+<a th:href="${path}">이전페이지로</a>
+</body>
+</html>
