@@ -106,19 +106,9 @@ document: springboot06_rest.md, springboot06_reply.md
 - oracle
 - jasperReport
 
-### boot - chat branch
-
-- storm
-
 ## demo
 
 - mysql
 - jpa
 
-### demo - h2 branch
 
-- jpa(h2)
-
-### demo - jpa_mybatis branch
-
-- jpa + mybatis
