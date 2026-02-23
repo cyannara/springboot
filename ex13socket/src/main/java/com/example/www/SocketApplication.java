@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class SocketApplication {  
 
 	public static void main(String[] args) {
-		SpringApplication.run(MybatisApplication.class, args);
+		SpringApplication.run(SocketApplication.class, args);
 	}
 
 }
