@@ -70,6 +70,7 @@ public class PrincipalHandshakeHandler extends DefaultHandshakeHandler {
 ```
 
 ```java
+@RequireArguemntConstructor
 @Controller
 public class PortfolioController {
 
