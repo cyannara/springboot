@@ -106,10 +106,6 @@ document: springboot06_rest.md, springboot06_reply.md
 - oracle
 - jasperReport
 
-### boot - chat branch
-
-- storm
-
 ## demo
 
 - mysql
