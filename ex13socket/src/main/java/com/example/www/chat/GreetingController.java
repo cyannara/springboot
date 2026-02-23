@@ -30,10 +30,12 @@ public class GreetingController {
 		return new Greeting("Hello, " + HtmlUtils.htmlEscape(message.getName()) + "!");
 	}
 
+	@ResponseBody
 	@GetMapping("/cust")
 	public Map<String, String> cust() {
 		String text = "[" + new Date() + "]:" + "cust select";
-		this.template.convertAndSend("/topic/cust", text);
+		AlamVO alamVO = new AlamVO("notice","admin", text);
+		this.template.convertAndSend("/topic/notice", alamVO);
 		return Collections.singletonMap("name", "test");
 	}
 

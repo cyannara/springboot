@@ -1,16 +1,27 @@
+const arr = ["kim","park","choi","lee"]
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
+
 const stompClient = new StompJs.Client({
-    brokerURL: 'ws://localhost:82/chatserver'
+    brokerURL: 'ws://localhost:82/chatserver' + '?userid='+ arr[getRandomInt(4)] 
 });
 
 stompClient.onConnect = (frame) => {
     setConnected(true);
     console.log('Connected: ' + frame);
+	
     stompClient.subscribe('/topic/greetings', (greeting) => {
         showGreeting(JSON.parse(greeting.body).content);
     });
-    stompClient.subscribe('/user/topic/approve', (greeting) => {
-        alert(greeting.body);
+	
+    stompClient.subscribe('/topic/notice', (notice) => {
+        alert(notice.body);
     });  
+	
+	stompClient.subscribe("/user/topic/notice", msg => {
+	    console.log(msg.body);
+	});
 };
 
 stompClient.onWebSocketError = (error) => {

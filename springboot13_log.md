@@ -1,5 +1,7 @@
 ## 로깅 라이브러리(Logging Library)
 
+- [springboot log](https://docs.spring.io/spring-boot/reference/features/logging.html)
+
 로깅(logging)이란 시스템 동작시 시스템의 상태와 작동 정보를 시간의 경과에 따라 기록하는 것
 
 - System.out.println()을 사용하지 말고 log.XXX() 이용하면 좋은 점
