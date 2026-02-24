@@ -1,21 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- <mapper namespace="Employees"> -->
 <mapper namespace="com.example.demo.mapper.EmployeesMapper">
+	<!-- 전체조회 -->
 	<select id="findAll" 
-	        resultType="com.example.demo.mapper.EmployeesDto">
+	        resultType="EmployeesDto">
 		SELECT * 
 		  FROM employees 
 	</select>
+	
+	<!-- 단건조회 -->
 	<select id="findById" 
-	        resultType="com.example.demo.mapper.EmployeesDto" 
+	        resultType="EmployeesDto" 
 	        parameterType="long">
 		SELECT FIRST_NAME,
 		       LAST_NAME 
 		  FROM employees 
 		 WHERE employee_id = #{employeeId} 		
 	</select>
+	
+	<!-- 부서와 이름으로 검색 -->
 	<select id="findBydeptAndName"
-	        resultType="com.example.demo.mapper.EmployeesDto">
+	        resultType="EmployeesDto">
 		SELECT *
 		  FROM employees
 		 <where>
@@ -27,6 +33,7 @@
 		 	</if>
 		 </where> 
 	</select>
+	
 </mapper>
 
 

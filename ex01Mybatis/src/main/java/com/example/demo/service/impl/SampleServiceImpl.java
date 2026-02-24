@@ -1,12 +1,12 @@
-package com.example.demo.ex.service.impl;
+package com.example.demo.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.ex.mapper.Sample1Mapper;
-import com.example.demo.ex.mapper.Sample2Mapper;
-import com.example.demo.ex.service.SampleService;
+import com.example.demo.mapper.Sample1Mapper;
+import com.example.demo.mapper.Sample2Mapper;
+import com.example.demo.service.SampleService;
 
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;

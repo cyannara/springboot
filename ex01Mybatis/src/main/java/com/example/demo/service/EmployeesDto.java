@@ -1,7 +1,13 @@
-package com.example.demo.mapper;
+package com.example.demo.service;
 
 import java.util.Date;
 
+import org.apache.ibatis.type.Alias;
+
+import lombok.ToString;
+
+@ToString
+@Alias("EmployeesDto")
 public class EmployeesDto {
 	private String employeeId;
 	private String firstName;

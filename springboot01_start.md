@@ -1,19 +1,25 @@
 
-reference : https://velog.io/@yedam_it/springboot-프로젝트    
+## Spring Boot
+### reference
+- [yedam_it](https://velog.io/@yedam_it/springboot-프로젝트)
+- [spring.io](https://docs.spring.io/spring-boot/documentation.html)
 
 ### 스프링부트 버전
 
-||||||||
-| :-------: | :--: |:--:| :--: | :---: | :---: | :--: |
 |spring boot|spring|java|gradle|maven  |servlet|tomcat|
-|3.0.13     |6.0.14|17  |7.5   |3.5    |6.0    |10    |
-|2.7.18     |5.3.31|8   |6.8   |3.5    |4.0    |9     |
+| :-------: | :--: |:--:| :--: | :---: | :---: | :--: |
+|3.X        |6.X   |17  |7.5   |3.5    |6.0    |10    |
+|2.7.X      |5.3.X |8~11|6.8   |3.5    |4.0    |9     |
 ||||||||
 
 - spring Boot3 = Java 17 이상(21 권장), Spring 6  
 - Spring Boot2 = Java 8 이상, Spring 5  
 
 - reference : https://docs.gradle.org/current/userguide/compatibility.html#java  
+
+### Spring Boot를 이용한 첫 번째 애플리케이션 개발하기
+
+
 
 ### 개발, 테스트, 운영 환경에 맞게 다중 프로파일 설정
 
