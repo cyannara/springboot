@@ -1,8 +1,13 @@
 ## DI(Dependency Injection)
 
-- 어떤 객체가 사용하는 의존 객체를 직접 만들어 사용하는게 아니라, 외부에서 주입 받아 사용하는 방법
-- 프로그램의 소스를 변경하지 않고 부분적인 전환(교체)를 쉽게 만드는 것
+- IoC: 어떤 객체가 사용하는 의존 객체를 직접 만들어 사용하는게 아니라, 외부 컨테이너에서 주입 받아 사용하는 방법
+- 프로그램의 소스를 변경하지 않고 의존관계에 있는 클래스를 전환(교체)를 쉽게 만드는 것
 - 인터페이스구현 방식과 ApplicationContext 이용
+
+### spring DI
+1. 객체생성
+2. 의존관계 연결
+3. 생명주기 관리(Singleton, Prototype, session, request)
 
 ### 실습1 클래스를 교체
 
@@ -80,6 +85,66 @@ public class SamsungTV implements TV { ...  }
 public class LgTV implements TV { ...  }
 
 ```
+
+### BeanFactory
+
+```
+D:\eGovFrameDev-4.3.0-64bit\workspace-egov\sp01\target\classes>java com.yedam.app.factory.App  lg
+===> LgTV
+LgTV powerOn.
+LgTV volumeUp.
+LgTV volumeDown.
+LgTV powerOff.
+
+D:\eGovFrameDev-4.3.0-64bit\workspace-egov\sp01\target\classes>java com.yedam.app.factory.App  samsung
+===> SamsungTV
+SamsungTV powerOn
+SamsungTV volumeUp
+SamsungTV volumeDown
+SamsungTV powerOff
+
+D:\eGovFrameDev-4.3.0-64bit\workspace-egov\sp01>mvn package
+[INFO] Scanning for projects...
+[INFO]
+[INFO] -------------------------< com.yedam.app:sp01 >-------------------------
+[INFO] Building demo 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO]
+...
+[INFO] Running com.yedam.app.demo.AppTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.022 s -- in com.yedam.app.demo.AppTest
+[INFO]
+[INFO] Results:
+[INFO]
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO]
+[INFO]
+[INFO] --- jar:3.4.1:jar (default-jar) @ sp01 ---
+[INFO] Building jar: D:\eGovFrameDev-4.3.0-64bit\workspace-egov\sp01\target\sp01-0.0.1-SNAPSHOT.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  2.077 s
+[INFO] Finished at: 2025-05-23T07:44:51+09:00
+[INFO] ------------------------------------------------------------------------
+
+D:\eGovFrameDev-4.3.0-64bit\workspace-egov\sp01>java -cp  ./target/sp01-0.0.1-SNAPSHOT.jar  com.yedam.app.factory.App  lg
+===> LgTV
+LgTV powerOn.
+LgTV volumeUp.
+LgTV volumeDown.
+LgTV powerOff.
+
+D:\eGovFrameDev-4.3.0-64bit\workspace-egov\sp01>java -cp  ./target/sp01-0.0.1-SNAPSHOT.jar  com.yedam.app.factory.App  samsung
+===> SamsungTV
+SamsungTV powerOn
+SamsungTV volumeUp
+SamsungTV volumeDown
+SamsungTV powerOff
+```
+
+
 
 ### 실습3 DI 실습
 

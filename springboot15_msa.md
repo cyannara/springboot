@@ -53,7 +53,7 @@ $ chmod 400 server.pem    # <-- 다운받은 pem 파일 복사
 
     <pre>
       cd %userprofile%/.ssh   
-      C:\Users\user\.ssh  
+      C:\Users\admin\.ssh  
     </pre>
 
 - config 파일

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org/">
+<head>
+<meta charset="UTF-8">
+<title></title>
+<style>
+	div { border : 1px red solid}
+	.error { color : red}
+</style>
+</head>
+<body>
+<h1>Error Page</h1>
+<a href="#"  onclick="history.back()">이전페이지로</a>  
+<div>
+	<p>상태코드: <span th:text="${status}" class="error"></span></p>
+	<p>에러명: <span th:text="${error}" class="error"></span></p>
+	<p>메시지: <span th:text="${message}"></span></p>
+	<p>요청경로: <span th:text="${path}"></span></p>
+	<p>trace: <span th:text="${trace}"></span></p>
+</div>
+</body>
+</html>

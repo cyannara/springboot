@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org/">
+<head>
+<meta charset="UTF-8">
+<title></title>
+</head>
+<body>
+<h1>게시판</h1>
+
+<a href="/board">정상</a><br>
+<a href="/board?num=0">에러</a><br>
+<a href="/boarderror">에러</a><br>
+<a href="#" onclick="req(event,1)">ajax 정상</a><br>
+<a href="#" onclick="req(event,0)">ajax 에러</a><br>
+
+<script>
+function req(e,num){
+	console.log(e.target);
+	e.stopPropagation();
+	fetch(`/api?num=${num}`)
+	.then(r => r.json())
+	.then(r => console.log(r))
+	.catch( e => console.log(e))
+}
+</script>
+</body>
+</html>
