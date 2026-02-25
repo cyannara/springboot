@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.hr;
 
 import static org.junit.Assert.assertEquals;
 
@@ -6,12 +6,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.example.demo.dao.EmployeeDAO;
-import com.example.demo.service.EmployeesDto;
+import com.example.demo.hr.dao.EmployeeDAO;
+import com.example.demo.hr.service.EmployeesDTO;
 
 
 @SpringBootTest
-public class EmplpyeeDaoTest {
+public class EmplpyeeDAOTest {
 
 	@Autowired
 	EmployeeDAO dao;
@@ -22,7 +22,7 @@ public class EmplpyeeDaoTest {
 		Long employeeId = 100l;
 		
 		//when
-		EmployeesDto dto =  dao.findById(employeeId);
+		EmployeesDTO dto =  dao.findById(employeeId);
 		System.out.println(dto);
 		
 		//then

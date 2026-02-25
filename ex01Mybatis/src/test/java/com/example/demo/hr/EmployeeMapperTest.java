@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.hr;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.example.demo.mapper.EmployeesMapper;
-import com.example.demo.service.EmployeesDto;
+import com.example.demo.hr.mapper.EmployeesMapper;
+import com.example.demo.hr.service.EmployeesDTO;
 
 @SpringBootTest
 public class EmployeeMapperTest {
@@ -19,18 +19,18 @@ public class EmployeeMapperTest {
 	
 	@Test
 	public void list() {
-		List<EmployeesDto> list = employeesMapper.findAll();
+		List<EmployeesDTO> list = employeesMapper.findAll();
 		System.out.println(list.get(0));
 	}
 	
 	@Test
-	 @DisplayName("")
+	 @DisplayName("사원번호로조회")
 	public void find() {
 		//given
-		Long id = 100L;
+		Integer id = 100;
 
 		//when
-		EmployeesDto map = employeesMapper.findById(id);
+		EmployeesDTO map = employeesMapper.findById(id).get();
 		
 		//then
 		assertEquals(map.getLastName().toString(), "King");
@@ -44,7 +44,7 @@ public class EmployeeMapperTest {
 		Long departmentId = null;
 		String firstName = null;
 		//when
-		List<EmployeesDto> list = employeesMapper.findBydeptAndName(departmentId, firstName);
+		List<EmployeesDTO> list = employeesMapper.findBydeptAndName(departmentId, firstName);
 		//then
 		System.out.println(list);
 	}

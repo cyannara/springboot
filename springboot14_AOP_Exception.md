@@ -22,14 +22,14 @@
 
 ### 주요 어노테이션
 
-|   어노테이션        |    설명                             |
-| :-------- | :------------------------------ |
-| @Aspect   | 해당 클래스를 Aspect로 사용     |
-| @PointCut | Advice를 적용할 메서드를 필터링 |
+| 어노테이션 | 설명                            |
+| :--------- | :------------------------------ |
+| @Aspect    | 해당 클래스를 Aspect로 사용     |
+| @PointCut  | Advice를 적용할 메서드를 필터링 |
 
 ### Aspect 실행 시점을 지정
 
-|   어노테이션        |    설명                             |
+| 어노테이션      | 설명                                                                |
 | :-------------- | :------------------------------------------------------------------ |
 | @Before         | 대상(서비스) 메서드가 실행되기 전에 Advice를 실행                   |
 | @AfterRetruning | 대상(서비스) 메서드가 정상적으로 실행되고 반환된 경우 Advice를 실행 |
@@ -88,10 +88,12 @@ public class BeforeAdvice {
 ```
 
 ## 트랜잭션
+
 - @Transactional
 - 서비스 계층에서 사용: 컨트롤러에 @Transactional을 선언해도 AOP 프록시로 인해 동작은 하지만, 트랜잭션은 비즈니스 로직 단위로 관리해야 하므로 서비스 계층에 선언하는 것이 원칙입니다.
 
 ### 컨트롤러에서 사용하면 안되는 이유
+
 - 컨트롤러에서는 json파싱, 요청검증, 인증처리, view 랜더링등 여러 작업을 진행하는데 트랜잭션을 걸게되면 DB Lock이 오래 유지됨
 - 서비스 재사용성 붕괴(서비는 트랜잭션 처리가 없음)
 - 예외처리 문제. 롤백 타이밍이 꼬일 수 있음. 서비스는 RuntimeException 발생 시 롤백을 하는데 컨트롤러에서는 @ExceptionHandler나 ControllerAdvice가 발생하면서 롤백타이밍이 꼬일 수 있음
@@ -162,14 +164,16 @@ public class AopTest {
 	}
 }
 ```
+
 ## (에러 핸들링](https://docs.spring.io/spring-boot/reference/web/servlet.html#web.servlet.spring-mvc.error-handling)
 
 ### error page
-- SpringBoot 이전에는 ErrorPageController를 직접 만들어야 했지만 SpringBoot는 동일한 기능을 가진 BasicErrorController 가지고 있다. 
-- SpringBoot 환경에서는 약속된 이름을 가진 오류페이지를 약속된 위치에 두면, SpringBoot가 알아서 에러 상황에 따라 적절한 오류페이지를 띄운다. 
-- 오류 정보를 오류페이지에 띄우고 싶다면 띄우고 싶은 오류정보를 설정파일에 설정하면 된다. 
 
-오류 정보 출력 여부 설정  
+- SpringBoot 이전에는 ErrorPageController를 직접 만들어야 했지만 SpringBoot는 동일한 기능을 가진 BasicErrorController 가지고 있다.
+- SpringBoot 환경에서는 약속된 이름을 가진 오류페이지를 약속된 위치에 두면, SpringBoot가 알아서 에러 상황에 따라 적절한 오류페이지를 띄운다.
+- 오류 정보를 오류페이지에 띄우고 싶다면 띄우고 싶은 오류정보를 설정파일에 설정하면 된다.
+
+오류 정보 출력 여부 설정
 
 ```properties
 # error
@@ -183,14 +187,16 @@ server.error.include-stacktrace=on_param
 server.error.include-binding-errors=on_param
 ```
 
-### 범용 error page 
-- /templates/error.html  (thymeleaf)  
+### 범용 error page
 
-error 페이지 적용순서  
+- /templates/error.html (thymeleaf)
+
+error 페이지 적용순서
+
 ```
 templates/
    ├─ error/
-   │    └─ 500.html      1 
+   │    └─ 500.html      1
    ├─ error.html         2
 static/
    ├─ error/
@@ -207,33 +213,40 @@ static/
 3️⃣ Whitelabel Error Page
 ```
 
-Whitelabel Error Page  - view 페이지 요청
-![alt text](image-4.png)
+Whitelabel Error Page - view 페이지 요청
+<img src="./images/exception01.png" >
 
-Whitelabel Error Page  - ajax 요청  
-![alt text](image-6.png)
+Whitelabel Error Page - ajax 요청  
+<img src="./images/exception02.png" >
 
-범용 error page  
+범용 error page
+
 ```html
 <head>
-<style>
-	div { border : 1px red solid}
-	.error { color : red}
-</style>
+  <style>
+    div {
+      border: 1px red solid;
+    }
+    .error {
+      color: red;
+    }
+  </style>
 </head>
 <body>
-<h1>Error Page</h1>
-<a href="#"  onclick="history.back()">이전페이지로</a>  
-<div>
-	<p>상태코드: <span th:text="${status}" class="error"></span></p>
-	<p>에러명: <span th:text="${error}" class="error"></span></p>
-	<p>메시지: <span th:text="${message}"></span></p>
-	<p>요청경로: <span th:text="${path}"></span></p>
-	<p>trace: <span th:text="${trace}"></span></p>
-</div>
+  <h1>Error Page</h1>
+  <a href="#" onclick="history.back()">이전페이지로</a>
+  <div>
+    <p>상태코드: <span th:text="${status}" class="error"></span></p>
+    <p>에러명: <span th:text="${error}" class="error"></span></p>
+    <p>메시지: <span th:text="${message}"></span></p>
+    <p>요청경로: <span th:text="${path}"></span></p>
+    <p>trace: <span th:text="${trace}"></span></p>
+  </div>
 </body>
 ```
+
 에러 뷰에서 다음 오류 속성을 표기할 수 있도록 제공 한다.  
+
 - status : HTTP 상태 코드  
 - error : 오류 발생 이유  
 - message : 예외 메시지  
@@ -250,29 +263,30 @@ http://localhost:8080/boarderror?trace=&errors=
 
 ## 예외 처리
 
- - Global Exception Handler: Controller에 대한 전역적으로 발생할 수 있는 예외를 잡아서 처리할 수 있습니다. 이를 통해 예외 처리 코드를 중앙에서 관리하고 예외에 대한 일관된 응답을 생성할 수 있습니다.
- - AOP 개념을 이용하나 구현된 방식이 프록시를 활용하지는 않음
+- Global Exception Handler: Controller에 대한 전역적으로 발생할 수 있는 예외를 잡아서 처리할 수 있습니다. 이를 통해 예외 처리 코드를 중앙에서 관리하고 예외에 대한 일관된 응답을 생성할 수 있습니다.
+- AOP 개념을 이용하나 구현된 방식이 프록시를 활용하지는 않음
 
 `장점`
+
 - 코드 중복감소: Controller마다 try-catch문을 넣을 필요가 없음
 - 유지보수성 향상: 예외 처리 로직이 한 곳에 집중되어 수정이 쉬움
 - 일관된응답: 모든 API 에러에 대해 동일한 JSON 구조를 보장
 - 가독성: 핵심 비즈니스 로직과 예외 처리 로직의 분리
 
- `작동원리`    
-![alt text](/images/aop_exceptionHandler.png)
+`작동원리`  
+<img src="./images/exception03.png" width="700">
 
- Controller 에서 에러가 발생하여 예외를 던지면 ExceptionHandlerExceptionResolver가 @RestControllerAdvice를 탐지하여 해당 예외를 처리하는 @ExceptionHandler 메소드를 찾음. 
-
+Controller 에서 에러가 발생하여 예외를 던지면 ExceptionHandlerExceptionResolver가 @RestControllerAdvice를 탐지하여 해당 예외를 처리하는 @ExceptionHandler 메소드를 찾음.
 
 `@ControllerAdvice 실행순서`  
-![alt text](image-3.png)
+<img src="./images/exception04.png" width="700">
 
-`HandlerExceptionResolver의 구현체(어노테이션)`  
- - @ExceptionHandler
- - @ControllerAdvice
- - @RestControllerAdvice
-  
+`HandlerExceptionResolver의 구현체(어노테이션)`
+
+- @ExceptionHandler
+- @ControllerAdvice
+- @RestControllerAdvice
+
 ### @ExceptionHandler
 
 예외를 처리할 수 있는 메서드를 지정  
@@ -348,6 +362,7 @@ public class ApiExceptionHandler {
 ## 맞춤형 응답: @ExceptionHandler를 사용하여 발생한 예외에 대해 사용자 정의 응답을 생성
 
 ### Error code 관리
+
 ```java
 @Getter
 public class BusinessException extends RuntimeException {
@@ -360,6 +375,7 @@ public class BusinessException extends RuntimeException {
     }
 }
 ```
+
 ```java
 @Getter
 public enum ErrorCode {
@@ -395,7 +411,9 @@ public enum ErrorCode {
     }
 }
 ```
+
 ### ExceptionHandler
+
 ```java
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;

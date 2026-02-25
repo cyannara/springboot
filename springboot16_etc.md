@@ -1,26 +1,22 @@
-#  스프링부트가 제공하는 API관련 유틸리티 ( batch job,  Actuator)
+# 스프링부트가 제공하는 API관련 유틸리티 ( batch job, Actuator)
 
 ## Spring Boot Actuator
 
 애플리케이션을 운영 환경(운영 서버, 배포 후 상태 모니터링 등)에서 모니터링하고 관리하는 도구로서 운영 중인 애플리케이션을 관찰하고, 문제를 조기에 발견하며, 안정적인 서비스 운영을 도와준다
- 
+
 내장 톰캣의 상태를 모니터링 할 수 있는 기능.  
 Actuator는 스프링 부트가 가지고 있는 기본적인 기능에다가 모니터링과 로깅 정보와 같은 것을 제어할 수 있도록 제공하는 서포트 라이브러리이다.
 사용하고 있는 localhost 포트 번호에 /actuator 경로로 접속하면 위와 같은 정보를 확인할 수 있다. 해당 프로젝트의 상태를 체크 할수있는 URL의 정보를 담고 있다.
 
-
 1. 애플리케이션 상태 모니터링
-
    - health 엔드포인트를 통해 DB, 캐시, 외부 API, 디스크 상태 등 서비스의 전반적인 헬스 체크 가능
    - 외부 모니터링 시스템(예: Prometheus, Grafana, AWS CloudWatch)과 연동 가능
 
 2. 운영 지표(메트릭) 제공
-
    - JVM 메모리 사용량, GC(Garbage Collection) 횟수, 스레드 상태, HTTP 요청 수, 응답 시간 등 성능 지표 수집
    - 마이크로서비스 환경에서 서비스의 상태를 숫자로 관찰하고 알람 설정 가능
 
 3. 애플리케이션 관리
-
    - env 엔드포인트로 환경 변수 확인
    - loggers 엔드포인트로 런타임에 로깅 레벨 변경
    - beans 엔드포인트로 현재 로드된 빈(bean) 목록 확인
@@ -31,7 +27,6 @@ Actuator는 스프링 부트가 가지고 있는 기본적인 기능에다가 �
    - loggers
 
 4. DevOps / 운영 자동화
-
    - CI/CD 파이프라인에서 애플리케이션 상태 점검 후 배포 자동화에 활용
    - 클라우드 오케스트레이션(Kubernetes readiness/liveness probe)에서 사용
 
@@ -82,7 +77,6 @@ curl -i http://localhost:8080/actuator/health
 curl -iv http://localhost:8080/actuator/health
 ```
 
-
 ## Spring Batch
 
 배치 작업이란게 데이터베이스나 api 또는 파일을 읽는 작업을 진행하고, 필요한 내용을 처리한 이후에 다시 파일이나 데이터베이스 같은 곳에 write 하는 작업을 진행.
@@ -123,88 +117,8 @@ JobLauncherCommandLineRunner가 활성화 되어 있어서 따로 스케쥴을 �
 
 ### actuator job 확인
 
-
-
 ```
 http://localhost:85/actuator/metrics/spring.batch.job
 ```
 
 Boot 3.x부터는 Actuator의 Batch 전용 엔드포인트가 사라지고, 대신 Micrometer Metrics 방식으로 모니터링하도록 바뀌었습니다. actuator/batch가 deprecated 됨
-
-
-
-## PageHelper
-### 의존성 추가
-scope를 compile로 지정해야 interceptor가 등록됨.  
-maven  
-```xml
-<!-- Source: https://mvnrepository.com/artifact/com.github.pagehelper/pagehelper-spring-boot-starter -->
-<dependency>
-    <groupId>com.github.pagehelper</groupId>
-    <artifactId>pagehelper-spring-boot-starter</artifactId>
-    <version>2.1.1</version>
-    <scope>compile</scope>
-</dependency>
-```
-gradle
-```
-// Source: https://mvnrepository.com/artifact/com.github.pagehelper/pagehelper-spring-boot-starter
-implementation 'com.github.pagehelper:pagehelper-spring-boot-starter:2.1.1'
-```
-
-### mapper xml, 인터페이스
-목록조회 id 뒤에 '_COUNT'를 붙여서 건수조회 쿼리 추가  
-```xml
-   <!-- 전체조회 -->
-	<select id="selectAll" resultType="EmpVO">
-	SELECT *
-      FROM employees
-      ORDER BY employee_id
-	</select>
-
-	<!-- 전체건수 -->
-	<select id="selectAll_COUNT" resultType="long">
-	SELECT count(*) 
-	  FROM employees
-	</select>
-```
-```java
-public interface EmpMapper {
-	// 전체조회
-	public List<EmpVO> selectAll();
-   // 전체건수
-	public Long selectAll_COUNT();
-}
-```
-
-
-### service
-서비스에서 매퍼 호출할 때 PageHelper를 적용해야 함.  
-```java
-	public PageInfo<EmpVO> findAll(Integer pageNum) {
-		// 사원전체조회		
-		PageInfo<EmpVO> page = PageHelper.startPage(pageNum, 3)
-				                         .doSelectPageInfo(() -> empMapper.selectAll());
-
-//	    PageHelper.startPage(pageNum, 5);            // startPage 지정. 
-//	    List<EmpVO> list = empMapper.selectAll();    // 다음에 실행되는 매퍼 쿼리에만 적용됨. (쿼리를 paging되게 수정하여 실행)
-//	    PageInfo<EmpVO> page = new PageInfo<>(list); // page 정보를 담음
-		
-		log.info("TotalCount : {}, CurrentPage : {}, PageSize : {}, TotalPage : {}", page.getTotal()
-                                                           , page.getPageNum()
-                                                           , page.getPageSize()
-                                                           , page.getPages());
-		
-		return page;
-	}
-```
-![alt text](image-5.png)
-```sql
-SELECT * 
-  FROM ( SELECT TMP_PAGE.*, ROWNUM PAGEHELPER_ROW_ID 
-           FROM ( SELECT * 
-                    FROM employees ORDER BY employee_id 
-                ) TMP_PAGE
-       ) 
- WHERE PAGEHELPER_ROW_ID <= ? AND PAGEHELPER_ROW_ID > ?
-```

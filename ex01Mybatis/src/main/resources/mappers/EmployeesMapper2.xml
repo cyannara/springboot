@@ -3,14 +3,14 @@
 <mapper namespace="Employees">
 	<!-- 전체조회 -->
 	<select id="findAll" 
-	        resultType="EmployeesDto">
+	        resultType="EmployeesDTO">
 		SELECT * 
 		  FROM employees 
 	</select>
 	
 	<!-- 단건조회 -->
 	<select id="findById" 
-	        resultType="EmployeesDto" 
+	        resultType="EmployeesDTO" 
 	        parameterType="long">
 		SELECT EMPLOYEE_ID,
 			   FIRST_NAME,
@@ -21,7 +21,7 @@
 	
 	<!-- 부서와 이름으로 검색 -->
 	<select id="findBydeptAndName"
-	        resultType="EmployeesDto">
+	        resultType="EmployeesDTO">
 		SELECT *
 		  FROM employees
 		 <where>
