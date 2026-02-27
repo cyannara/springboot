@@ -38,6 +38,13 @@
 ```shell
 curl -H "Content-Type:application/json" -X POST -d "{\"username\":\"jong\"}" http://localhost:8080/ex1
 ```
+## cors
+```java
+@CrossOrigin(origins = "<http://localhost:3001>",
+        methods = {RequestMethod.GET, RequestMethod.POST},
+        maxAge = 3600,
+        allowedHeaders = "*")
+```
 
 ## springdoc-openapi(swagger3)
 Swagger : REST API Documentation을 위해 사용  
