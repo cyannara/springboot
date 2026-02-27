@@ -34,6 +34,11 @@
 - HATEOAS : 응답에 데이터뿐만 아니라 해당 데이터와 관련된 요청에 필요한 URI를 응답에 포함하여 반환
 - Spring REST Docs
 
+## curl
+```shell
+curl -H "Content-Type:application/json" -X POST -d "{\"username\":\"jong\"}" http://localhost:8080/ex1
+```
+
 ## springdoc-openapi(swagger3)
 Swagger : REST API Documentation을 위해 사용  
 
