@@ -184,6 +184,10 @@ SampleController에 핸들러 추가
 
 ## 모델의 일생
 
+HTTP 요청으로부터 컨트롤러 메소드까지  
+<img src="images/controller05.png" width="1000">
+
+컨트롤러 메소드로부터 뷰까지의 과정
 <img src="images/controller04.png" width="1000">
 
 @SessionAttribute
@@ -394,7 +398,7 @@ src/main/java/com/yedam/`UserController` 클래스 생성
 
 	@PostMapping("/form")
 	public String checkPersonInfo(@Valid PersonForm personForm,
-			                      BindingResult bindingResult) {
+			                           BindingResult bindingResult) {
 
 		if (bindingResult.hasErrors()) {
 			return "form";
@@ -409,7 +413,11 @@ src/main/java/com/yedam/`UserController` 클래스 생성
 error 메시지를 출력할 곳에 `th:errors` 지정
 
 ```html
-<div class="error" th:errors="${userVO.name}"></div>
+<div
+  class="error"
+  th:if="${#fields.hasErrors('name')}"
+  th:errors="${userVO.name}"
+></div>
 ```
 
 ```html
@@ -474,6 +482,94 @@ error 메시지를 출력할 곳에 `th:errors` 지정
 </form>
 ```
 
+## 다국어 처리
+
+#### properties에 message 파일명 지정
+
+```env
+spring.messages.basename=message
+spring.messages.encoding=UTF-8
+```
+
+#### LocaleResolver 빈 등록
+
+```java
+import java.util.Locale;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
+
+@Configuration
+public class LocaleConfig {
+	@Bean
+    public LocaleResolver localeResolver() {
+		SessionLocaleResolver  localeResolver = new SessionLocaleResolver();
+        localeResolver.setDefaultLocale(Locale.KOREAN); // 기본 언어
+        return localeResolver;
+    }
+
+    @Bean
+    public LocaleChangeInterceptor localeChangeInterceptor() {
+        LocaleChangeInterceptor interceptor = new LocaleChangeInterceptor();
+        interceptor.setParamName("lang"); // ?lang=ko
+        return interceptor;
+    }
+}
+```
+
+#### interceptor 등록
+
+```java
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+
+import lombok.RequiredArgsConstructor;
+
+@Configuration
+@RequiredArgsConstructor
+public class WebConfig implements WebMvcConfigurer {
+
+	 private final LocaleChangeInterceptor localeChangeInterceptor;
 
 
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(localeChangeInterceptor);
+    }
+}
 
+```
+
+#### message 파일 작성
+
+message_kr.properties
+
+```
+email.valid=이메일 형식이 맞지 않습니다.
+string.valid=문자는 {min} 부터 {max} 글자 이내에 작성해야합니다.
+```
+
+message_en.properties
+
+#### 메시지 사용
+
+```java
+    @Size(min = 10, max = 200, message = "{string.valid}")
+    private String aboutMe;
+
+    @NotBlank
+    @Email(message = "{email.valid}")
+    private String email;
+```
+
+#### locale 변경
+
+```
+?lang=en
+?lang=ko
+```

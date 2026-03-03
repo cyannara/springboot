@@ -22,6 +22,11 @@
                     <td><input type="text" th:field="*{name}" /></td>
                     <td class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</td>
                 </tr>
+				<tr>
+				    <td>About Me:</td>
+				    <td><input type="text" th:field="*{aboutMe}" /></td>
+				    <td class="text-danger" th:if="${#fields.hasErrors('aboutMe')}" th:errors="*{aboutMe}">aboutMe Error</td>
+				</tr>  				
                 <tr>
                     <td>Email:</td>
                     <td><input type="text" th:field="*{email}" /></td>

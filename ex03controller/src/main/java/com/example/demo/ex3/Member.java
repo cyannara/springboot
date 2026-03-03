@@ -23,8 +23,7 @@ public class Member {
     @AssertTrue(message = "Working must be true")
     private boolean working;
 
-    @Size(min = 10, max = 200, message 
-      = "About Me must be between 10 and 200 characters")
+    @Size(min = 10, max = 200, message = "{string.valid}")
     private String aboutMe;
 
     @Min(value = 18, message = "Age should not be less than 18")
@@ -32,7 +31,7 @@ public class Member {
     private int age;
 
     @NotBlank
-    @Email(message = "Email should be valid")
+    @Email(message = "{email.valid}")
     private String email;
 
     @Pattern(regexp = "0\\d{1,2}-\\d{1,4}-\\d{4}" , message = "xxx-xxxx-xxxx 형식")
