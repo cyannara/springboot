@@ -1,5 +1,64 @@
 # EgovFrame
 
+### 이클립스 dataSource 지정
+
+DB connection 정보 등록
+
+<img src="./images/egov/eclipse_datasource08.png">
+
+데이터베이스 선택하고 이름 입력
+
+<img src="./images/egov/eclipse_datasource06.png">
+
+JDBC 드라이브 추가
+
+<img src="./images/egov/eclipse_datasource07.png">
+
+드라이버 선택
+
+<img src="./images/egov/eclipse_datasource02.png">
+
+드라이버(jar) 지정
+
+- 21c버전  
+  C:\app\oracle\product\21c\dbhomeXE\jdbc\lib\ojdbc8.jar  
+  C:\Users\user\.m2\repository\com\oracle\database\jdbc\ojdbc11\21.5.0.0
+- 11g버전  
+   c:\oraclexe\app\oracle\product\11.2.0\server\jdbc\lib\ojdbc6.jar
+
+<img src="./images/egov/eclipse_datasource03.png">
+
+접속정보 등록  
+<img src="./images/egov/eclipse_datasource01.png">
+
+DB 접속하고 테스트
+
+<img src="./images/egov/eclipse_datasource04.png"  style="width:600px">
+
+### server(Tomcat) 설치
+
+스프링 프로젝트는 별도의 서버가 필요함. spring boot 프로젝트는 서버가 내장되어 있음.
+
+[tomcat 9.0 download](https://tomcat.apache.org/download-90.cgi)
+
+<img src="./images/egov/tomcat_01.png" width="900">
+
+c:\eGovFrameDev-4.3.1-64bit\ 폴더에 압축해제 (하위폴더생성 선택 안함)
+
+<img src="./images/egov/tomcat_02.png" width="240">
+
+이클립스에 서버 설정
+
+<img src="./images/egov/tomcat_03.png" width="400">
+
+서버 선택
+
+<img src="./images/egov/tomcat_05.png" width="400">
+
+tomcat 폴더 지정
+
+<img src="./images/egov/tomcat_04.png" width="400">
+
 ### eGovFrame Template Porject
 
 1. Common All-in-one  
@@ -8,81 +67,125 @@
 2. project name, Group id 입력  
    <img src="./images/egov/all_02.png"  width="400">
 
-3. 데이터베이스 사용자 계정 생성
+3. properoies 파일에서 dbtyp을 오라클로 변경  
+파일위치 : src\main\resources\egovframework\egovProps\globals.properties  
+데이터베이스 기본계정은 com/com01
+
+   <img src="./images/egov/all_06.png" width="650">
+
+4. 데이터베이스 사용자 계정 생성
 
    ```sql
    ALTER SESSION SET "_ORACLE_SCRIPT"=true;
    create user com identified by com01;
-   grant resource, connect to com;
+   grant resource, connect, create view to com;
    ALTER USER com DEFAULT TABLESPACE USERS QUOTA UNLIMITED ON USERS;
    ```
 
-   <img src="./images/egov/all_04.png"  width="500">
+5. DDL, DML 스크립트 실행
 
-4. DDL, DML 스크립트 실행  
-   <img src="./images/egov/all_03.png"  width="300">
-5. 패키지 표현방식 -> 계층형  
-   <img src="./images/egov/all_05.png" width="550">
+script/ddl/oracle/com_DDL_oracle.sql 파일 실행  
+script/dml/oracle/com_DML_oracle.sql 파일 실행
 
-6. properoies 파일에서 dbtyp을 오라클로 변경  
-   <img src="./images/egov/all_06.png" width="550">
-7. 컨트롤러, 서비스, DAO, 매퍼XML 생성  
-   <img src="./images/egov/all_08.png" width="300">
+   <img src="./images/egov/all_03.png"  width="360">
 
-8. 패키지 스캔 경로 추가  
-   <img src="./images/egov/all_09.png" width="300">
+6. 브라우저 테스트
 
-9. 서비스, DAO 패키지 경로 추가(context-common.xml)  
-   <img src="./images/egov/all_10.png" width="600">
+로그인 계정 : USER/rhdxhd12 (공통12)  
+메인페이지 변경 : Globals.MainPage =/EgovContent.do
 
-10. 매퍼 XML 경로 추가(context-mapper.xml)  
-    <img src="./images/egov/all_11.png"  width="600">
+6. Exceptionresolver 빈 주석 처리(에러메시지 보이도록 함)
 
-11. 컨트롤러 패키지 경로 추가 (egov-com-servlet.xml)
-    <img src="./images/egov/all_12.png" width="700">
+<img src="./images/egov/all_13.png" width="800">
 
-12. Exceptionresolver 빈 주석 처리(에러메시지 보이도록 함)
-    <img src="./images/egov/all_13.png" width="700">
+8. error 페이지  
+   <img src="./images/egov/all_14.png" width="650">
 
-13. error 페이지  
-    <img src="./images/egov/all_14.png" width="550">
+9. 로그 레벨 제어  
+   <img src="./images/egov/all_15.png" width="800">
 
-14. 로그 레벨 제어  
-    <img src="./images/egov/all_15.png" width="500">
-15. 권한 제어
+10. 권한 제어
 
 - 권한그룹관리 : 사용자에게 권한 부여
 - 권한 계층  
-  <img src="./images/egov/all_21.png" width="500">
+  <img src="./images/egov/all_21.png" width="800">
 
   ```sql
   SELECT a.CHLDRN_ROLE as child, a.PARNTS_ROLE parent
     FROM COMTNROLES_HIERARCHY a LEFT JOIN COMTNROLES_HIERARCHY b on (a.CHLDRN_ROLE = b.PARNTS_ROLE);
-
-  SELECT a.ROLE_PTTRN url, b.AUTHOR_CODE authority
-  FROM COMTNROLEINFO a, COMTNAUTHORROLERELATE b
-  WHERE a.ROLE_CODE = b.ROLE_CODE
-  AND a.ROLE_TY = 'url' ORDER BY a.ROLE_SORT;
   ```
 
-  <img src="./images/egov/all_22.png" width="330">  
-  <img src="./images/egov/all_23.png" width="400">
+  ```sql
+    SELECT a.ROLE_PTTRN url, b.AUTHOR_CODE authority
+    FROM COMTNROLEINFO a, COMTNAUTHORROLERELATE b
+    WHERE a.ROLE_CODE = b.ROLE_CODE
+    AND a.ROLE_TY = 'url' ORDER BY a.ROLE_SORT;
+  ```
+
+  <img src="./images/egov/all_22.png" width="400">
+
+  <img src="./images/egov/all_23.png" width="500">
 
 - 롤관리
   고객관리 페이지 접근권한  
-  <img src="./images/egov/all_17.png" width="500">
+  <img src="./images/egov/all_17.png" width="700">
 
   메인화면 접근권한  
-  <img src="./images/egov/all_19.png" width="500">
+  <img src="./images/egov/all_19.png" width="700">
 
   롤 정규표현식  
   <img src="./images/egov/all_16.png" width="500">
 
 - 권한관리 : 권한에 롤을 부여  
   ROLE_USER에게 모든 접근제한 미등록, 회원관리, 고객관리, 메인페이지 권한 등록  
-  <img src="./images/egov/all_18.png" width="500">
+  <img src="./images/egov/all_18.png" width="700">
 
-  <img src="./images/egov/all_20.png" width="500">
+  <img src="./images/egov/all_20.png" width="700">
+
+### 새로운 기능 추가
+
+1. 테이블 생성
+
+   ```sql
+   create table cusomer (
+     no number primary key,
+     name varchar2(20),
+     addr varchar2(100),
+     phone varchar2(20),
+     grade number(1)
+   )
+   ```
+
+2. 패키지 생성
+
+   ```
+   com.yedam.customer.service         <-  Service, VO
+   com.yedam.customer.service.impl    <- DAO or Mapper, serviceImpl
+   com.yedam.customer.web             <- Controller
+   ```
+
+3. 패키지 표현방식 -> 계층형
+
+   <img src="./images/egov/all_05.png" width="650">
+
+4. CRUD Program  
+   mapper(xml) : /src/main/resources/egovframework/mapper  
+   view : /src/main/webapp/WEB-INF/jsp
+
+5. 컨트롤러, 서비스, DAO, 매퍼XML 생성  
+   <img src="./images/egov/all_08.png" width="300">
+
+6. 패키지 스캔 경로 추가  
+   <img src="./images/egov/all_09.png" width="300">
+
+7. 서비스, DAO 패키지 경로 추가(context-common.xml)  
+   <img src="./images/egov/all_10.png" width="600">
+
+8. 매퍼 XML 경로 추가(context-mapper.xml)  
+   <img src="./images/egov/all_11.png"  width="600">
+
+9. 컨트롤러 패키지 경로 추가 (egov-com-servlet.xml)
+   <img src="./images/egov/all_12.png" width="800">
 
 ### 공통컴포넌트 사용
 
@@ -95,19 +198,7 @@ grant resource, connect , create view to com;
 ALTER USER com DEFAULT TABLESPACE USERS QUOTA UNLIMITED ON USERS;
 ```
 
-2. 이클립스 dataSource 지정
-
-- 접속정보 등록  
-  <img src="./images/egov/eclipse_datasource01.png">
-
-- 드라이버 선택  
-  <img src="./images/egov/eclipse_datasource02.png">
-
-- 드라이버(jar) 지정  
-  <img src="./images/egov/eclipse_datasource03.png">
-
-- DB 연결하여 테스트  
-  <img src="./images/egov/eclipse_datasource04.png"  style="width:600px">
+2. 컴포넌트 선택
 
 - 컴포넌트 추가 : file-> new -> Add EgovFrame Common Compononent  
   <img src="./images/egov/egov_common01.png">
@@ -132,40 +223,6 @@ egovframework.rte.ptl : Presenation layer (화면처리)
 
 용어명 : [행정표준용어](www.adams.go.kr)를 기준으로 명명  
 Java Coding Convention : [오라클 코딩 규칙](https://www.oracle.com/java/technologies/javase/codeconventions-contents.html)
-
-### 컴포넌트 추가
-
-파일위치 : src\main\resources\egovframework\egovProps\globals.properties  
-데이터베이스 기본계정은 com/com01
-
-Globals.MainPage =/EgovContent.do
-
-### 브라우저 테스트
-
-로그인 계정 : USER/rhdxhd12
-
-### 새로운 기능 추가
-
-1. 테이블 생성
-
-   ```sql
-   create table todo (
-     no number primary key,
-     title varchar2(100),
-     complete char(1) default 'n'
-   )
-   ```
-
-2. 패키지 생성
-<pre>
-egovframe.tdo.service      : service, vo,
-            .service.impl : dao, serviceImpl
-            .web          : controller
-</pre>
-
-3. CRUD Program  
-   mapper(xml) : /src/main/resources/egovframework/mapper  
-   view : /egovweb/src/main/webapp/WEB-INF/jsp
 
 ## MyBatis 적용
 
