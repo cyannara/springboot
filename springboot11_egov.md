@@ -67,6 +67,16 @@ tomcat 폴더 지정
 2. project name, Group id 입력  
    <img src="./images/egov/all_02.png"  width="400">
 
+3. pom.xml
+```
+	<dependency>
+	    <groupId>com.oracle.database.jdbc</groupId>
+	    <artifactId>ojdbc8</artifactId>
+	    <version>23.2.0.0</version>
+	    <scope>compile</scope>
+	</dependency>
+```
+
 3. properoies 파일에서 dbtyp을 오라클로 변경  
 파일위치 : src\main\resources\egovframework\egovProps\globals.properties  
 데이터베이스 기본계정은 com/com01
