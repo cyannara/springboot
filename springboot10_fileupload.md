@@ -353,10 +353,9 @@ import java.io.File;
 import java.util.UUID;
 
 public final class FileUtils {
-	public static String uuidFilename(File file) {
+	public static String uuidFilename(String originalFilename) {
 		// 확장자 추출
 		String extension = "";
-		String originalFilename = file.getName();
 		if (originalFilename != null && originalFilename.contains(".")) {
 			extension = originalFilename.substring(originalFilename.lastIndexOf("."));
 		}
