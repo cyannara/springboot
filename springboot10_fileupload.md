@@ -349,18 +349,22 @@ public class WebMvcConfig implements WebMvcConfigurer {
 공통으로 사용될 클래스 작성
 
 ```java
-public final class FileUtils {
-      public static String uuidFilename(String originalFilename) {
-      // 확장자 추출
-      String originalFilename = file.getOriginalFilename()
-      if (originalFilename != null && originalFilename.contains(".")) {
-        extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-      }
+import java.io.File;
+import java.util.UUID;
 
-      // UUID로 새로운 파일명 생성
-      String savedFilename = UUID.randomUUID().toString() + extension;
-        return savedFilename;
-      }
+public final class FileUtils {
+	public static String uuidFilename(File file) {
+		// 확장자 추출
+		String extension = "";
+		String originalFilename = file.getName();
+		if (originalFilename != null && originalFilename.contains(".")) {
+			extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+		}
+
+		// UUID로 새로운 파일명 생성
+		String savedFilename = UUID.randomUUID().toString() + extension;
+		return savedFilename;
+	}
 }
 ```
 
