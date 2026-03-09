@@ -158,7 +158,77 @@ response 이용한 방식
 		}
 	}
 ```
+viewResolver 이용
+```java
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.view.AbstractView;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+@Component
+public class FileDownloadView extends AbstractView {
+
+    public FileDownloadView() {
+        setContentType("application/download");
+    }
+
+    @Override
+    protected void renderMergedOutputModel(
+            Map<String, Object> model,
+            HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        File file = (File) model.get("file");
+
+        response.setContentType(getContentType());
+        response.setContentLength((int) file.length());
+
+        String encodedFileName = getEncodedFileName(request, file.getName());
+        
+        response.setHeader(
+            "Content-Disposition",
+            "attachment; filename=\"" + encodedFileName + "\""
+        );
+
+        FileInputStream fis = new FileInputStream(file);
+        fis.transferTo(response.getOutputStream());
+        fis.close();
+    }
+    
+    private String getEncodedFileName(HttpServletRequest request, String fileName) throws Exception {
+
+        String agent = request.getHeader("User-Agent");
+
+        if (agent.contains("MSIE") || agent.contains("Trident")) {
+            return URLEncoder.encode(fileName, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+        } else if (agent.contains("Chrome")) {
+            return new String(fileName.getBytes(StandardCharsets.UTF_8), "ISO-8859-1");
+        } else {
+            return URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+        }
+    }
+}
+```
+컨트롤러에서 viewResolver 호출
+```java
+	@Autowired  FileDownloadView fileDownloadView;
+	
+	@GetMapping("/download")
+	public ModelAndView download() {
+	    File file = new File("d:/upload/요구분석.xls");
+	    ModelAndView mv = new ModelAndView(fileDownloadView);
+	    mv.addObject("file", file);
+	    return mv;
+	}
+```
 ### 업로드 경로 설정
 
 application.properties
