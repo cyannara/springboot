@@ -468,7 +468,7 @@ Spring Security 의 CSRF protection은 Http 세션과 동일한 생명주기을 
 #### 폼데이터
 
 ```html
-<input type="hidden" name="${_csrf.parameterName}" vlue="${_crf.token}" />
+<input type="hidden" name="${_csrf.parameterName}" vlue="${_csrf.token}" />
 ```
 
 #### ajax 요청에서 token 전달
