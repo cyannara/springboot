@@ -379,7 +379,7 @@ public class SecurityConfig {
 ```java
 public class CustomLoginSuccessHandler implements AuthentocationSuccessHandler {
   @Override
-  pblic void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse
+  public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse
          response, Authentocation authentication) throws IOException, ServletException {
 
        //로그인 후 추가작업
