@@ -51,6 +51,10 @@ public class FileUploadConfig {
 	</form>
 ```
 
+<img src="./images/upload01.png" width="600">
+
+<img src="./images/upload02.png" width="600">
+
 ### 컨트롤러 업로드 처리
 
 ```java
@@ -158,7 +162,9 @@ response 이용한 방식
 		}
 	}
 ```
+
 viewResolver 이용
+
 ```java
 
 import java.io.File;
@@ -192,7 +198,7 @@ public class FileDownloadView extends AbstractView {
         response.setContentLength((int) file.length());
 
         String encodedFileName = getEncodedFileName(request, file.getName());
-        
+
         response.setHeader(
             "Content-Disposition",
             "attachment; filename=\"" + encodedFileName + "\""
@@ -202,7 +208,7 @@ public class FileDownloadView extends AbstractView {
         fis.transferTo(response.getOutputStream());
         fis.close();
     }
-    
+
     private String getEncodedFileName(HttpServletRequest request, String fileName) throws Exception {
 
         String agent = request.getHeader("User-Agent");
@@ -217,10 +223,12 @@ public class FileDownloadView extends AbstractView {
     }
 }
 ```
+
 컨트롤러에서 viewResolver 호출
+
 ```java
 	@Autowired  FileDownloadView fileDownloadView;
-	
+
 	@GetMapping("/download")
 	public ModelAndView download() {
 	    File file = new File("d:/upload/요구분석.xls");
@@ -229,6 +237,7 @@ public class FileDownloadView extends AbstractView {
 	    return mv;
 	}
 ```
+
 ### 업로드 경로 설정
 
 application.properties
