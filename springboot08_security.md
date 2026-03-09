@@ -489,7 +489,15 @@ Spring Security 의 CSRF protection은 Http 세션과 동일한 생명주기을 
   </script>
 </head>
 ```
-
+fetch 함수 
+```html
+<head>
+<meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
+<script>
+fetch('/url', { method: 'POST', headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content } })
+</script>
+```
 #### Rest API (Ajax 인증검사)
 
 AuthenticationEntryPoint <-- AuthenticationException
