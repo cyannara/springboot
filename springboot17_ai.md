@@ -1,4 +1,4 @@
-## LLM
+## Spirng AI
 
 ### LLM 종류
 
