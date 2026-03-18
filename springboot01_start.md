@@ -21,6 +21,30 @@
 
 ### Spring Boot를 이용한 첫 번째 애플리케이션 개발하기
 
+```
+dependency
+ - mybatis, oracle
+
+application.properties
+ - dataSouce,
+ - mybatis,
+ - log
+
+@MapperScan
+
+DTO
+ - UserDTO
+ - RoleDTO
+
+mapper.xml
+ - getUser : user 단건조회,
+  - getRole : 권한 조회
+
+mapper 인터페이스 (@Mapper)
+
+UserMapperTest - 권한조회 테스트
+```
+
 ### 개발, 테스트, 운영 환경에 맞게 다중 프로파일 설정
 
 - `.gitignore`에 **`*.properties`** 추가
@@ -94,6 +118,7 @@ data:
 
 ```html
 <span th:text="${@environment.getProperty('spring.profiles.active')}"></span>
+<span th:text="#{spring.profiles.active}"></span>
 ```
 
 - @ConfigurationProperties로 프로퍼티 설정  
@@ -149,7 +174,7 @@ server:
 
 이렇게 설정하면 dev 프로파일이 활성화되었을 때 82 포트를 사용하고, prod가 활성화되면 83 포트를 사용
 
-#### 6. Spring Boot에서 설정 파일이 로드되는 우선순위
+#### 5. Spring Boot에서 설정 파일이 로드되는 우선순위
 
 1. application-{profile}.properties (환경별 프로퍼티)
 2. application.properties (기본 프로퍼티)
