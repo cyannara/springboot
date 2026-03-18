@@ -261,11 +261,12 @@ public class BoardControllerTest {
     }
 ```
 
-페이지 번호 출력
+페이지 번호 출력  
+fragments/paging.html
 
 ```HTML
   <!-- 페이징 시작 -->
-  <nav>
+  <nav div th:fragment="paging(pageVO)">
     <ul class="pagination">
       <li class="page-item"
         th:classappend="${paging.startPage} == 1 ? disabled"><a
@@ -287,6 +288,10 @@ public class BoardControllerTest {
     </ul>
   </nav>
   <!-- 페이징 끝 -->
+```
+
+```html
+<div th:insert="~{fragments/paging :: paging(${pageVO})}"></div>
 ```
 
 검색기능
