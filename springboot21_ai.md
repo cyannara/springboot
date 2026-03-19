@@ -487,9 +487,57 @@ spring.ai.ollama.init.timeout=60s
 spring.ai.ollama.init.max-retries=1
 ```
 
+### 임베딩이란
+
+임베딩이란 텍스트나 이미지와 같은 데이터를 부동소수점 숫자로 이루어진 `벡터로 변환`하는 과정을 말하고 이 작업을 수행하는 모델을 임베딩 모델이라고 합니다.
+데이터를 벡터로 변환하는 이유는, 벡터가 `방향과 크기를 갖는 다차원 공간`의 한 점으로 표현될 수 있기 때문으로 이렇게 벡터화 된 데이터는 수학적으로 유사도를 계산하기 쉬워집니다. 두 벡터의 방향과 크기가 비슷할수록 해당 데이터 간의 `유사도`가 높다고 판단할 수 있습니다.
+
+### 백터 저장소 설치
+
+1. pgVertor 설치
+   PostgreSQL + pgVector 플러그인
+2. [pgAdmin](https://www.pgadmin.org/) 설치
+
+### 어플리케이션 구성
+
+1. 라이브러리 의존성 추가
+
+```
+  // Spring AI
+  implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+  implementation 'org.springframework.ai:spring-ai-starter-vector-store-pgvector'
+```
+
+<img src="images/openai_rag01.png" width="800">
+
 ## RAG
 
 https://wikidocs.net/238531
+
+### 검색증강생성(RAG, Retrieval Argumented Generation)
+
+1. RAG는 사용자의 질문에 대한 해답을 얻기 위해 지식기반저장소(벡터 저장소)에서 우선 검색을 합니다.
+2. 검색결과를 프롬프트 내에 문맥으로 추가해서 프롬프트를 증강합니다.
+3. LLM은 자신의 시작과 프롬프트 내에 증강된 내용을 참고해서 사용자의 질문에 맞는 자연스러운 응답을 생성합니다.
+
+### ETL(Extract-Transform-Load) 파이프라인
+
+1. 외부 소스로부터 텍스트를 추출
+2. Document로 변환
+3. 벡터 저장소에 적재
+
+<img src="images/openai_rag02.png" width="500">  
+[참고](https://www.rubrik.com/blog/architecture/25/4/rubrik-annapurna-brings-secure-retrieval-augmented-generation-to-the-enterprise)
+
+- QuestionAnswerAdvisor
+- RetrievalAugmentationAdvisor
+
+검색전 모듈
+
+- CompressionQueryTransfomer: 압축 쿼리 변환기, 대화 기억과 관련이 있는 모호한 사용자의 질문을 LLM을 이용해서 완전한 질문으로 변환해줍니다.
+- RewriteQueryTransfomer: 쿼리 재작성 변환기, 사용자 질문에 검색 결과의 품질에 영향을 줄 수 있는 불필요한 내용이 포함되어 있을 경우, LLM을 이용해서 사용자의 질문을 재작성합니다.
+- TranslationQueryTransfomer: 변역 쿼리 변환기, 사용자의 질문을 LLM을 이용해서 임베팅 모델이 지원하는 대상 언어로 변역합니다.
+- MultiQueryExpander: 쿼리 확장, 사용자의 질문을 LLM을 이용해서 다양한 변형 질문으로 확장합니다. 확장된 질문들은 개별적으로 벡터 저장소 유사도 검색에 사용되며 검색된 Document들은 자동으로 합쳐집니다.
 
 ## 실습
 
@@ -535,3 +583,6 @@ https://wikidocs.net/238531
 
 형식화해서 정리해줘
 ```
+
+LLM과 같은 생성형 AI 모델은 사전 학습된 데이터에 기반해 동작하기 때문에, 학습 이후의 정보에 대해서는 정확한 답변을 할 수 없습니다. 또한 특화된 도메인이나 기업의 내부 지식 기반으로 훈련되어 있지 않기 때문에, 이런 주제에 대해서는 AI 모델의 응답을 받기 힘듭니다.
+이와 같은 문제를 해결하기 위해 파인튜닝(fine-tuning), 검색증강생성(RAG), 도구 호출(Tool Calling) 등의 기술을 사용할 수 있습니다.
