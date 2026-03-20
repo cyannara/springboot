@@ -351,6 +351,8 @@ public class WebConfiguration implements WebMvcConfigurer {
 }
 ```
 
+<img src="./images/mvcconfig.png" width="700">
+
 ### WebMvcConfigurer 인터페이스
 
 [java api 🔗](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/config/annotation/WebMvcConfigurer.html)

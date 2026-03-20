@@ -68,6 +68,7 @@ tomcat 폴더 지정
    <img src="./images/egov/all_02.png"  width="400">
 
 3. pom.xml
+
 ```
 	<dependency>
 	    <groupId>com.oracle.database.jdbc</groupId>
@@ -310,3 +311,12 @@ Java Coding Convention : [오라클 코딩 규칙](https://www.oracle.com/java/t
    @Mapper("todoMapper")
    public interface TodoMapper { … }
    ```
+
+### security 권한관리
+
+```
+ROLE_USER > IS_AUTHENTICATED_FULLY
+IS_AUTHENTICATED_FULLY > IS_AUTHENTICATED_REMEMBERED
+IS_AUTHENTICATED_ANONYMOUSLY > ROLE_ANONYMOUS
+ROLE_ADMIN > ROLE_USER
+```

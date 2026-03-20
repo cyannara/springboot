@@ -459,6 +459,10 @@ public class EmpMapperTest {
 
 #### DTD 에러
 
+DTD란 Document Type Definition을 나타내는 용어로 XML 파일이 어떤 구조와 어떤 element, 어떤 attributes를 가지는지 정의하는 것
+
+Window -> Preferences -> XML(Wild Web Developer) -> Download external resources like referenced DTD, XSD 체크
+
 dtd 다운로드 허용  
 <img src="./images/mybatis07.png" width="500">
 

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.BoardMapper">
+
+  <resultMap type="BoardVO" id="boardmap">
+  	<id column="bno" property="bno"/>
+    <result column="TITLE" property="title"/>
+    <result column="WRITER" property="writer"/>
+    <result column="CONTENT" property="content"/>
+    <result column="regdate" property="regdate"/>
+    <result column="UPDATEDATE" property="updatedate"/>
+    <collection property="reply" ofType="ReplyVO" >
+    	<id column="RNO" property="rno"/>
+    	<result column="REPLY" property="reply"/>
+    	<result column="REPLYER" property="replyer"/>
+    </collection>
+  </resultMap>
+  
+<select id="getListByWriter">
+	SELECT *  
+	  FROM TBL_BOARD
+	 <where> 
+	   <if test="writer != null">AND WRITER like '%' || #{writer} ||'%'</if>
+	   <if test="title != null">AND TITLE  like '%' || #{title} ||'%'</if>
+	 </where>
+	 <!--  '%${  }%'  --> 
+</select>  
+  
+<select id="getList" resultMap="boardmap">
+SELECT A.*, 
+       B.RNO, B.REPLY, B.REPLYER
+  FROM TBL_BOARD A
+  LEFT OUTER JOIN TBL_REPLY B ON (A.BNO = B.BNO)
+</select>
+
+<insert id="insert">
+	<selectKey keyProperty="bno" 
+	           order="BEFORE" 
+	           resultType="long">
+	SELECT SEQ_BOARD.NEXTVAL FROM DUAL
+	</selectKey>
+	INSERT INTO TBL_BOARD(BNO, TITLE, CONTENT, WRITER)
+    VALUES ( #{bno}, #{title} ,#{content},#{writer})
+</insert>
+
+<select id="count">
+	select count(*) from tbl_board 
+</select>
+</mapper>

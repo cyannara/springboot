@@ -73,6 +73,25 @@ public class Ex1Controller {
 		return "sample";
 	}
 	
+	@GetMapping("/ex03")   //ex02?name=aaa&age=   
+	public String ex02( @ModelAttribute("name") 
+			            @RequestParam("name") String name, 
+			            
+			           @DateTimeFormat(pattern = "yyyy-MM-dd") 
+	                   @RequestParam(value = "birth") Date birth,
+					   
+	                   @RequestParam(value =  "age", 
+			                         required = false, 
+			                         defaultValue = "10") int age,
+					   Model model) {
+		log.info(name + ":" + age + ":" + birth);
+		model.addAttribute("name", name);
+		return "ex03";
+	}
+
+	/*
+	배열로 받기
+	*/
 	@GetMapping("/ex4")
 	public String ex4(@RequestParam("username") List<String> hobby ) {
 		log.info("hobby:" + hobby);
@@ -103,5 +122,15 @@ public class Ex1Controller {
 			}
 		}
 		return "sample";
+	}
+
+
+	/* ModelAndView 리턴 */	
+	@GetMapping("/ex03")
+	public ModelAndView  ex03() {
+		ModelAndView mv = new ModelAndView("/hello","greet","hi" );
+		//mv.setViewName("/hello");
+		//mv.addObject("greet", "hi");
+		return mv;
 	}
 }
