@@ -109,6 +109,17 @@ public class HelloController {
 
 ## 개발환경구축
 
+### STS 플러그인 설치
+
+<img src="./images/sts01.png">
+<img src="./images/sts02.png">
+<img src="./images/sts03.png">
+<img src="./images/sts04.png">
+<img src="./images/sts05.png">
+<img src="./images/sts06.png">
+
+### springboot install
+
 https://docs.spring.io/spring-boot/installing.html
 
 https://scoop.sh/
