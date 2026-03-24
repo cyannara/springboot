@@ -19,6 +19,46 @@
 
 - reference : https://docs.gradle.org/current/userguide/compatibility.html#java
 
+### Maven 프로젝트 시작하기
+
+#### new project
+
+- Name : 프로젝트 이름
+- Location : 프로젝트 저장 위치
+- Language : 개발언어. Java, Kotlin
+- Build System : 빌드 툴 설정. Maven, Gradle
+- JDK
+- GroupID : 프로젝트 식별자. 일반적으로 패키지 이름으로 사용되며 도메인 형식으로 구분한다.
+- ArtifactId : 제품이름. 패키징하면 jar파일명이 됨
+
+#### pom.xml
+
+pom(Project Object Model) 파일은 Maven 설정파일이며 라이브러리들의 의존성을 설정하고 프로젝트를 빌드하는 기능을 제공
+
+#### 메인클래스와 @SpringBootApplication 애너테이션
+
+```java
+@SpringBootApplication
+public class SpringEduApplication {
+	public static void main(String[] args) {
+		//SpringApplication.run(SpringEduApplication.class, args);
+		SpringApplication application = new SpringApplication(SpringEduApplication.class);
+        application.setLazyInitialization(true); // Set lazy initialization
+        application.run(args);
+	}
+}
+```
+
+#### application.properties 파일
+
+프로퍼티 파일은 키-벨류 쌍으로 구성되어 있고 애플리케이션 설정 정보를 담고 있음. 몇몇 자동 설정은 프로퍼티 팡ㄹ에서 미리 정해진 키 값을 얽어 애플리케이션 기능을 구성한다.(Datasource, JPA, logging, Mybatis...)
+
+```sh
+server.port=85
+# 지연초기화(애플리케이션 시작 시간이 단축됨)
+spring.main.lazy-initialization=true
+```
+
 ### Spring Boot를 이용한 첫 번째 애플리케이션 개발하기
 
 ```
