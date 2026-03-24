@@ -58,6 +58,14 @@ SELECT BNO, TITLE, WRITER FROM (
 ) WHERE RN > 10;
 ```
 
+21C
+
+```sql
+select * from employees
+offset 0 rows
+fetch next 5 rows only;
+```
+
 <img src="./images/sql04.png" style="width:70%">
 
 ### buffer_cache 비우기
@@ -86,6 +94,58 @@ grant SELECT ANY DICTIONARY to HR
 ```SQL
 grant SELECT_CATALOG_ROLE to HR;
 grant SELECT ANY DICTIONARY to HR;
+```
+
+### 페이징 - 스프링
+
+```
+1. 의존성 설정
+spring-boot-starter-web을 사용 중이라면 기본적으로 포함되어 있으나, 단독 사용 시에는 아래 의존성이 필요합니다.
+xml
+<dependency>
+    <groupId>org.springframework.data</groupId>
+    <artifactId>spring-data-commons</artifactId>
+</dependency>
+코드를 사용할 때는 주의가 필요합니다.
+
+2. 컨트롤러에서 Pageable 사용
+@EnableSpringDataWebSupport가 활성화되어 있다면, 쿼리 파라미터(?page=0&size=10)가 Pageable 객체로 자동 변환됩니다.
+GitHub
+GitHub
+java
+@GetMapping("/users")
+public Page<UserVO> getUsers(Pageable pageable) {
+    return userService.getUserList(pageable);
+}
+코드를 사용할 때는 주의가 필요합니다.
+
+3. MyBatis 매퍼(Mapper) 적용
+Pageable의 offset과 pageSize 값을 사용하여 SQL의 LIMIT 절에 매핑합니다.
+Stack Overflow
+Stack Overflow
+Mapper Interface
+java
+List<UserVO> selectUserList(Pageable pageable);
+long countUserList();
+코드를 사용할 때는 주의가 필요합니다.
+
+XML Mapper
+xml
+<select id="selectUserList" resultType="UserVO">
+    SELECT * FROM users
+    ORDER BY id DESC
+    LIMIT #{pageSize} OFFSET #{offset}
+</select>
+코드를 사용할 때는 주의가 필요합니다.
+
+4. 결과 반환 (PageImpl 활용)
+조회된 리스트와 전체 개수를 PageImpl 객체에 담아 반환하면, JPA와 동일한 페이징 응답 규격을 유지할 수 있습니다.
+java
+public Page<UserVO> getUserList(Pageable pageable) {
+    List<UserVO> content = userMapper.selectUserList(pageable);
+    long total = userMapper.countUserList();
+    return new PageImpl<>(content, pageable, total);
+}
 ```
 
 ### 페이징
