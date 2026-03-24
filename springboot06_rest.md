@@ -32,23 +32,24 @@
 
 #### Jackson 주요 애너테이션
 
-| 애너테이션                | 설명                                                    |
-| :------------------------ | :------------------------------------------------------ |
-| **@JsonProperty**         | JSON 필드명과 Java 필드명을 매핑.                       |
-| **@JsonIgnore**           | 직렬화/역직렬화 시 해당 필드를 무시.                    |
-| **@JsonIgnoreProperties** | 여러 필드를 한 번에 무시 (클래스 레벨).                 |
-| **@JsonIgnoreType**       | 특정 클래스 타입 전체를 무시.                           |
-| **@JsonInclude**          | null/빈 값은 제외하고 JSON 생성.                        |
-| **@JsonFormat**           | 날짜/시간 포맷 지정.                                    |
-| **@JsonCreator**          | 생성자/팩토리 메서드로 역직렬화.                        |
-| **@JsonValue**            | 객체를 특정 필드/메서드 값으로만 직렬화.                |
-| **@JsonSetter**           | 역직렬화 시 setter 메서드 매핑.                         |
-| **@JsonAnySetter**        | 존재하지 않는 프로퍼티를 Map에 담음.                    |
-| **@JsonAnyGetter**        | Map 필드를 JSON 프로퍼티로 직렬화.                      |
-| **@JsonUnwrapped**        | 중첩 객체를 풀어서 직렬화.                              |
-| **@JsonPropertyOrder**    | JSON 출력 필드 순서 지정.                               |
-| **@JsonRawValue**         | 값이 JSON 문자열이어도 이스케이프하지 않고 그대로 출력. |
-| **@JsonView**             | 뷰 클래스에 따라 직렬화 범위 제어.                      |
+| 애너테이션                | 설명                                                                                |
+| :------------------------ | :---------------------------------------------------------------------------------- |
+| **@JsonProperty**         | JSON 필드명과 Java 필드명을 매핑.                                                   |
+| **@JsonSerialize**        | 마셜링과정에서 데이터 변환할 때 복잡한 로직이 필요하거나 특별한 형태의 값으로 변경. |
+| **@JsonIgnore**           | 직렬화/역직렬화 시 해당 필드를 무시.                                                |
+| **@JsonIgnoreProperties** | 여러 필드를 한 번에 무시 (클래스 레벨).                                             |
+| **@JsonIgnoreType**       | 특정 클래스 타입 전체를 무시.                                                       |
+| **@JsonInclude**          | null/빈 값은 제외하고 JSON 생성.                                                    |
+| **@JsonFormat**           | 날짜/시간 포맷 지정.                                                                |
+| **@JsonCreator**          | 생성자/팩토리 메서드로 역직렬화.                                                    |
+| **@JsonValue**            | 객체를 특정 필드/메서드 값으로만 직렬화.                                            |
+| **@JsonSetter**           | 역직렬화 시 setter 메서드 매핑.                                                     |
+| **@JsonAnySetter**        | 존재하지 않는 프로퍼티를 Map에 담음.                                                |
+| **@JsonAnyGetter**        | Map 필드를 JSON 프로퍼티로 직렬화.                                                  |
+| **@JsonUnwrapped**        | 중첩 객체를 풀어서 직렬화.                                                          |
+| **@JsonPropertyOrder**    | JSON 출력 필드 순서 지정.                                                           |
+| **@JsonRawValue**         | 값이 JSON 문자열이어도 이스케이프하지 않고 그대로 출력.                             |
+| **@JsonView**             | 뷰 클래스에 따라 직렬화 범위 제어.                                                  |
 
 # Jackson 주요 애너테이션 (JSON 변환 예시 포함)
 
