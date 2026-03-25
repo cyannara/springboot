@@ -1,14 +1,6 @@
 ## 페이징과 검색
 
-### 작업순서
-
-1. mapper xml 쿼리
-2. 매퍼인터페이스 매개변수
-3. 서비스 매개변수
-4. 컨트롤러 메서드
-5. list 페이지 번호 출력
-
-### 페이징 쿼리
+### 실행계획
 
 백만건 데이터 입력
 
@@ -18,7 +10,7 @@ insert into tbl_board (bno, title, content, writer) select  seq_board.nextval, t
 select count(*) from tbl_board;
 ```
 
-order by -> full table scan
+#### full table scan
 
 ```SQL
 SELECT * FROM tbl_board ORDER BY bno + 1 DESC;
@@ -26,7 +18,7 @@ SELECT * FROM tbl_board ORDER BY bno + 1 DESC;
 
 <img src="./images/sql01.png" style="width:70%">
 
-index full scan
+#### index full scan
 
 ```SQL
 SELECT * FROM tbl_board ORDER BY bno DESC;
@@ -34,13 +26,17 @@ SELECT * FROM tbl_board ORDER BY bno DESC;
 
 <img src="./images/sql02.png" style="width:70%">
 
-index range scan
+#### index range scan
 
 ```SQL
 select /*+index_desc(TBL_BOARD PK_BOARD)*/ * from tbl_board ;
 ```
 
 <img src="./images/sql03.png" style="width:70%">
+
+### 페이징쿼리
+
+#### 11g
 
 ```SQL
 SELECT * FROM (
@@ -51,6 +47,8 @@ SELECT * FROM (
 ) WHERE RN > 10;
 ```
 
+<img src="./images/sql04.png" style="width:70%">
+
 ```SQL
 SELECT BNO, TITLE, WRITER FROM (
     select /*+index_desc(TBL_BOARD PK_BOARD)*/ ROWNUM RN, BNO, TITLE, WRITER
@@ -58,7 +56,7 @@ SELECT BNO, TITLE, WRITER FROM (
 ) WHERE RN > 10;
 ```
 
-21C
+#### 21c
 
 ```sql
 select * from employees
@@ -66,284 +64,131 @@ offset 0 rows
 fetch next 5 rows only;
 ```
 
-<img src="./images/sql04.png" style="width:70%">
+### 페이징 조회(spring-data)
 
-### buffer_cache 비우기
-
-한번 수행한 이후에는 해당 블록들을 Data Buffer Cache에 보관하고 있기때문에 정확한 시간 측정이 힘들다
-이 경우에는 강제로 Data Buffer Cache를 비워준 이후에 측정하면 된다.
-
-```SQL
- ALTER SYSTEM FLUSH BUFFER_CACHE;
-```
-
-쿼리의 파싱속도 자체도 영향을 미치는 조건이므로 Shared Pool 도 Flush 시켜줘야될 필요성이 있다
-
-```SQL
-ALTER SYSTEM FLUSH SHERED_POOL;
-```
-
-<PRE>
-V$MYSTAT에 액세스를 실패했습니다.
-데이터베이스 관리자로부터 카탈로그 읽기 권한을 얻으십시오.
-grant SELECT_CATALOG_ROLE to HR
-grant SELECT ANY DICTIONARY to HR
-참고: 설정 변경사항을 적용하려면 현재 세션을 재접속해야 합니다.
-</PRE>
-
-```SQL
-grant SELECT_CATALOG_ROLE to HR;
-grant SELECT ANY DICTIONARY to HR;
-```
-
-### 페이징 - 스프링
-
-```
 1. 의존성 설정
-spring-boot-starter-web을 사용 중이라면 기본적으로 포함되어 있으나, 단독 사용 시에는 아래 의존성이 필요합니다.
-xml
+   JPA을 사용 중이라면 기본적으로 포함되어 있으나, 단독 사용 시에는 아래 의존성이 필요합니다.
+
+```xml
 <dependency>
     <groupId>org.springframework.data</groupId>
     <artifactId>spring-data-commons</artifactId>
 </dependency>
-코드를 사용할 때는 주의가 필요합니다.
+```
 
-2. 컨트롤러에서 Pageable 사용
-@EnableSpringDataWebSupport가 활성화되어 있다면, 쿼리 파라미터(?page=0&size=10)가 Pageable 객체로 자동 변환됩니다.
-GitHub
-GitHub
-java
-@GetMapping("/users")
-public Page<UserVO> getUsers(Pageable pageable) {
-    return userService.getUserList(pageable);
+2. springData 활성화
+
+```java
+@EnableSpringDataWebSupport
+@SpringBootApplication
+public class Ex02Application {
+	public static void main(String[] args) {
+		SpringApplication.run(Ex02Application.class, args);
+	}
 }
-코드를 사용할 때는 주의가 필요합니다.
+```
 
-3. MyBatis 매퍼(Mapper) 적용
-Pageable의 offset과 pageSize 값을 사용하여 SQL의 LIMIT 절에 매핑합니다.
-Stack Overflow
-Stack Overflow
+4. 컨트롤러에서 결과 반환 (PageImpl 활용)  
+   조회된 리스트와 전체 개수를 PageImpl 객체에 담아 반환하면, JPA와 동일한 페이징 응답 규격을 유지할 수 있습니다.  
+   @EnableSpringDataWebSupport가 활성화되어 있다면, 쿼리 파라미터(?page=0&size=10)가 Pageable 객체로 자동 변환됩니다.
+
+```java
+	@GetMapping("/api/empList")
+	public PageImpl empPage( @PageableDefault(size = 50,
+	         sort = "employee_id",
+					 direction = Sort.Direction.DESC) Pageable pageable) {
+		System.out.println(pageable);
+		pageable.getSort().forEach(order -> {
+			System.out.println("정렬 필드: " + order.getProperty()); // first_name, department_id 출력됨
+			System.out.println("정렬 방향: " + order.getDirection()); // DESC, ASC 출력됨
+		});
+
+		List<EmpVO> content = empMapper.findAllPageAndSort(null,pageable);
+		int total = empMapper.findAll_COUNT();
+		return new PageImpl<>(content, pageable, total);
+	}
+```
+
+```
+http://localhost:8080/api/empPage?sort=first_name,desc&page=1&size=5
+
+  sort : 정렬할 컬럼명과 순서
+  page : 페이지번호
+  size : 한페이지에 출력될 레코드 건수
+```
+
+<img src="./images/sql05.png" width="400">
+
+5. MyBatis 매퍼(Mapper) 적용
+
 Mapper Interface
-java
-List<UserVO> selectUserList(Pageable pageable);
-long countUserList();
-코드를 사용할 때는 주의가 필요합니다.
+
+```java
+public List<EmpVO> findAllPageAndSort(@Param("emp") EmpVO vo, @Param("pageable") Pageable pagable);
+long count();
+```
 
 XML Mapper
-xml
+
+11g
+
+```xml
+	<select id="findAllPageAndSort">
+    SELECT * FROM (
+        SELECT a.*, ROWNUM rnum FROM (
+            SELECT * FROM employees
+            <if test="pageable.sort.sorted">
+                ORDER BY
+                <foreach collection="pageable.sort" item="order" separator=",">
+                    ${order.property} ${order.direction}
+                </foreach>
+            </if>
+        ) a
+        WHERE ROWNUM &lt;= #{pageable.offset} + #{pageable.pageSize}
+    )
+    WHERE rnum &gt; #{pageable.offset}
+	</select>
+<!-- 카운트 -->
+<select id="count" resultType="int">
+  SELECT COUNT(*) FROM employees
+</select>
+```
+
+21c
+
+Pageable의 offset과 pageSize 값을 사용하여 SQL의 LIMIT 절에 매핑합니다.
+
+```xml
 <select id="selectUserList" resultType="UserVO">
     SELECT * FROM users
     ORDER BY id DESC
-    LIMIT #{pageSize} OFFSET #{offset}
-</select>
-코드를 사용할 때는 주의가 필요합니다.
-
-4. 결과 반환 (PageImpl 활용)
-조회된 리스트와 전체 개수를 PageImpl 객체에 담아 반환하면, JPA와 동일한 페이징 응답 규격을 유지할 수 있습니다.
-java
-public Page<UserVO> getUserList(Pageable pageable) {
-    List<UserVO> content = userMapper.selectUserList(pageable);
-    long total = userMapper.countUserList();
-    return new PageImpl<>(content, pageable, total);
-}
-```
-
-### 페이징
-
-totalRecord와 page만 지정되면 나머지 자동 계산됨
-
-```JAVA
-@Data
-public class Paging {
-	int pageUnit=10 ;  //한페이지 출력할 레코드 건수
-	int pageSize=10 ;  //페이지번호 수 (5) 1~ 5까지
-	int lastPage;      //마지막 페이지번호
-	int totalRecord;  //전체 레코드건수
-	Integer page = 1;	  //현재 페이지
-	int startPage;  //페이지그룹내에서 시작페이지번호
-	int endPage;  //페이지그룹내에서 마지막페이지번호
-	int first;
-	int last;
-
-	public int getFirst() {
-		first = (getPage() - 1) * getPageUnit() + 1;
-		return first;
-	}
-
-	public int getLast() {
-		last = getPage() * getPageUnit();
-		return last;
-	}
-
-	public int getPageUnit() {
-		return pageUnit;
-	}
-
-	public void setPageUnit(int pageUnit) {
-		this.pageUnit = pageUnit;
-	}
-
-	public int getPageSize() {
-		return pageSize;
-	}
-
-	public void setPageSize(int pageSize) {
-		this.pageSize = pageSize;
-	}
-
-	public int getLastPage() {
-		lastPage = totalRecord / pageUnit +
-				   ( totalRecord % pageUnit>0 ? 1 : 0 );
-		return lastPage;
-	}
-
-	public void setLastPage(int lastPage) {
-		this.lastPage = lastPage;
-	}
-
-	public int getTotalRecord() {
-		return totalRecord;
-	}
-
-	public void setTotalRecord(int totalRecord) {
-		this.totalRecord = totalRecord;
-	}
-
-	public Integer getPage() {
-		return page;
-	}
-
-	public void setPage(Integer page) {
-		this.page = page;
-	}
-
-	public int getStartPage() {
-		startPage = (page-1)/pageSize * pageSize + 1;
-		return startPage;
-	}
-
-	public void setStartPage(int startPage) {
-		this.startPage = startPage;
-	}
-
-	public int getEndPage() {
-		endPage = (page-1)/pageSize  * pageSize  + pageSize ;
-		if ( endPage > getLastPage() )
-			endPage = getLastPage() ;
-		return endPage;
-	}
-
-	public void setEndPage(int endPage) {
-		this.endPage = endPage;
-	}
-
-}
-```
-
-BoardSearchDTO 검색에 필요한 값을 저장
-
-```java
-@Data
-public class BoardSearchDTO {
-	int start;
-	int end;
-}
-
-```
-
-매퍼 쿼리 수정
-
-```xml
-<!-- getList : 전체조회 -->
-<select id="getList" resultType="BoardDTO">
-	SELECT * FROM (
-	    SELECT ROWNUM RN, BNO, TITLE, WRITER
-	    FROM (
-	        select BNO, TITLE, WRITER FROM TBL_BOARD ORDER BY BNO DESC
-	  <![CDATA[
-	    ) WHERE rownum <= #{end}
-	  ]]>
-	) WHERE RN > #{start}
-</select>
-
-<!-- 카운트 -->
-<select id="getCount" resultType="int">
-  SELECT COUNT(*) FROM TBL_BOARD
+    LIMIT #{pageable.pageSize} OFFSET #{pageable.offset}
 </select>
 ```
 
-서비스 수정
-
-서비스 테스트
-
-컨트롤러 수정
-
-```java
-@GetMapping("/board/list")
-	public void list(Model model, BoardSearchDTO searchDTO, Paging paging) {
-
-		//페이징처리
-    paging.setPage(2);
-    paging.setPageUnit(5);
-    paging.setPageSize(3);
-		paging.setTotalRecord(service.getCount(vo));
-		model.addAttribute("paging", paging);
-
-		//목록 조회
-		searchDTO.setStart(paging.getFirst());
-		searchDTO.setEnd(paging.getLast());
-		model.addAttribute("list", service.getList(searchDTO));
-
-	}
-```
-
-컨트롤러 테스트
-
-```java
-@Slf4j
-@AutoConfigureMockMvc
-@SpringBootTest
-public class BoardControllerTest {
-
-    @Autowired MockMvc mvc;
-
-    @Test
-    @DisplayName("조회 컨트롤러")
-    void list() throws Exception {
-    	ModelMap map = mvc.perform(MockMvcRequestBuilders.get("/board/list"))
-    	   .andReturn()
-    	   .getModelAndView()
-    	   .getModelMap();
-
-    	log.debug(map.getAttribute("list").toString());
-    	log.debug(map.getAttribute("paging").toString());
-
-    }
-```
-
-페이지 번호 출력  
-fragments/paging.html
+6. 페이지 번호 출력  
+   fragments/paging.html
 
 ```HTML
   <!-- 페이징 시작 -->
-  <nav div th:fragment="paging(pageVO)">
+  <nav div th:fragment="paging(item)">
     <ul class="pagination">
       <li class="page-item"
-        th:classappend="${paging.startPage} == 1 ? disabled"><a
+        th:classappend="${item.first} == 1 ? disabled"><a
         class="page-link"
-        th:href="|javascript:gopage(${paging.startPage}-1)|">Previous</a></li>
+        th:href="${items.first} ? '#' : @{/items(page=${items.number - 1})}">Previous</a></li>
 
       <li
-        th:each="num : *{#numbers.sequence(paging.startPage, paging.endPage)}"
-        class="page-item" th:classappend="${num} == ${paging.page} ? active">
+        th:each="num : *{#numbers.sequence(0, items.totalPages - 1)}"
+        class="page-item" th:classappend="${num} == ${item.number} ? active">
         <a class="page-link" th:href="|javascript:gopage(${num})|"
         th:text="${num}">2</a>
       </li>
 
       <li class="page-item"
-        th:classappend="${paging.endPage} >= ${paging.lastPage} ? disabled">
+        th:classappend="${items.last} ? 'disabled'">
         <a class="page-link"
-        th:href="|javascript:gopage(${paging.endPage}+1)|">Next</a>
+        th:href="${items.last} ? '#' : @{/items(page=${items.number + 1})}">Next</a>
       </li>
     </ul>
   </nav>
@@ -382,4 +227,32 @@ fragments/paging.html
   </div>
 </div>
 <!-- 검색폼 끝 -->
+```
+
+### buffer_cache 비우기
+
+한번 수행한 이후에는 해당 블록들을 Data Buffer Cache에 보관하고 있기때문에 정확한 시간 측정이 힘들다
+이 경우에는 강제로 Data Buffer Cache를 비워준 이후에 측정하면 된다.
+
+```SQL
+ ALTER SYSTEM FLUSH BUFFER_CACHE;
+```
+
+쿼리의 파싱속도 자체도 영향을 미치는 조건이므로 Shared Pool 도 Flush 시켜줘야될 필요성이 있다
+
+```SQL
+ALTER SYSTEM FLUSH SHERED_POOL;
+```
+
+<PRE>
+V$MYSTAT에 액세스를 실패했습니다.
+데이터베이스 관리자로부터 카탈로그 읽기 권한을 얻으십시오.
+grant SELECT_CATALOG_ROLE to HR
+grant SELECT ANY DICTIONARY to HR
+참고: 설정 변경사항을 적용하려면 현재 세션을 재접속해야 합니다.
+</PRE>
+
+```SQL
+grant SELECT_CATALOG_ROLE to HR;
+grant SELECT ANY DICTIONARY to HR;
 ```
