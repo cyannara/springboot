@@ -499,6 +499,74 @@ public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
 }
 ```
 
+## 서블릿 필터(Servlet Filter)
+
+서블릿 전체에 공통 기능을 추가하는 기능. DispatcherServlet 앞에서 사용자의 요청과 응답을 처리할 수 있는 구조
+
+### Filter 클래스 작성
+
+````java
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.annotation.WebFilter;
+
+public class LoggingFilter implements Filter{
+
+	@Override
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
+
+			System.out.println("선처리 작업");
+			chain.doFilter(request, response);
+			System.out.println("후처리 작업");
+	}
+
+}
+
+### Filter 클래스 등록
+
+1. @Bean 등록
+
+```java
+import java.util.Arrays;
+
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class FilterConfig {
+
+    @Bean
+    public FilterRegistrationBean filterBean() {
+
+        FilterRegistrationBean registrationBean = new FilterRegistrationBean(new LoggingFilter());
+        registrationBean.setOrder(Integer.MIN_VALUE); //필터 여러개 적용 시 순번
+        registrationBean.setUrlPatterns(Arrays.asList("/test/*", "/api/*"));
+
+        return registrationBean;
+    }
+}
+```
+
+
+2. @WebFilter로 필터 등록
+
+```java
+@ServletComponentScan
+@Configuration
+````
+
+```java
+@WebFilter(urlPatterns = {"/test/*", "/api/*"})
+public class LoggingFilter implements Filter{
+
+}
+```
+
 ## 인터셉터(Interceptor)
 
 인터셉터는 특정 URI 패턴에 대한 요청을 가로채어 컨트롤러가 처리하기 전후에 추가적인 작업을 할 수 있게 해준다. 로그인 체크, 권한 검증, 로깅 등과 같은 작업을 처리할 수 있다.
@@ -537,3 +605,15 @@ public class LoggerInterceptor implements HandlerInterceptor {
 
 }
 ```
+
+## DispatcherServlet
+
+DispatcherServlet에서 설정 가능한 기능
+
+- MultipartResolver :
+  서버에서는 멀티파트 요청을 처리하는 기능
+  클라이언트가 바이너리 파일을 서버로 전송할 때 content-type 헤더 값은 multipart/form-data 메시지 바디에는 바이너리 파일을 인코딩하여 여러 개의 파트로 분리하여 전송
+- Themeresolver
+  스프링 웹 MVC 프레임워크의 뷰를 사용할 때 동작하는 기능이다. 데이터를 HTML 같은 형태로 변환할 때 테마에 따라 뷰가 화면을 구성
+- LocaleResolver : SessionLocaleResolver, CookieLocaleResolver
+  언어오 위치 정보를 표현

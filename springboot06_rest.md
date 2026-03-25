@@ -18,6 +18,18 @@
 - (JSON)Jackson-databind : https://github.com/FasterXML/jackson-databind
 - (XML) jackson-dataformat-xml : https://github.com/FasterXML/jackson-dataformat-xml
 
+ObjectMapper를 새로 정의
+
+```java
+	@Bean
+	@Primary
+	public ObjectMapper objectMapper() {
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+		return objectMapper;
+	}
+```
+
 ### @RestController
 
 #### 응답형식
