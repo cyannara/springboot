@@ -13,30 +13,32 @@
 
 ### 라이브러리 의존성
 ```xml
-		<dependency>
-		 <groupId>net.sf.jasperreports</groupId>
-		 <artifactId>jasperreports</artifactId>
-		 <version>7.0.3</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.jasperreports</groupId>
-			<artifactId>jasperreports-pdf</artifactId>
-			<version>7.0.3</version>
-		</dependency>
+<dependency>
+    <groupId>net.sf.jasperreports</groupId>
+    <artifactId>jasperreports</artifactId>
+    <version>6.6.0</version>
+    <scope>compile</scope>
+</dependency>
 ```
 
 ### spring
 ```java
-     	// jasper에 띄울 데이터 date에 맞춰 받아오기
-			//List<BoardStatus> result = boardService.getStatus(date);
-			
-         // 받아온 데이터를 jasper datasource로 등록
-			//JRBeanCollectionDataSource beanCollectionDataSource = new JRBeanCollectionDataSource(result);
+	// pdf 출력
+	@RequestMapping("emp/pdf")
+	public void report(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		Connection conn = datasource.getConnection();
+		
+		Resource reportResource  = new ClassPathResource("reports/empInfo.jrxml");
 
-         
-         // return 방식1. 컴파일된 pdf파일을 현재 폴더에 생성
-//			JasperExportManager.exportReportToPdfFile(report, "BoardStatus.pdf");
-//			return "generated";
+		// 2. JRXML 컴파일
+        JasperReport jasperReport = JasperCompileManager.compileReport(reportResource.getInputStream());
+        
+        // 3. PDF 생성
+		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, conn);
+		
+		response.setContentType("application/pdf");
+		JasperExportManager.exportReportToPdfStream(jasperPrint, response.getOutputStream());
+	}
 ```
 
 ### ViewResolver 이용
