@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.1</version>
+        <version>3.5.13</version>
         <relativePath/>
     </parent>
 
@@ -53,9 +53,21 @@
         </dependency>
 
         <!-- Spring AI - Oracle Vector Store (auto-config 포함) -->
-        <dependency>
+        <!-- <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-vector-store-oracle</artifactId>
+        </dependency> -->
+
+        <!-- Spring AI - PgVector Store (auto-config 포함) -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-vector-store-pgvector</artifactId>
+        </dependency>
+
+        <!-- Spring AI - RAG 모듈 (RetrievalAugmentationAdvisor 등) -->
+        <dependency>
+          <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-rag</artifactId>  <!-- RetrievalAugmentationAdvisor 포함 모듈 -->
         </dependency>
 
         <!-- Spring AI - Tika Document Reader (PDF, DOCX, TXT 등 파싱) -->
@@ -65,10 +77,16 @@
         </dependency>
 
         <!-- Oracle JDBC Driver -->
-        <dependency>
+        <!-- <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>ojdbc11</artifactId>
             <scope>runtime</scope>
+        </dependency> -->
+
+        <!-- PostgreSQL JDBC Driver -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
         </dependency>
 
         <!-- Lombok -->
@@ -84,10 +102,7 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-          <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-rag</artifactId>  <!-- RetrievalAugmentationAdvisor 포함 모듈 -->
-        </dependency>
+
     </dependencies>
 
     <build>

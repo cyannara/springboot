@@ -10,5 +10,5 @@ public class SearchResultDto {
     private String id;
     private String content;
     private Map<String, Object> metadata;
-    private Double score;
+    private Float score;
 }
