@@ -57,6 +57,24 @@ public class CustomerRepositoryTest {
 		assertEquals("04411", customer.getAddress().getZipcode());
 	}
 
+
+	@Test
+	public void 고객_수정() {
+		// given - 초기 데이터 저장
+		String name = "홍길동";
+		String phone = "011";		
+		Customer saved = customerRepository.save(Customer.builder().name(name).phone(phone).build());
+		
+		// when - 고객 정보 수정
+		Customer customer = customerRepository.findById(saved.getId()).orElse(new Customer());
+		customer.updateName("둘리");
+		Customer updated = customerRepository.save(customer);
+	
+		//then
+		assertEquals(updated.getName(), customer.getName());
+		log.info("수정된 고객 이름: {}", updated.getName());
+	}
+
 //	 @Test
 //	 //@Transactional
 //	 void manytoOneTest(){

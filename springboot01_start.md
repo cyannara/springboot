@@ -19,6 +19,46 @@
 
 - reference : https://docs.gradle.org/current/userguide/compatibility.html#java
 
+### Maven 프로젝트 시작하기
+
+#### new project
+
+- Name : 프로젝트 이름
+- Location : 프로젝트 저장 위치
+- Language : 개발언어. Java, Kotlin
+- Build System : 빌드 툴 설정. Maven, Gradle
+- JDK
+- GroupID : 프로젝트 식별자. 일반적으로 패키지 이름으로 사용되며 도메인 형식으로 구분한다.
+- ArtifactId : 제품이름. 패키징하면 jar파일명이 됨
+
+#### pom.xml
+
+pom(Project Object Model) 파일은 Maven 설정파일이며 라이브러리들의 의존성을 설정하고 프로젝트를 빌드하는 기능을 제공
+
+#### 메인클래스와 @SpringBootApplication 애너테이션
+
+```java
+@SpringBootApplication
+public class SpringEduApplication {
+	public static void main(String[] args) {
+		//SpringApplication.run(SpringEduApplication.class, args);
+		SpringApplication application = new SpringApplication(SpringEduApplication.class);
+        application.setLazyInitialization(true); // Set lazy initialization
+        application.run(args);
+	}
+}
+```
+
+#### application.properties 파일
+
+프로퍼티 파일은 키-벨류 쌍으로 구성되어 있고 애플리케이션 설정 정보를 담고 있음. 몇몇 자동 설정은 프로퍼티 팡ㄹ에서 미리 정해진 키 값을 얽어 애플리케이션 기능을 구성한다.(Datasource, JPA, logging, Mybatis...)
+
+```sh
+server.port=85
+# 지연초기화(애플리케이션 시작 시간이 단축됨)
+spring.main.lazy-initialization=true
+```
+
 ### Spring Boot를 이용한 첫 번째 애플리케이션 개발하기
 
 ```
@@ -351,6 +391,8 @@ public class WebConfiguration implements WebMvcConfigurer {
 }
 ```
 
+<img src="./images/mvcconfig.png" width="700">
+
 ### WebMvcConfigurer 인터페이스
 
 [java api 🔗](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/config/annotation/WebMvcConfigurer.html)
@@ -457,6 +499,74 @@ public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
 }
 ```
 
+## 서블릿 필터(Servlet Filter)
+
+서블릿 전체에 공통 기능을 추가하는 기능. DispatcherServlet 앞에서 사용자의 요청과 응답을 처리할 수 있는 구조
+
+### Filter 클래스 작성
+
+````java
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.annotation.WebFilter;
+
+public class LoggingFilter implements Filter{
+
+	@Override
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
+
+			System.out.println("선처리 작업");
+			chain.doFilter(request, response);
+			System.out.println("후처리 작업");
+	}
+
+}
+
+### Filter 클래스 등록
+
+1. @Bean 등록
+
+```java
+import java.util.Arrays;
+
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class FilterConfig {
+
+    @Bean
+    public FilterRegistrationBean filterBean() {
+
+        FilterRegistrationBean registrationBean = new FilterRegistrationBean(new LoggingFilter());
+        registrationBean.setOrder(Integer.MIN_VALUE); //필터 여러개 적용 시 순번
+        registrationBean.setUrlPatterns(Arrays.asList("/test/*", "/api/*"));
+
+        return registrationBean;
+    }
+}
+```
+
+
+2. @WebFilter로 필터 등록
+
+```java
+@ServletComponentScan
+@Configuration
+````
+
+```java
+@WebFilter(urlPatterns = {"/test/*", "/api/*"})
+public class LoggingFilter implements Filter{
+
+}
+```
+
 ## 인터셉터(Interceptor)
 
 인터셉터는 특정 URI 패턴에 대한 요청을 가로채어 컨트롤러가 처리하기 전후에 추가적인 작업을 할 수 있게 해준다. 로그인 체크, 권한 검증, 로깅 등과 같은 작업을 처리할 수 있다.
@@ -495,3 +605,15 @@ public class LoggerInterceptor implements HandlerInterceptor {
 
 }
 ```
+
+## DispatcherServlet
+
+DispatcherServlet에서 설정 가능한 기능
+
+- MultipartResolver :
+  서버에서는 멀티파트 요청을 처리하는 기능
+  클라이언트가 바이너리 파일을 서버로 전송할 때 content-type 헤더 값은 multipart/form-data 메시지 바디에는 바이너리 파일을 인코딩하여 여러 개의 파트로 분리하여 전송
+- Themeresolver
+  스프링 웹 MVC 프레임워크의 뷰를 사용할 때 동작하는 기능이다. 데이터를 HTML 같은 형태로 변환할 때 테마에 따라 뷰가 화면을 구성
+- LocaleResolver : SessionLocaleResolver, CookieLocaleResolver
+  언어오 위치 정보를 표현

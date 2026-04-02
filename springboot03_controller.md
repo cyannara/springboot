@@ -198,58 +198,6 @@ HTTP 요청으로부터 컨트롤러 메소드까지
 
 @Valid
 
-## REST-API 서버 만들기
-
-#### REST
-
-#### `@RestController`
-
-```java
-@RestController
-```
-
-#### Jackson 주요 애너테이션
-
-| 애너테이션                | 설명                                                    |
-| :------------------------ | :------------------------------------------------------ |
-| **@JsonProperty**         | JSON 필드명과 Java 필드명을 매핑.                       |
-| **@JsonIgnore**           | 직렬화/역직렬화 시 해당 필드를 무시.                    |
-| **@JsonIgnoreProperties** | 여러 필드를 한 번에 무시 (클래스 레벨).                 |
-| **@JsonIgnoreType**       | 특정 클래스 타입 전체를 무시.                           |
-| **@JsonInclude**          | null/빈 값은 제외하고 JSON 생성.                        |
-| **@JsonFormat**           | 날짜/시간 포맷 지정.                                    |
-| **@JsonCreator**          | 생성자/팩토리 메서드로 역직렬화.                        |
-| **@JsonValue**            | 객체를 특정 필드/메서드 값으로만 직렬화.                |
-| **@JsonSetter**           | 역직렬화 시 setter 메서드 매핑.                         |
-| **@JsonAnySetter**        | 존재하지 않는 프로퍼티를 Map에 담음.                    |
-| **@JsonAnyGetter**        | Map 필드를 JSON 프로퍼티로 직렬화.                      |
-| **@JsonUnwrapped**        | 중첩 객체를 풀어서 직렬화.                              |
-| **@JsonPropertyOrder**    | JSON 출력 필드 순서 지정.                               |
-| **@JsonRawValue**         | 값이 JSON 문자열이어도 이스케이프하지 않고 그대로 출력. |
-| **@JsonView**             | 뷰 클래스에 따라 직렬화 범위 제어.                      |
-
-# Jackson 주요 애너테이션 (JSON 변환 예시 포함)
-
-| 애너테이션                | 코드 예제                                                                                    | JSON 결과                                                                                |
-| :------------------------ | :------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------- |
-| 필드                      |                                                                                              |                                                                                          |
-| **@JsonProperty**         | `@JsonProperty("user_name") ` <br>private String userName = "Tom";                           | `{ "user_name": "Tom" }`                                                                 |
-| **@JsonIgnore**           | `@JsonIgnore` <br> private String password = "1234";                                         | `{ }`                                                                                    |
-| **@JsonInclude**          | `@JsonInclude(JsonInclude.Include.NON_NULL)`<br> private String email = null;                | `{ }`                                                                                    |
-| **@JsonFormat**           | `@JsonFormat(pattern="yyyy-MM-dd")`<br> private LocalDate birth = LocalDate.of(2000,1,1);    | `{ "birth": "2000-01-01" }`                                                              |
-| **@JsonRawValue**         | `@JsonRawValue` <br>private String json = "{\"x\":1}";                                       | `{ "json": {"x":1} }`                                                                    |
-| **@JsonView**             | `@JsonView(Views.Public.class)`<br> private String name;                                     | `Public View → { "name":"Tom" }` <br> `Admin View → { "name":"Tom", "password":"1234" }` |
-| **@JsonUnwrapped**        | `@JsonUnwrapped` private Address addr;                                                       | `{ "street": "Main", "zip": "12345" }`                                                   |
-| method                    |                                                                                              |                                                                                          |
-| **@JsonValue**            | `@JsonValue`<br> public String getValue() { return "SINGLE"; }                               | `"SINGLE"`                                                                               |
-| **@JsonCreator**          | `@JsonCreator`<br> public User(`@JsonProperty("name")` String name) { this.name = name; }    | JSON `{ "name": "Tom" }` → User(name="Tom")                                              |
-| **@JsonSetter**           | `@JsonSetter("user_name")`<br>public void setUserName(String name) { this.userName = name; } | JSON `{ "user_name": "Tom" }` → User(userName="Tom")                                     |
-| **@JsonAnySetter**        | `@JsonAnySetter`<br>public void set(String key, Object value) { map.put(key,value); }        | JSON `{ "age": 20 }` → map={"age":20}                                                    |
-| **@JsonAnyGetter**        | `@JsonAnyGetter`<br> public Map<String,Object> getProps(){ return props; }                   | `{ "age": 20, "city": "Seoul" }`                                                         |
-| class                     |                                                                                              |                                                                                          |
-| **@JsonIgnoreProperties** | `@JsonIgnoreProperties({"id","password"})` <br> class User { ... }                           | `{ "name": "Tom" }`                                                                      |
-| **@JsonPropertyOrder**    | `@JsonPropertyOrder({"id","name"})` <br>class User { ... }                                   | `{ "id":1, "name":"Tom" }`                                                               |
-
 ## bean validation
 
 Spring Boot는 사용자 정의 유효성 검사기와의 완벽한 통합을 지원하지만 유효성 검사를 수행하는 사실상의 표준은 Bean 유효성 검사 프레임 워크의 참조 구현인 Hibernate Validator 입니다.

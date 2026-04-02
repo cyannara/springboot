@@ -10,4 +10,7 @@ public class SampleVO {
 	private int age;
 	
 	private List<String> hobby;
+
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private Date birth;
 }

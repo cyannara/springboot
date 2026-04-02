@@ -1,5 +1,6 @@
 ## String tools 설치
-- [STS](https://github.com/spring-projects/spring-tools/wiki)  
+
+- [STS](https://github.com/spring-projects/spring-tools/wiki)
 
 ### SpringBoot 수업일정
 
@@ -81,28 +82,31 @@ mappers  - DeptMapper.xml
 </pre>
 
 ### 5일차 실습
-수업:  paging, aop, transaction
-프로젝트 : ex05board  
 
+수업: paging, aop, transaction
+프로젝트 : ex05board
 
 ### 6일차 실습
-수업 : rest 
+
+수업 : rest
 프로젝트 : ex06reply, ex07rest  
 document: springboot06_rest.md, springboot06_reply.md  
 실습및 과제: 부서관리
 
 ### 7일차 실습
-수업 : security 
-프로젝트 :  ex08boardSecurity , ex08security  
-실습및 과제 :  
+
+수업 : security
+프로젝트 : ex08boardSecurity , ex08security  
+실습및 과제 :
 
 ### 8일차 실습
-수업 : jpa, egov   
-프로젝트 : ex09jpa  
-실습및 과제 : 
 
+수업 : jpa, egov  
+프로젝트 : ex09jpa  
+실습및 과제 :
 
 ## boot
+
 - oracle
 - jasperReport
 
@@ -111,4 +115,6 @@ document: springboot06_rest.md, springboot06_reply.md
 - mysql
 - jpa
 
+## referer
 
+[디자인패턴(한빛채널)](https://www.hanbit.co.kr/channel/view.html?cmscode=CMS8616098823)

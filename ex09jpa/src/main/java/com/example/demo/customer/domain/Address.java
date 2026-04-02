@@ -6,11 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
-@Data
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Entity
 public class Address {
 	
 	@Id
@@ -27,4 +25,12 @@ public class Address {
 	//@ManyToOne
 	//@JoinColumn(name = "customer_id")
 	//private Customer customer;
+
+	@Builder
+	public Address(String zipcode, String address, String detail_address, Customer customer) {
+		this.zipcode = zipcode;
+		this.address = address;
+		this.detail_address = detail_address;
+		this.customer = customer;
+	}
 }
