@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${pageTitle} + ' | Oracle RAG'">문서 등록 | Oracle RAG</title>
+    <th:block th:replace="~{layout :: __styles__}"></th:block>
+    <style>
+        /* 이 파일에만 layout의 CSS를 인라인으로 포함 (단독 템플릿 방식) */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI','Apple SD Gothic Neo',sans-serif; background:#f0f4f8; color:#2d3748; min-height:100vh; }
+        nav { background:linear-gradient(135deg,#1a365d 0%,#2b6cb0 100%); padding:0 2rem; display:flex; align-items:center; gap:2rem; height:56px; box-shadow:0 2px 8px rgba(0,0,0,.25); }
+        nav .brand { color:#fff; font-size:1.1rem; font-weight:700; text-decoration:none; }
+        nav a { color:#bee3f8; text-decoration:none; font-size:.9rem; padding:.25rem .5rem; border-radius:4px; transition:background .2s; }
+        nav a:hover { background:rgba(255,255,255,.15); color:#fff; }
+        nav a.active { background:rgba(255,255,255,.2); color:#fff; font-weight:600; }
+        .container { max-width:860px; margin:2rem auto; padding:0 1rem; }
+        .card { background:#fff; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,.08); padding:2rem; margin-bottom:1.5rem; }
+        .card h2 { font-size:1.2rem; color:#2b6cb0; margin-bottom:1.25rem; border-bottom:2px solid #ebf4ff; padding-bottom:.6rem; }
+        .form-group { margin-bottom:1rem; }
+        .form-group label { display:block; font-size:.85rem; font-weight:600; color:#4a5568; margin-bottom:.35rem; }
+        .form-control { width:100%; padding:.55rem .8rem; border:1.5px solid #cbd5e0; border-radius:8px; font-size:.9rem; transition:border-color .2s; outline:none; }
+        .form-control:focus { border-color:#3182ce; box-shadow:0 0 0 3px rgba(49,130,206,.15); }
+        .btn { display:inline-block; padding:.6rem 1.4rem; border:none; border-radius:8px; font-size:.9rem; font-weight:600; cursor:pointer; transition:filter .2s,transform .1s; }
+        .btn:active { transform:scale(.97); }
+        .btn-primary { background:#3182ce; color:#fff; }
+        .btn-primary:hover { filter:brightness(1.1); }
+        .alert { padding:.9rem 1.1rem; border-radius:8px; margin-bottom:1rem; font-size:.9rem; }
+        .alert-success { background:#f0fff4; border:1px solid #9ae6b4; color:#276749; }
+        .alert-danger  { background:#fff5f5; border:1px solid #feb2b2; color:#9b2c2c; }
+        .dropzone { border:2px dashed #a0aec0; border-radius:10px; padding:2rem; text-align:center; cursor:pointer; transition:border-color .2s,background .2s; }
+        .dropzone:hover,.dropzone.over { border-color:#3182ce; background:#ebf4ff; }
+        .dropzone input[type=file] { display:none; }
+        .drop-icon { font-size:2.5rem; margin-bottom:.5rem; }
+        .drop-hint { font-size:.85rem; color:#718096; }
+        .selected-file { margin-top:.6rem; font-size:.88rem; color:#2b6cb0; font-weight:600; }
+        .row { display:flex; gap:1rem; flex-wrap:wrap; }
+        .col { flex:1; min-width:180px; }
+        .supported-types { font-size:.8rem; color:#718096; margin-top:.4rem; }
+        .chunk-info { display:inline-flex; align-items:center; gap:.4rem; background:#ebf8ff; border-radius:8px; padding:.5rem 1rem; font-size:.88rem; color:#2b6cb0; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a class="brand" href="/">🔮 Oracle RAG</a>
+    <a href="/" class="active">📤 문서 등록</a>
+    <a href="/search">🔍 유사도 검색</a>
+    <a href="/ask">🤖 AI 질의응답</a>
+</nav>
+
+<div class="container">
+
+    <!-- ── 업로드 결과 알림 ── -->
+    <div th:if="${uploadResult}" class="alert alert-success">
+        ✅ <strong th:text="${uploadResult.fileName}"></strong> 업로드 완료!
+        <span class="chunk-info">
+            📦 <span th:text="${uploadResult.chunkCount}"></span>개 청크가 Oracle Vector Store에 저장되었습니다.
+        </span>
+    </div>
+    <div th:if="${error}" class="alert alert-danger">
+        ❌ <span th:text="${error}"></span>
+    </div>
+
+    <!-- ── 업로드 폼 카드 ── -->
+    <div class="card">
+        <h2>📤 문서 등록 (임베딩 저장)</h2>
+
+        <form th:action="@{/upload}" method="post" enctype="multipart/form-data" id="uploadForm">
+
+            <!-- 파일 드롭존 -->
+            <div class="form-group">
+                <label>파일 선택</label>
+                <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
+                    <div class="drop-icon">📄</div>
+                    <div>클릭하거나 파일을 드래그하여 업로드</div>
+                    <div class="drop-hint">PDF, DOCX, TXT, HTML, XLSX 등 지원</div>
+                    <div class="selected-file" id="selectedFileName"></div>
+                </div>
+                <input type="file" id="fileInput" name="file"
+                       accept=".pdf,.docx,.doc,.txt,.html,.htm,.xlsx,.xls,.pptx,.ppt,.md"
+                       onchange="showFileName(this)"/>
+                <p class="supported-types">지원 형식: PDF · DOCX · TXT · HTML · XLSX · PPTX · Markdown (Apache Tika 기반)</p>
+            </div>
+
+            <!-- 카테고리 + TopK 행 -->
+            <div class="row">
+                <div class="col form-group">
+                    <label for="category">카테고리 (메타데이터)</label>
+                    <input type="text" id="category" name="category" class="form-control"
+                           placeholder="예: 기술문서, 계약서, 매뉴얼" value="general"/>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="submitBtn">
+                🚀 임베딩 후 저장
+            </button>
+        </form>
+    </div>
+
+    <!-- ── 프로세스 안내 ── -->
+    <div class="card">
+        <h2>⚙️ 처리 흐름</h2>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;font-size:.88rem;color:#4a5568;">
+            <div style="background:#ebf4ff;border-radius:8px;padding:.6rem 1rem;">① 파일 업로드</div>
+            <span style="color:#a0aec0;">→</span>
+            <div style="background:#ebf4ff;border-radius:8px;padding:.6rem 1rem;">② Apache Tika 파싱</div>
+            <span style="color:#a0aec0;">→</span>
+            <div style="background:#ebf4ff;border-radius:8px;padding:.6rem 1rem;">③ 토큰 단위 청크 분할</div>
+            <span style="color:#a0aec0;">→</span>
+            <div style="background:#ebf4ff;border-radius:8px;padding:.6rem 1rem;">④ OpenAI 임베딩 생성</div>
+            <span style="color:#a0aec0;">→</span>
+            <div style="background:#c6f6d5;border-radius:8px;padding:.6rem 1rem;">⑤ Oracle VECTOR_STORE 저장</div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function showFileName(input) {
+        const el = document.getElementById('selectedFileName');
+        el.textContent = input.files[0] ? '선택된 파일: ' + input.files[0].name : '';
+    }
+
+    // 드래그 앤 드롭
+    const dz = document.getElementById('dropzone');
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('over'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('over'));
+    dz.addEventListener('drop', e => {
+        e.preventDefault();
+        dz.classList.remove('over');
+        const fi = document.getElementById('fileInput');
+        fi.files = e.dataTransfer.files;
+        showFileName(fi);
+    });
+
+    // 업로드 중 버튼 비활성화
+    document.getElementById('uploadForm').addEventListener('submit', () => {
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.textContent = '⏳ 임베딩 처리 중...';
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: rag-oracle
+
+  datasource:
+    url: jdbc:oracle:thin:@//localhost:1521/xe
+    username: hr
+    password: hr
+    driver-class-name: oracle.jdbc.OracleDriver
+
+  thymeleaf:
+    cache: false
+    encoding: UTF-8
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: gpt-4o-mini
+          temperature: 0.3
+      embedding:
+        options:
+          model: text-embedding-3-small
+
+    vectorstore:
+      oracle:
+        table-name: VECTOR_STORE # Oracle에 생성될 벡터 테이블명
+        index-type: IVF # 인덱스 유형: NONE | IVF | HNSW
+        distance-type: COSINE # 거리 측정: COSINE | DOT | EUCLIDEAN
+        dimensions: 1536 # text-embedding-3-small = 1536차원
+        search-accuracy: 95
+        initialize-schema: true # 앱 기동 시 테이블 자동 생성
+
+logging:
+  level:
+    org.springframework.ai: DEBUG
+    com.example: DEBUG
