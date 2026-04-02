@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>AI 질의응답 | Oracle RAG</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI','Apple SD Gothic Neo',sans-serif; background:#f0f4f8; color:#2d3748; min-height:100vh; }
+        nav { background:linear-gradient(135deg,#1a365d 0%,#2b6cb0 100%); padding:0 2rem; display:flex; align-items:center; gap:2rem; height:56px; box-shadow:0 2px 8px rgba(0,0,0,.25); }
+        nav .brand { color:#fff; font-size:1.1rem; font-weight:700; text-decoration:none; }
+        nav a { color:#bee3f8; text-decoration:none; font-size:.9rem; padding:.25rem .5rem; border-radius:4px; transition:background .2s; }
+        nav a:hover { background:rgba(255,255,255,.15); color:#fff; }
+        nav a.active { background:rgba(255,255,255,.2); color:#fff; font-weight:600; }
+        .container { max-width:860px; margin:2rem auto; padding:0 1rem; }
+        .card { background:#fff; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,.08); padding:2rem; margin-bottom:1.5rem; }
+        .card h2 { font-size:1.2rem; color:#2b6cb0; margin-bottom:1.25rem; border-bottom:2px solid #ebf4ff; padding-bottom:.6rem; }
+        .form-group { margin-bottom:1rem; }
+        .form-group label { display:block; font-size:.85rem; font-weight:600; color:#4a5568; margin-bottom:.35rem; }
+        .form-control { width:100%; padding:.55rem .8rem; border:1.5px solid #cbd5e0; border-radius:8px; font-size:.9rem; transition:border-color .2s; outline:none; }
+        .form-control:focus { border-color:#3182ce; box-shadow:0 0 0 3px rgba(49,130,206,.15); }
+        textarea.form-control { resize:vertical; min-height:90px; }
+        .btn { display:inline-block; padding:.6rem 1.4rem; border:none; border-radius:8px; font-size:.9rem; font-weight:600; cursor:pointer; transition:filter .2s; }
+        .btn-success { background:#38a169; color:#fff; }
+        .btn-success:hover { filter:brightness(1.1); }
+        .row { display:flex; gap:1rem; flex-wrap:wrap; }
+        .col { flex:1; min-width:160px; }
+        .alert { padding:.9rem 1.1rem; border-radius:8px; margin-bottom:1rem; font-size:.9rem; }
+        .alert-danger { background:#fff5f5; border:1px solid #feb2b2; color:#9b2c2c; }
+        /* 질문 버블 */
+        .question-bubble { background:#ebf4ff; border-radius:0 12px 12px 12px; padding:1rem 1.2rem; margin-bottom:1rem; font-size:.93rem; line-height:1.6; }
+        .question-label { font-size:.78rem; font-weight:700; color:#2b6cb0; margin-bottom:.35rem; }
+        /* 답변 */
+        .answer-box { background:#f0fff4; border-left:4px solid #38a169; border-radius:0 10px 10px 0; padding:1.1rem 1.3rem; font-size:.93rem; line-height:1.8; white-space:pre-wrap; color:#2d3748; }
+        .answer-label { font-size:.78rem; font-weight:700; color:#276749; margin-bottom:.35rem; }
+        /* 참조 문서 */
+        .source-item { border:1.5px solid #e2e8f0; border-radius:8px; padding:.8rem 1rem; margin-bottom:.7rem; background:#f7fafc; }
+        .source-header { display:flex; justify-content:space-between; margin-bottom:.35rem; }
+        .rank-badge { background:#fefcbf; color:#744210; font-size:.75rem; font-weight:700; padding:.1rem .45rem; border-radius:999px; }
+        .score-badge { background:#ebf4ff; color:#2b6cb0; font-size:.75rem; font-weight:700; padding:.1rem .45rem; border-radius:999px; }
+        .source-content { font-size:.83rem; color:#4a5568; line-height:1.6; white-space:pre-wrap; max-height:120px; overflow-y:auto; word-break:break-word; }
+        .source-meta { font-size:.75rem; color:#718096; margin-top:.35rem; display:flex; gap:.6rem; flex-wrap:wrap; }
+        .meta-tag { background:#edf2f7; border-radius:4px; padding:.1rem .35rem; }
+        .sources-title { font-size:.88rem; font-weight:600; color:#4a5568; margin-bottom:.7rem; }
+        .divider { border:none; border-top:1.5px solid #e2e8f0; margin:1.2rem 0; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a class="brand" href="/">🔮 Oracle RAG</a>
+    <a href="/">📤 문서 등록</a>
+    <a href="/search">🔍 유사도 검색</a>
+    <a href="/ask" class="active">🤖 AI 질의응답</a>
+</nav>
+
+<div class="container">
+
+    <!-- ── 질문 폼 ── -->
+    <div class="card">
+        <h2>🤖 AI 질의응답 (RAG)</h2>
+        <p style="font-size:.85rem;color:#718096;margin-bottom:1.2rem;">
+            등록된 문서를 기반으로 AI가 답변합니다. 관련 문서를 벡터 검색하여 컨텍스트로 활용합니다.
+        </p>
+
+        <form th:action="@{/ask}" method="post" id="askForm">
+
+            <div class="form-group">
+                <label for="question">질문</label>
+                <textarea id="question" name="question" class="form-control"
+                          placeholder="예: Spring AI에서 Oracle Vector Store를 설정하는 방법은?"
+                          th:text="${question}" required></textarea>
+            </div>
+
+            <div class="row">
+                <div class="col form-group">
+                    <label for="topK">참조 문서 수 (Top-K)</label>
+                    <input type="number" id="topK" name="topK" class="form-control"
+                           min="1" max="20" th:value="${topK ?: 5}"/>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-success" id="askBtn">
+                💬 답변 받기
+            </button>
+        </form>
+    </div>
+
+    <!-- ── 에러 ── -->
+    <div th:if="${askError}" class="alert alert-danger">
+        ❌ <span th:text="${askError}"></span>
+    </div>
+
+    <!-- ── RAG 답변 결과 ── -->
+    <div th:if="${ragAnswer}" class="card">
+        <h2>💡 답변 결과</h2>
+
+        <!-- 질문 버블 -->
+        <div class="question-bubble">
+            <div class="question-label">🙋 질문</div>
+            <span th:text="${ragAnswer.question}"></span>
+        </div>
+
+        <!-- AI 답변 -->
+        <div class="answer-label">🤖 AI 답변</div>
+        <div class="answer-box" th:text="${ragAnswer.answer}"></div>
+
+        <!-- 참조 문서 -->
+        <hr class="divider"/>
+        <p class="sources-title">
+            📚 참조 문서
+            (<span th:text="${ragAnswer.sourceDocuments.size()}"></span>건)
+        </p>
+
+        <div th:if="${ragAnswer.sourceDocuments.isEmpty()}"
+             style="font-size:.85rem;color:#a0aec0;">
+            관련 참조 문서를 찾을 수 없습니다.
+        </div>
+
+        <div th:each="src, stat : ${ragAnswer.sourceDocuments}" class="source-item">
+            <div class="source-header">
+                <span class="rank-badge" th:text="'참조 #' + ${stat.index + 1}"></span>
+                <span class="score-badge"
+                      th:text="'유사도: ' + ${#numbers.formatDecimal(src.score, 1, 4)}"></span>
+            </div>
+            <div class="source-content" th:text="${src.content}"></div>
+            <div class="source-meta">
+                <span th:if="${src.metadata['source_file']}" class="meta-tag"
+                      th:text="'📄 ' + ${src.metadata['source_file']}"></span>
+                <span th:if="${src.metadata['category']}" class="meta-tag"
+                      th:text="'🏷 ' + ${src.metadata['category']}"></span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    document.getElementById('askForm').addEventListener('submit', () => {
+        const btn = document.getElementById('askBtn');
+        btn.disabled = true;
+        btn.textContent = '⏳ AI가 답변을 생성하는 중...';
+    });
+</script>
+</body>
+</html>
