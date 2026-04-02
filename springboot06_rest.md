@@ -42,7 +42,7 @@ ObjectMapper를 새로 정의
 @RestController
 ```
 
-#### Jackson 주요 애너테이션
+### Jackson 주요 애너테이션
 
 | 애너테이션                | 설명                                                                                |
 | :------------------------ | :---------------------------------------------------------------------------------- |
@@ -63,7 +63,7 @@ ObjectMapper를 새로 정의
 | **@JsonRawValue**         | 값이 JSON 문자열이어도 이스케이프하지 않고 그대로 출력.                             |
 | **@JsonView**             | 뷰 클래스에 따라 직렬화 범위 제어.                                                  |
 
-# Jackson 주요 애너테이션 (JSON 변환 예시 포함)
+### Jackson 주요 애너테이션 (JSON 변환 예시 포함)
 
 | 애너테이션                | 코드 예제                                                                                    | JSON 결과                                                                                |
 | :------------------------ | :------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------- |
@@ -85,7 +85,49 @@ ObjectMapper를 새로 정의
 | **@JsonIgnoreProperties** | `@JsonIgnoreProperties({"id","password"})` <br> class User { ... }                           | `{ "name": "Tom" }`                                                                      |
 | **@JsonPropertyOrder**    | `@JsonPropertyOrder({"id","name"})` <br>class User { ... }                                   | `{ "id":1, "name":"Tom" }`                                                               |
 
-### 관련 기능
+## JSON Test
+
+[springboot reference](https://docs.spring.io/spring-boot/3.4/reference/testing/spring-boot-applications.html#testing.spring-boot-applications.json-tests)
+
+@JsonTest  
+컨트롤러/DB 없이 JSON 직렬화/역직렬화마 따로 테스트. JSON 변환만 검증(날짜 포맷, 필드포함/제외확인, 커스텀 직렬화 검증)
+
+```java
+import org.junit.jupiter.api.Test;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.json.JsonTest;
+import org.springframework.boot.test.json.JacksonTester;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@JsonTest
+class MyJsonTests {
+
+	@Autowired
+	private JacksonTester<VehicleDetails> json;
+
+	@Test
+	void serialize() throws Exception {
+		VehicleDetails details = new VehicleDetails("Honda", "Civic");
+		// Assert against a `.json` file in the same package as the test
+		assertThat(this.json.write(details)).isEqualToJson("expected.json");
+		// Or use JSON path based assertions
+		assertThat(this.json.write(details)).hasJsonPathStringValue("@.make");
+		assertThat(this.json.write(details)).extractingJsonPathStringValue("@.make").isEqualTo("Honda");
+	}
+
+	@Test
+	void deserialize() throws Exception {
+		String content = "{\"make\":\"Ford\",\"model\":\"Focus\"}";
+		assertThat(this.json.parse(content)).isEqualTo(new VehicleDetails("Ford", "Focus"));
+		assertThat(this.json.parseObject(content).getMake()).isEqualTo("Ford");
+	}
+
+}
+```
+
+## 관련 기능
 
 - REST
 - MSA
