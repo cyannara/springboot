@@ -1,30 +1,18 @@
 server:
-  port: 85
+  port: 86
 
 spring:
   application:
-    name: rag-oracle
+    name: rag-server
 
-  #   # datasource:
-  #   #   url: jdbc:oracle:thin:@//localhost:1521/xe
-  #   #   username: hr
-  #   #   password: hr
-  #   #   driver-class-name: oracle.jdbc.OracleDriver
+  main:
+    web-application-type: servlet
 
   datasource:
     url: jdbc:postgresql://localhost:5432/ragdb
     username: raguser
     password: ragpassword
     driver-class-name: org.postgresql.Driver
-
-  thymeleaf:
-    cache: false
-    encoding: UTF-8
-
-  servlet:
-    multipart:
-      max-file-size: 50MB
-      max-request-size: 50MB
 
   ai:
     openai:
@@ -36,15 +24,6 @@ spring:
       embedding:
         options:
           model: text-embedding-3-small
-
-    # vectorstore:
-    #   oracle:
-    #     table-name: VECTOR_STORE # Oracle에 생성될 벡터 테이블명
-    #     index-type: IVF # 인덱스 유형: NONE | IVF | HNSW
-    #     distance-type: COSINE # 거리 측정: COSINE | DOT | EUCLIDEAN
-    #     dimensions: 1536 # text-embedding-3-small = 1536차원
-    #     search-accuracy: 95
-    #     initialize-schema: true # 앱 기동 시 테이블 자동 생성
 
     vectorstore:
       pgvector:
@@ -58,9 +37,9 @@ spring:
 logging:
   level:
     org.springframework.ai: DEBUG
-    com.example: DEBUG
+    com.rag: DEBUG
 
 # RAG 서버 설정: 파일 업로드 서버와 공유하는 파일 저장 경로
 rag:
   file:
-    base-path: /shared/uploads # 업로드 서버와 공유 마운트 경로 (NFS, S3 마운트 등)
+    base-path: /uploads # 업로드 서버와 공유 마운트 경로 (NFS, S3 마운트 등)
