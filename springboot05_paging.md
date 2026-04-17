@@ -236,7 +236,7 @@ Pageable의 offset과 pageSize 값을 사용하여 SQL의 LIMIT 절에 매핑합
 <dependency>
     <groupId>com.github.pagehelper</groupId>
     <artifactId>pagehelper-spring-boot-starter</artifactId>
-    <version>1.2.12</version>
+    <version>2.0.1</version>
 </dependency>
 ```
 #### mapper count 쿼리
