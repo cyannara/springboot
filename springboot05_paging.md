@@ -229,6 +229,35 @@ Pageable의 offset과 pageSize 값을 사용하여 SQL의 LIMIT 절에 매핑합
 <!-- 검색폼 끝 -->
 ```
 
+### 페이징 조회(pagehelper)
+
+#### dependency
+```xml
+<dependency>
+    <groupId>com.github.pagehelper</groupId>
+    <artifactId>pagehelper-spring-boot-starter</artifactId>
+    <version>1.2.12</version>
+</dependency>
+```
+#### mapper count 쿼리
+```xml
+<select id="selectAll_COUNT" resultType="int">
+  SELECT COUNT(*) FROM employees
+</select>
+```
+#### page
+```java
+PageInfo<User> page = PageHelper.startPage(pageNum, pageSize)
+                                .doSelectPageInfo(() -> userMapper.selectUser());
+
+log.info("TotalCount : {}, CurrentPage : {}, PageSize : {}, TotalPage : {}", page.getTotal()
+                                                                           , page.getPageNum()
+                                                                           , page.getPageSize()
+                                                                           , page.getPages());
+
+List<User> userList = page.getList();
+```
+
 ### buffer_cache 비우기
 
 한번 수행한 이후에는 해당 블록들을 Data Buffer Cache에 보관하고 있기때문에 정확한 시간 측정이 힘들다
