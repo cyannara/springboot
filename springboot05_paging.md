@@ -254,7 +254,7 @@ log.info("TotalCount : {}, CurrentPage : {}, PageSize : {}, TotalPage : {}"
    , page.getTotal()
    , page.getPageNum()
    , page.getPageSize()
-   , page.hasNextPage()
+   , page.hasNextPage() 
    , page.hasPreviousPage()
    , page.prePage()
    , page.nextPage()
