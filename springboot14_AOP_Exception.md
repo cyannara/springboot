@@ -98,6 +98,53 @@ public class BeforeAdvice {
 - 서비스 재사용성 붕괴(서비는 트랜잭션 처리가 없음)
 - 예외처리 문제. 롤백 타이밍이 꼬일 수 있음. 서비스는 RuntimeException 발생 시 롤백을 하는데 컨트롤러에서는 @ExceptionHandler나 ControllerAdvice가 발생하면서 롤백타이밍이 꼬일 수 있음
 
+### 테이블 생성  
+```sql
+create table sample ( title varchar2(50) );
+create table sample2 ( title varchar2(5) );
+```
+
+### 매퍼 인터페이스
+```java
+@Mapper
+public interface SampleMapper {
+
+	@Insert("insert into sample values ( #{title} )")
+	void sample(String title);
+
+	@Insert("insert into sample2 values ( #{title} )")
+	void sample2(String title);
+}
+```
+### SampleService
+```java
+@Service
+@Slf4j
+public class SampleService {
+
+	@Autowired SampleMapper sampleMapper; 
+	
+	@Transactional
+	public void insert(String title) {   //  6글자
+		sampleMapper.sample(title);  //50 
+		sampleMapper.sample2(title);   //5   //error 가나면 모두 롤백해야함
+	}
+```
+### Test
+```java
+@SpringBootTest
+public class AopTest {
+
+	@Autowired SampleService sampleService;
+	
+	@Test
+	public void test1() {
+		sampleService.insert("hong");
+	}
+	
+}
+```
+
 ## 어노테이션 만들기
 
 어노테이션을 만드는 것은 마치 인터페이스를 정의하고 해당 인터페이스를 구현하는 클래스를 작성하는 것과 비슷함.
