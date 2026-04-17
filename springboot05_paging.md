@@ -236,7 +236,7 @@ Pageable의 offset과 pageSize 값을 사용하여 SQL의 LIMIT 절에 매핑합
 <dependency>
     <groupId>com.github.pagehelper</groupId>
     <artifactId>pagehelper-spring-boot-starter</artifactId>
-    <version>2.0.1</version>
+    <version>2.1.0</version>
 </dependency>
 ```
 #### mapper count 쿼리
@@ -250,13 +250,48 @@ Pageable의 offset과 pageSize 값을 사용하여 SQL의 LIMIT 절에 매핑합
 PageInfo<User> page = PageHelper.startPage(pageNum, pageSize)
                                 .doSelectPageInfo(() -> userMapper.selectUser());
 
-log.info("TotalCount : {}, CurrentPage : {}, PageSize : {}, TotalPage : {}", page.getTotal()
-                                                                           , page.getPageNum()
-                                                                           , page.getPageSize()
-                                                                           , page.getPages());
+log.info("TotalCount : {}, CurrentPage : {}, PageSize : {}, TotalPage : {}"
+   , page.getTotal()
+   , page.getPageNum()
+   , page.getPageSize()
+   , page.hasNextPage()
+   , page.hasPreviousPage()
+   , page.prePage()
+   , page.nextPage()
+   , page.navigatepageNums());
 
 List<User> userList = page.getList();
 ```
+
+#### list.html
+```html
+<div th:insert="~{layout/page::page(${pageInfo})}"></div>
+<script th:inline="javascript">
+	function gopage(pageNum){
+		frm.pageNum.value = pageNum;
+		frm.submit();
+	}
+</script>
+```
+
+#### page.html
+```html
+<div th:fragment="page(pageInfo)">
+<nav aria-label="Page navigation example">
+  <ul class="pagination">
+    <li class="page-item" th:if="${pageInfo.hasPreviousPage}">
+       <a class="page-link" href="#" th:onclick="gopage([[${pageInfo.prePage}]])">Previous</a></li>
+    
+    <li class="page-item" th:each="i : ${pageInfo.navigatepageNums}">
+        <a class="page-link" href="#" th:onclick="gopage([[${i}]])">[[${i}]]</a></li>
+   
+    <li class="page-item" th:if="${pageInfo.hasNextPage}">
+        <a class="page-link" href="#" th:onclick="gopage([[${pageInfo.nextPage}]])">Next</a></li>
+  </ul>
+</nav>
+</div>
+```
+
 
 ### buffer_cache 비우기
 
