@@ -250,8 +250,6 @@ Pageable의 offset과 pageSize 값을 사용하여 SQL의 LIMIT 절에 매핑합
 PageInfo<User> page = PageHelper.startPage(pageNum, pageSize)
                                 .doSelectPageInfo(() -> userMapper.selectUser());
 
-PageInfo<User> page = PageHelper.startPage(pageNum, pageSize)
-                                .doSelectPageInfo(() -> userMapper.selectUser());
 
 log.info("TotalCount : {}, CurrentPage : {}, PageSize : {}, TotalPage : {}"
    , page.getTotal()
