@@ -245,25 +245,31 @@ Pageable의 offset과 pageSize 값을 사용하여 SQL의 LIMIT 절에 매핑합
   SELECT COUNT(*) FROM employees
 </select>
 ```
-#### page
+#### 컨트롤러
 ```java
-PageInfo<User> page = PageHelper.startPage(pageNum, pageSize)
-                                .doSelectPageInfo(() -> userMapper.selectUser());
-
-
-log.info("TotalCount : {}, CurrentPage : {}, PageSize : {}, TotalPage : {}"
-   , page.getTotal()
-   , page.getPageNum()
-   , page.getPageSize()
-   , page.hasNextPage() 
-   , page.hasPreviousPage()
-   , page.prePage()
-   , page.nextPage()
-   , page.navigatepageNums());
-
-List<User> userList = page.getList();
-
-List<User> userList = page.getList();
+	@GetMapping({"/emp/list", "/"})
+	public String emplist(Model model, 
+			 @ModelAttribute("emp") EmployeeVO vo,
+			 @RequestParam(required = false, defaultValue = "1") int pageNum ) {
+		
+		PageInfo<Object> page = PageHelper.startPage(pageNum, 5)
+				.doSelectPageInfo(()->employeeMapper.selectAll(vo));
+		
+		log.info("TotalCount : {}, CurrentPage : {}, PageSize : {}, TotalPage : {}"
+				   , page.getTotal()
+				   , page.getPageNum()
+				   , page.getPageSize()
+				   , page.isHasNextPage()
+				   , page.isHasPreviousPage()
+				   , page.getPrePage()
+				   , page.getNextPage()
+				   , page.getNavigatepageNums());
+		
+		System.out.println(page.getList());
+		
+		model.addAttribute("pageInfo", page);
+		return "emp/list";
+	}
 ```
 
 #### list.html
