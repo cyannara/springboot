@@ -70,6 +70,12 @@ management.endpoint.loggers.enabled=true
 https://docs.spring.io/spring-boot/api/rest/actuator/index.html
 
 실습
+```
+http://localhost/actuator/beans
+http://localhost/actuator/mappings
+http://localhost/actuator/metrics
+http://localhost/actuator/metrics/disk.free
+```
 
 ```bash
 curl http://localhost:8080/actuator/health
